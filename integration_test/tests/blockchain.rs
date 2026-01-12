@@ -246,8 +246,21 @@ fn blockchain__get_deployment_info__modelled() {
 fn blockchain__get_descriptor_activity__modelled() {
     let node = Node::with_wallet(Wallet::None, &["-coinstatsindex=1", "-txindex=1"]);
 
-    let json: GetDescriptorActivity =
-        node.client.get_descriptor_activity().expect("getdescriptoractivity");
+    // In Core v30, `getdescriptoractivity` requires `blockhashes` and `scanobjects` arguments.
+    // Older versions accepted omitting them.
+    let json: GetDescriptorActivity = {
+        #[cfg(feature = "v29_and_below")]
+        {
+            node.client.get_descriptor_activity().expect("getdescriptoractivity")
+        }
+
+        #[cfg(not(feature = "v29_and_below"))]
+        {
+            node.client
+                .get_descriptor_activity(&[] as &[bitcoin::BlockHash], &[] as &[&str])
+                .expect("getdescriptoractivity")
+        }
+    };
     let model: Result<mtype::GetDescriptorActivity, GetDescriptorActivityError> = json.into_model();
     model.unwrap();
 }
