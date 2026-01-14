@@ -80,3 +80,15 @@ macro_rules! impl_client_v17__reconsider_block {
         }
     };
 }
+
+/// Implements Bitcoin Core JSON-RPC API method `mockscheduler`.
+#[macro_export]
+macro_rules! impl_client_v17__mock_scheduler {
+    () => {
+        impl Client {
+            pub fn mock_scheduler(&self, delta_time: u64) -> Result<()> {
+                self.call("mockscheduler", &[into_json(delta_time)?])
+            }
+        }
+    };
+}
