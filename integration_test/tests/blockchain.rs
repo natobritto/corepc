@@ -670,3 +670,10 @@ fn blockchain__reconsider_block__modelled() {
         "height should return to the original height after reconsiderblock"
     );
 }
+
+#[test]
+fn blockchain__mock_scheduler() {
+    let node = Node::with_wallet(Wallet::Default, &[]);
+
+    let _: () = node.client.mock_scheduler(1).expect("mockscheduler");
+}
