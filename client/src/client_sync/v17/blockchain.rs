@@ -128,7 +128,9 @@ macro_rules! impl_client_v17__get_block_stats {
 macro_rules! impl_client_v17__get_chain_tips {
     () => {
         impl Client {
-            pub fn get_chain_tips(&self) -> Result<GetChainTips> { self.call("getchaintips", &[]) }
+            pub fn get_chain_tips(&self) -> Result<GetChainTips> {
+                self.call("getchaintips", &[])
+            }
         }
     };
 }
@@ -230,8 +232,13 @@ macro_rules! impl_client_v17__get_raw_mempool {
                 // Equivalent to self.call("getrawmempool", &[into_json(false)?])
                 self.call("getrawmempool", &[])
             }
+
             pub fn get_raw_mempool_verbose(&self) -> Result<GetRawMempoolVerbose> {
                 self.call("getrawmempool", &[into_json(true)?])
+            }
+
+            pub fn get_raw_mempool_sequence(&self) -> Result<GetRawMempoolSequence> {
+                self.call("getrawmempool", &[into_json(false)?, into_json(true)?])
             }
         }
     };
@@ -323,7 +330,9 @@ macro_rules! impl_client_v17__save_mempool {
 macro_rules! impl_client_v17__verify_chain {
     () => {
         impl Client {
-            pub fn verify_chain(&self) -> Result<VerifyChain> { self.call("verifychain", &[]) }
+            pub fn verify_chain(&self) -> Result<VerifyChain> {
+                self.call("verifychain", &[])
+            }
         }
     };
 }

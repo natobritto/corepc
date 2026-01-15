@@ -30,6 +30,12 @@ macro_rules! impl_client_v23__get_block_from_peer {
 macro_rules! impl_client_v23__get_deployment_info {
     () => {
         impl Client {
+            /// Query deployment info at the current chain tip (omits the optional argument).
+            pub fn get_deployment_info_tip(&self) -> Result<GetDeploymentInfo> {
+                self.call("getdeploymentinfo", &[])
+            }
+
+            /// Query deployment info at the given block hash.
             pub fn get_deployment_info(&self, blockhash: &BlockHash) -> Result<GetDeploymentInfo> {
                 self.call("getdeploymentinfo", &[into_json(blockhash)?])
             }
@@ -42,7 +48,9 @@ macro_rules! impl_client_v23__get_deployment_info {
 macro_rules! impl_client_v23__save_mempool {
     () => {
         impl Client {
-            pub fn save_mempool(&self) -> Result<SaveMempool> { self.call("savemempool", &[]) }
+            pub fn save_mempool(&self) -> Result<SaveMempool> {
+                self.call("savemempool", &[])
+            }
         }
     };
 }

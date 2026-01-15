@@ -71,6 +71,11 @@ pub struct GetMempoolEntry(pub MempoolEntry);
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct GetRawMempoolVerbose(pub BTreeMap<String, MempoolEntry>);
 
+/// Result of JSON-RPC method `getrawmempool` with verbose set to `false` and `mempool_sequence` set to `true`.
+///
+/// Map of txid to [`MempoolEntry`].
+GetRawMempoolSequence
+
 /// Mempool data. Part of `getmempoolentry`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
