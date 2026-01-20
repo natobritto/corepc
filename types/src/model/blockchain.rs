@@ -660,6 +660,15 @@ pub struct GetRawMempool(pub Vec<Txid>);
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct GetRawMempoolVerbose(pub BTreeMap<Txid, MempoolEntry>);
 
+/// Models the result of JSON-RPC method `getrawmempool` with verbose set to `false` and `mempool_sequence` set to `true`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct GetRawMempoolSequence {
+    /// List of transaction ids in the mempool.
+    pub txids: Vec<Txid>,
+    /// The mempool sequence value.
+    pub mempool_sequence: i64,
+}
+
 /// Models the result of JSON-RPC method `gettxout`.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub struct GetTxOut {
@@ -685,22 +694,56 @@ pub struct GetTxOutSetInfo {
     /// The hash of the block at the tip of the chain.
     pub best_block: BlockHash,
     /// The number of transactions with unspent outputs.
-    pub transactions: u32,
+    /// (optional: not present when coinstatsindex is used)
+    pub transactions: Option<u32>,
     /// The number of unspent transaction outputs.
     pub tx_outs: u32,
     /// A meaningless metric for UTXO set size.
     pub bogo_size: u32,
-    /// The serialized hash.
-    ///
-    /// This was removed in Bitcoin Core v26, and hence will be `None` for v26 and later.
-    pub hash_serialized_2: Option<String>, // FIXME: What sort of hash is this?
+    /// The estimated size of the chainstate on disk.
+    /// (optional: not present when coinstatsindex is used)
+    pub disk_size: Option<u32>,
+    /// The total amount.
+    pub total_amount: Amount,
     /// The serialized hash (only present if 'hash_serialized_3' hash_type is chosen).
     /// v26 and later only.
     pub hash_serialized_3: Option<String>,
-    /// The estimated size of the chainstate on disk.
-    pub disk_size: u32,
-    /// The total amount.
-    pub total_amount: Amount,
+    /// The muhash serialized hash (optional; present only if 'muhash' hash_type is chosen).
+    pub muhash: Option<String>,
+    /// The total amount of coins permanently excluded from the UTXO set
+    /// (optional; only available if coinstatsindex is used).
+    pub total_unspendable_amount: Option<Amount>,
+    /// Per-block aggregated info (optional; only available if coinstatsindex is used).
+    pub block_info: Option<BlockInfo>,
+}
+
+/// Detailed block-level info returned by `gettxoutsetinfo` when coinstatsindex is enabled.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct BlockInfo {
+    /// Total amount of all prevouts spent in this block.
+    pub prevout_spent: Amount,
+    /// Coinbase subsidy amount of this block.
+    pub coinbase: Amount,
+    /// Total amount of new outputs created by this block (excluding coinbase).
+    pub new_outputs_ex_coinbase: Amount,
+    /// Total amount of unspendable outputs created in this block.
+    pub unspendable: Amount,
+    /// Detailed view of unspendable categories.
+    pub unspendables: Unspendables,
+}
+
+/// Categories of unspendable amounts returned inside `BlockInfo`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct Unspendables {
+    /// The unspendable amount of the Genesis block subsidy.
+    #[serde(rename = "genesis_block")]
+    pub genesis_block: Amount,
+    /// Transactions overridden by duplicates (no longer possible with BIP30).
+    pub bip30: Amount,
+    /// Amounts sent to scripts that are unspendable (for example OP_RETURN outputs).
+    pub scripts: Amount,
+    /// Fee rewards that miners did not claim in their coinbase transaction.
+    pub unclaimed_rewards: Amount,
 }
 
 /// Models the result of JSON-RPC method `gettxspendingprevout`.
@@ -738,6 +781,8 @@ pub struct ScanBlocksStart {
     pub to_height: u32,
     /// Blocks that may have matched a scanobject
     pub relevant_blocks: Vec<BlockHash>,
+    /// Whether the scan is completed. For v26 onwards.
+    pub completed: Option<bool>,
 }
 
 /// Models the result of JSON-RPC method `verifytxoutproof`.

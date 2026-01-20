@@ -21,10 +21,12 @@ pub enum GetChainStatesError {
 impl fmt::Display for GetChainStatesError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::BestBlockHash(ref e) =>
-                write_err!(f, "conversion of the `best_block_hash` field failed"; e),
-            Self::SnapshotBlockHash(ref e) =>
-                write_err!(f, "conversion of the `snapshot_block_hash` field failed"; e),
+            Self::BestBlockHash(ref e) => {
+                write_err!(f, "conversion of the `best_block_hash` field failed"; e)
+            }
+            Self::SnapshotBlockHash(ref e) => {
+                write_err!(f, "conversion of the `snapshot_block_hash` field failed"; e)
+            }
             Self::Numeric(ref e) => write_err!(f, "numeric"; e),
         }
     }
@@ -42,7 +44,9 @@ impl std::error::Error for GetChainStatesError {
 }
 
 impl From<NumericError> for GetChainStatesError {
-    fn from(e: NumericError) -> Self { Self::Numeric(e) }
+    fn from(e: NumericError) -> Self {
+        Self::Numeric(e)
+    }
 }
 
 /// Error when converting a `DumpTxOutSet` type into the model type.
@@ -61,11 +65,13 @@ pub enum DumpTxOutSetError {
 impl fmt::Display for DumpTxOutSetError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::CoinsWritten(ref e) =>
-                write_err!(f, "conversion of the `coins_written` field failed"; e),
+            Self::CoinsWritten(ref e) => {
+                write_err!(f, "conversion of the `coins_written` field failed"; e)
+            }
             Self::BaseHash(ref e) => write_err!(f, "conversion of the `base_hash` field failed"; e),
-            Self::TxOutSetHash(ref e) =>
-                write_err!(f, "conversion of the `txoutset_hash` field failed"; e),
+            Self::TxOutSetHash(ref e) => {
+                write_err!(f, "conversion of the `txoutset_hash` field failed"; e)
+            }
             Self::Numeric(ref e) => write_err!(f, "numeric"; e),
         }
     }
@@ -84,7 +90,9 @@ impl std::error::Error for DumpTxOutSetError {
 }
 
 impl From<NumericError> for DumpTxOutSetError {
-    fn from(e: NumericError) -> Self { Self::Numeric(e) }
+    fn from(e: NumericError) -> Self {
+        Self::Numeric(e)
+    }
 }
 
 /// Error when converting a `GetTxOut` type into the model type.
@@ -102,10 +110,12 @@ impl fmt::Display for GetTxOutSetInfoError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Self::Numeric(ref e) => write_err!(f, "numeric"; e),
-            Self::BestBlock(ref e) =>
-                write_err!(f, "conversion of the `beast_block` field failed"; e),
-            Self::TotalAmount(ref e) =>
-                write_err!(f, "conversion of the `total_amount` field failed"; e),
+            Self::BestBlock(ref e) => {
+                write_err!(f, "conversion of the `beast_block` field failed"; e)
+            }
+            Self::TotalAmount(ref e) => {
+                write_err!(f, "conversion of the `total_amount` field failed"; e)
+            }
         }
     }
 }
@@ -122,7 +132,9 @@ impl std::error::Error for GetTxOutSetInfoError {
 }
 
 impl From<NumericError> for GetTxOutSetInfoError {
-    fn from(e: NumericError) -> Self { Self::Numeric(e) }
+    fn from(e: NumericError) -> Self {
+        Self::Numeric(e)
+    }
 }
 
 /// Error when converting a `LoadTxOutSet` type into the model type.
@@ -139,8 +151,9 @@ pub enum LoadTxOutSetError {
 impl fmt::Display for LoadTxOutSetError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::CoinsLoaded(ref e) =>
-                write_err!(f, "conversion of the `coins_loaded` field failed"; e),
+            Self::CoinsLoaded(ref e) => {
+                write_err!(f, "conversion of the `coins_loaded` field failed"; e)
+            }
             Self::TipHash(ref e) => write_err!(f, "conversion of the `tip_hash` field failed"; e),
             Self::Numeric(ref e) => write_err!(f, "numeric"; e),
         }
@@ -159,5 +172,16 @@ impl std::error::Error for LoadTxOutSetError {
 }
 
 impl From<NumericError> for LoadTxOutSetError {
-    fn from(e: NumericError) -> Self { Self::Numeric(e) }
+    fn from(e: NumericError) -> Self {
+        Self::Numeric(e)
+    }
+}
+
+/// Error when converting a `ScanBlocksStart` type into the model type.
+#[derive(Debug)]
+pub enum ScanBlocksStartError {
+    /// Conversion of numeric type to expected type failed.
+    Numeric(NumericError),
+    /// Conversion of the `relevant_blocks` field failed.
+    RelevantBlocks(hex::HexToArrayError),
 }

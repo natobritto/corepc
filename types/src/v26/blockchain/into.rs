@@ -3,9 +3,10 @@
 use bitcoin::hashes::sha256;
 use bitcoin::{Amount, BlockHash};
 
+use super::error::ScanBlocksStartError;
 use super::{
     DumpTxOutSet, DumpTxOutSetError, GetChainStates, GetChainStatesError, GetTxOutSetInfo,
-    GetTxOutSetInfoError, LoadTxOutSet, LoadTxOutSetError,
+    GetTxOutSetInfoError, LoadTxOutSet, LoadTxOutSetError, ScanBlocksStart,
 };
 use crate::model;
 
@@ -69,12 +70,18 @@ impl GetTxOutSetInfo {
     pub fn into_model(self) -> Result<model::GetTxOutSetInfo, GetTxOutSetInfoError> {
         use GetTxOutSetInfoError as E;
 
-        let height = crate::to_u32(self.height, "height")?;
+        let height = crate::to_u32(self.height, "height").map_err(E::Numeric)?;
         let best_block = self.best_block.parse::<BlockHash>().map_err(E::BestBlock)?;
-        let transactions = crate::to_u32(self.transactions, "transactions")?;
-        let tx_outs = crate::to_u32(self.tx_outs, "tx_outs")?;
-        let bogo_size = crate::to_u32(self.bogo_size, "bogo_size")?;
-        let disk_size = crate::to_u32(self.disk_size, "disk_size")?;
+        let transactions = self
+            .transactions
+            .map(|v| crate::to_u32(v, "transactions").map_err(E::Numeric))
+            .transpose()?;
+        let tx_outs = crate::to_u32(self.tx_outs, "tx_outs").map_err(E::Numeric)?;
+        let bogo_size = crate::to_u32(self.bogo_size, "bogo_size").map_err(E::Numeric)?;
+        let disk_size = self
+            .disk_size
+            .map(|v| crate::to_u32(v, "disk_size").map_err(E::Numeric))
+            .transpose()?;
         let total_amount = Amount::from_btc(self.total_amount).map_err(E::TotalAmount)?;
 
         Ok(model::GetTxOutSetInfo {
@@ -83,10 +90,42 @@ impl GetTxOutSetInfo {
             transactions,
             tx_outs,
             bogo_size,
-            hash_serialized_2: None, // v17 to v25 only.
-            hash_serialized_3: self.hash_serialized_3,
             disk_size,
             total_amount,
+            hash_serialized_3: self.hash_serialized_3,
+            muhash: self.muhash,
+            total_unspendable_amount: self
+                .total_unspendable_amount
+                .map(|v| Amount::from_btc(v).map_err(E::TotalAmount))
+                .transpose()?,
+            block_info: match self.block_info {
+                Some(b) => {
+                    let prevout_spent =
+                        Amount::from_btc(b.prevout_spent).map_err(E::TotalAmount)?;
+                    let coinbase = Amount::from_btc(b.coinbase).map_err(E::TotalAmount)?;
+                    let new_outputs_ex_coinbase =
+                        Amount::from_btc(b.new_outputs_ex_coinbase).map_err(E::TotalAmount)?;
+                    let unspendable = Amount::from_btc(b.unspendable).map_err(E::TotalAmount)?;
+                    let unspendables = model::Unspendables {
+                        genesis_block: Amount::from_btc(b.unspendables.genesis_block)
+                            .map_err(E::TotalAmount)?,
+                        bip30: Amount::from_btc(b.unspendables.bip30).map_err(E::TotalAmount)?,
+                        scripts: Amount::from_btc(b.unspendables.scripts)
+                            .map_err(E::TotalAmount)?,
+                        unclaimed_rewards: Amount::from_btc(b.unspendables.unclaimed_rewards)
+                            .map_err(E::TotalAmount)?,
+                    };
+
+                    Some(model::BlockInfo {
+                        prevout_spent,
+                        coinbase,
+                        new_outputs_ex_coinbase,
+                        unspendable,
+                        unspendables,
+                    })
+                }
+                None => None,
+            },
         })
     }
 }
@@ -101,5 +140,25 @@ impl LoadTxOutSet {
         let coins_loaded = Amount::from_btc(self.coins_loaded).map_err(E::CoinsLoaded)?;
 
         Ok(model::LoadTxOutSet { coins_loaded, tip_hash, base_height, path: self.path })
+    }
+}
+
+impl ScanBlocksStart {
+    pub fn into_model(self) -> Result<model::ScanBlocksStart, ScanBlocksStartError> {
+        use ScanBlocksStartError as E;
+
+        let relevant_blocks = self
+            .relevant_blocks
+            .iter()
+            .map(|s| s.parse())
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(ScanBlocksStartError::RelevantBlocks)?;
+
+        Ok(model::ScanBlocksStart {
+            from_height: crate::to_u32(self.from_height, "from_height").map_err(E::Numeric)?,
+            to_height: crate::to_u32(self.to_height, "to_height").map_err(E::Numeric)?,
+            relevant_blocks,
+            completed: Some(self.completed),
+        })
     }
 }

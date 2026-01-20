@@ -249,7 +249,7 @@ pub use self::{
         Bip9Info, Bip9Statistics, DeploymentInfo, GetBlockchainInfo, GetDeploymentInfo,
         GetDeploymentInfoError, GetMempoolAncestors, GetMempoolAncestorsVerbose,
         GetMempoolDescendants, GetMempoolDescendantsVerbose, GetMempoolEntry, GetRawMempool,
-        GetRawMempoolVerbose, MempoolEntry, SaveMempool,
+        GetRawMempoolSequence, GetRawMempoolVerbose, MempoolEntry, SaveMempool,
     },
     control::Logging,
     network::{GetPeerInfo, PeerInfo},

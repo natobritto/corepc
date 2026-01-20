@@ -249,8 +249,9 @@ mod wallet;
 pub use self::{
     blockchain::{
         GetMempoolAncestors, GetMempoolAncestorsVerbose, GetMempoolDescendants,
-        GetMempoolDescendantsVerbose, GetMempoolEntry, GetMempoolInfo, GetRawMempoolVerbose,
-        GetTxSpendingPrevout, GetTxSpendingPrevoutError, GetTxSpendingPrevoutItem, MempoolEntry,
+        GetMempoolDescendantsVerbose, GetMempoolEntry, GetMempoolInfo, GetRawMempoolSequence,
+        GetRawMempoolVerbose, GetTxSpendingPrevout, GetTxSpendingPrevoutError,
+        GetTxSpendingPrevoutItem, MempoolEntry,
     },
     network::{GetPeerInfo, PeerInfo},
     raw_transactions::{

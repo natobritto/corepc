@@ -14,7 +14,9 @@ impl GetBestBlockHash {
     }
 
     /// Converts json straight to a `bitcoin::BlockHash`.
-    pub fn block_hash(self) -> Result<BlockHash, hex::HexToArrayError> { Ok(self.into_model()?.0) }
+    pub fn block_hash(self) -> Result<BlockHash, hex::HexToArrayError> {
+        Ok(self.into_model()?.0)
+    }
 }
 
 impl GetBlockVerboseZero {
@@ -25,7 +27,9 @@ impl GetBlockVerboseZero {
     }
 
     /// Converts json straight to a `bitcoin::Block`.
-    pub fn block(self) -> Result<Block, encode::FromHexError> { Ok(self.into_model()?.0) }
+    pub fn block(self) -> Result<Block, encode::FromHexError> {
+        Ok(self.into_model()?.0)
+    }
 }
 
 impl GetBlockVerboseOne {
@@ -138,7 +142,9 @@ impl Bip9SoftforkStatus {
 
 impl GetBlockCount {
     /// Converts version specific type to a version nonspecific, more strongly typed type.
-    pub fn into_model(self) -> model::GetBlockCount { model::GetBlockCount(self.0) }
+    pub fn into_model(self) -> model::GetBlockCount {
+        model::GetBlockCount(self.0)
+    }
 }
 
 impl GetBlockHash {
@@ -149,7 +155,9 @@ impl GetBlockHash {
     }
 
     /// Converts json straight to a `bitcoin::BlockHash`.
-    pub fn block_hash(self) -> Result<BlockHash, hex::HexToArrayError> { Ok(self.into_model()?.0) }
+    pub fn block_hash(self) -> Result<BlockHash, hex::HexToArrayError> {
+        Ok(self.into_model()?.0)
+    }
 }
 
 impl GetBlockHeader {
@@ -208,7 +216,9 @@ impl GetBlockHeaderVerbose {
     }
 
     /// Converts json straight to a `bitcoin::BlockHeader`.
-    pub fn block_header(self) -> Result<block::Header, hex::HexToArrayError> { todo!() }
+    pub fn block_header(self) -> Result<block::Header, hex::HexToArrayError> {
+        todo!()
+    }
 }
 
 impl GetBlockStats {
@@ -331,7 +341,9 @@ impl GetChainTxStats {
 
 impl GetDifficulty {
     /// Converts version specific type to a version nonspecific, more strongly typed type.
-    pub fn into_model(self) -> model::GetDifficulty { model::GetDifficulty(self.0) }
+    pub fn into_model(self) -> model::GetDifficulty {
+        model::GetDifficulty(self.0)
+    }
 }
 
 impl GetMempoolAncestors {
@@ -530,11 +542,10 @@ impl GetTxOutSetInfo {
 
         let height = crate::to_u32(self.height, "height")?;
         let best_block = self.best_block.parse::<BlockHash>().map_err(E::BestBlock)?;
-        let transactions = crate::to_u32(self.transactions, "transactions")?;
+        let transactions = Some(crate::to_u32(self.transactions, "transactions")?);
         let tx_outs = crate::to_u32(self.tx_outs, "tx_outs")?;
         let bogo_size = crate::to_u32(self.bogo_size, "bogo_size")?;
-        let hash_serialized_2 = Some(self.hash_serialized_2); // TODO: Convert this to a hash type.
-        let disk_size = crate::to_u32(self.disk_size, "disk_size")?;
+        let disk_size = Some(crate::to_u32(self.disk_size, "disk_size")?);
         let total_amount = Amount::from_btc(self.total_amount).map_err(E::TotalAmount)?;
 
         Ok(model::GetTxOutSetInfo {
@@ -543,10 +554,12 @@ impl GetTxOutSetInfo {
             transactions,
             tx_outs,
             bogo_size,
-            hash_serialized_2,
-            hash_serialized_3: None, // v26 and later only.
             disk_size,
             total_amount,
+            hash_serialized_3: None,
+            muhash: None,
+            total_unspendable_amount: None,
+            block_info: None,
         })
     }
 }

@@ -116,6 +116,18 @@ pub struct MempoolEntry {
     pub unbroadcast: bool,
 }
 
+/// Result of JSON-RPC method `getrawmempool` with verbose set to `false` and `mempool_sequence` set to `true`.
+///
+/// List of txids with mempool sequence.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawMempoolSequence {
+    /// List of transaction ids in the mempool.
+    pub txids: Vec<String>,
+    /// The mempool sequence value.
+    pub mempool_sequence: i64,
+}
+
 /// Result of JSON-RPC method `getmempoolinfo` with verbose set to `true`.
 ///
 /// > getmempoolinfo

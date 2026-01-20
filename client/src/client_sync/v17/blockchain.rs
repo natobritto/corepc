@@ -128,7 +128,9 @@ macro_rules! impl_client_v17__get_block_stats {
 macro_rules! impl_client_v17__get_chain_tips {
     () => {
         impl Client {
-            pub fn get_chain_tips(&self) -> Result<GetChainTips> { self.call("getchaintips", &[]) }
+            pub fn get_chain_tips(&self) -> Result<GetChainTips> {
+                self.call("getchaintips", &[])
+            }
         }
     };
 }
@@ -349,7 +351,9 @@ macro_rules! impl_client_v17__scan_tx_out_set {
 macro_rules! impl_client_v17__verify_chain {
     () => {
         impl Client {
-            pub fn verify_chain(&self) -> Result<VerifyChain> { self.call("verifychain", &[]) }
+            pub fn verify_chain(&self) -> Result<VerifyChain> {
+                self.call("verifychain", &[])
+            }
         }
     };
 }

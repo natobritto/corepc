@@ -15,6 +15,12 @@ macro_rules! impl_client_v17__estimate_raw_fee {
     () => {
         impl Client {
             pub fn estimate_raw_fee(&self, conf_target: u32) -> Result<EstimateRawFee> {
+                if conf_target < 1 || conf_target > 1008 {
+                    return Err($crate::client_sync::error::Error::Returned(
+                        "Invalid conf_target, must be between 1 and 1008".to_string(),
+                    ));
+                }
+
                 self.call("estimaterawfee", &[conf_target.into()])
             }
         }
