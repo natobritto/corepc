@@ -709,7 +709,7 @@ pub struct GetTxOutSetInfo {
     pub block_info: Option<BlockInfo>,
 }
 
-/// Detailed block-level info returned by `gettxoutsetinfo` when coinstatsindex is enabled.
+/// Detailed block-level info.  Part of `gettxoutsetinfo`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct BlockInfo {
     /// Total amount of all prevouts spent in this block.
@@ -724,7 +724,7 @@ pub struct BlockInfo {
     pub unspendables: Unspendables,
 }
 
-/// Categories of unspendable amounts returned inside `BlockInfo`.
+/// Categories of unspendable amounts. Part of `gettxoutsetinfo`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct Unspendables {
     /// The unspendable amount of the Genesis block subsidy.
