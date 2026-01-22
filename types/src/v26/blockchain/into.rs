@@ -103,10 +103,9 @@ impl GetTxOutSetInfo {
                     let prevout_spent =
                         Amount::from_btc(b.prevout_spent).map_err(E::PrevoutSpent)?;
                     let coinbase = Amount::from_btc(b.coinbase).map_err(E::Coinbase)?;
-                    let new_outputs_ex_coinbase =
-                        Amount::from_btc(b.new_outputs_ex_coinbase).map_err(E::NewOutputsExCoinbase)?;
-                    let unspendable =
-                        Amount::from_btc(b.unspendable).map_err(E::Unspendable)?;
+                    let new_outputs_ex_coinbase = Amount::from_btc(b.new_outputs_ex_coinbase)
+                        .map_err(E::NewOutputsExCoinbase)?;
+                    let unspendable = Amount::from_btc(b.unspendable).map_err(E::Unspendable)?;
                     let unspendables = model::Unspendables {
                         genesis_block: Amount::from_btc(b.unspendables.genesis_block)
                             .map_err(E::UnspendablesGenesisBlock)?,
