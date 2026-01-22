@@ -684,8 +684,7 @@ pub struct GetTxOutSetInfo {
     pub height: u32,
     /// The hash of the block at the tip of the chain.
     pub best_block: BlockHash,
-    /// The number of transactions with unspent outputs.
-    /// (optional: not present when coinstatsindex is used)
+    /// The number of transactions with unspent outputs (not available when coinstatsindex is used).
     pub transactions: Option<u32>,
     /// The number of unspent transaction outputs.
     pub tx_outs: u32,
@@ -698,17 +697,15 @@ pub struct GetTxOutSetInfo {
     /// The serialized hash (only present if 'hash_serialized_3' hash_type is chosen).
     /// v26 and later only.
     pub hash_serialized_3: Option<String>,
-    /// The estimated size of the chainstate on disk.
-    /// (optional: not present when coinstatsindex is used)
+    /// The estimated size of the chainstate on disk (not available when coinstatsindex is used).
     pub disk_size: Option<u32>,
     /// The total amount.
     pub total_amount: Amount,
-    /// The muhash serialized hash (optional; present only if 'muhash' hash_type is chosen).
+    /// The serialized hash (only present if 'muhash' hash_type is chosen)
     pub muhash: Option<String>,
-    /// The total amount of coins permanently excluded from the UTXO set
-    /// (optional; only available if coinstatsindex is used).
+    /// The total amount of coins permanently excluded from the UTXO set (only available if coinstatsindex is used).
     pub total_unspendable_amount: Option<Amount>,
-    /// Per-block aggregated info (optional; only available if coinstatsindex is used).
+    /// Info on amounts in the block at this block height (only available if coinstatsindex is used).
     pub block_info: Option<BlockInfo>,
 }
 
@@ -719,7 +716,7 @@ pub struct BlockInfo {
     pub prevout_spent: Amount,
     /// Coinbase subsidy amount of this block.
     pub coinbase: Amount,
-    /// Total amount of new outputs created by this block (excluding coinbase).
+    /// Total amount of new outputs created by this block.
     pub new_outputs_ex_coinbase: Amount,
     /// Total amount of unspendable outputs created in this block.
     pub unspendable: Amount,
@@ -731,7 +728,6 @@ pub struct BlockInfo {
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct Unspendables {
     /// The unspendable amount of the Genesis block subsidy.
-    #[serde(rename = "genesis_block")]
     pub genesis_block: Amount,
     /// Transactions overridden by duplicates (no longer possible with BIP30).
     pub bip30: Amount,

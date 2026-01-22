@@ -99,8 +99,7 @@ pub struct GetTxOutSetInfo {
     /// The hash of the block at the tip of the chain.
     #[serde(rename = "bestblock")]
     pub best_block: String,
-    /// The number of transactions with unspent outputs.
-    /// (optional: not present when coinstatsindex is used)
+    /// The number of transactions with unspent outputs (not available when coinstatsindex is used).
     pub transactions: Option<i64>,
     /// The number of unspent transaction outputs.
     #[serde(rename = "txouts")]
@@ -108,20 +107,18 @@ pub struct GetTxOutSetInfo {
     /// A meaningless metric for UTXO set size.
     #[serde(rename = "bogosize")]
     pub bogo_size: i64,
-    /// The estimated size of the chainstate on disk.
-    /// (optional: not present when coinstatsindex is used)
-    pub disk_size: Option<i64>,
-    /// The total amount.
-    pub total_amount: f64,
     /// The serialized hash (only present if 'hash_serialized_3' hash_type is chosen).
     /// v26 and later only.
     pub hash_serialized_3: Option<String>,
-    /// The muhash serialized hash (optional; present only if 'muhash' hash_type is chosen).
+    /// The estimated size of the chainstate on disk (not available when coinstatsindex is used).
+    pub disk_size: Option<i64>,
+    /// The total amount.
+    pub total_amount: f64,
+    /// The serialized hash (only present if 'muhash' hash_type is chosen)
     pub muhash: Option<String>,
-    /// The total amount of coins permanently excluded from the UTXO set
-    /// (optional; only available if coinstatsindex is used).
+    /// The total amount of coins permanently excluded from the UTXO set (only available if coinstatsindex is used).
     pub total_unspendable_amount: Option<f64>,
-    /// Per-block aggregated info (optional; only available if coinstatsindex is used).
+    /// Info on amounts in the block at this block height (only available if coinstatsindex is used).
     pub block_info: Option<BlockInfo>,
 }
 
@@ -134,7 +131,7 @@ pub struct BlockInfo {
     pub prevout_spent: f64,
     /// Coinbase subsidy amount of this block.
     pub coinbase: f64,
-    /// Total amount of new outputs created by this block (excluding coinbase).
+    /// Total amount of new outputs created by this block.
     #[serde(rename = "new_outputs_ex_coinbase")]
     pub new_outputs_ex_coinbase: f64,
     /// Total amount of unspendable outputs created in this block.
@@ -148,14 +145,12 @@ pub struct BlockInfo {
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct Unspendables {
     /// The unspendable amount of the Genesis block subsidy.
-    #[serde(rename = "genesis_block")]
     pub genesis_block: f64,
     /// Transactions overridden by duplicates (no longer possible with BIP30).
     pub bip30: f64,
     /// Amounts sent to scripts that are unspendable (for example OP_RETURN outputs).
     pub scripts: f64,
     /// Fee rewards that miners did not claim in their coinbase transaction.
-    #[serde(rename = "unclaimed_rewards")]
     pub unclaimed_rewards: f64,
 }
 

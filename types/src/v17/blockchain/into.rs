@@ -543,10 +543,10 @@ impl GetTxOutSetInfo {
             transactions,
             tx_outs,
             bogo_size,
-            disk_size,
-            total_amount,
             hash_serialized_2,
             hash_serialized_3: None, // v26 and later only.
+            disk_size,
+            total_amount,
             muhash: None,
             total_unspendable_amount: None,
             block_info: None,
