@@ -78,6 +78,7 @@ impl ScanBlocksStart {
             from_height: crate::to_u32(self.from_height, "from_height")?,
             to_height: crate::to_u32(self.to_height, "to_height")?,
             relevant_blocks,
+            completed: None,
         })
     }
 }
