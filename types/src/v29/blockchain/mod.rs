@@ -12,8 +12,8 @@ use bitcoin::{Network, TxMerkleNode};
 
 pub use self::error::{
     GetBlockHeaderError, GetBlockHeaderVerboseError, GetBlockVerboseOneError,
-    GetBlockVerboseThreeError, GetBlockVerboseTwoError,
-    GetBlockchainInfoError, GetChainStatesError, GetDescriptorActivityError,
+    GetBlockVerboseThreeError, GetBlockVerboseTwoError, GetBlockchainInfoError,
+    GetChainStatesError, GetDescriptorActivityError,
 };
 use crate::psbt::{RawTransactionInput, RawTransactionOutput};
 use crate::v17::GetRawTransactionVerbose;

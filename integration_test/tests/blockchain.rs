@@ -72,11 +72,11 @@ fn blockchain__get_block__modelled() {
 
         assert_eq!(block_v2.tx.len(), block_v2.n_tx as usize);
 
-        let mined_txid = mined_tx.txid();
+        let mined_txid = mined_tx.compute_txid();
         let mined_entry = block_v2
             .tx
             .iter()
-            .find(|entry| entry.transaction.transaction.txid() == mined_txid)
+            .find(|entry| entry.transaction.transaction.compute_txid() == mined_txid)
             .expect("mined transaction should be present in verbosity=2 results");
         assert!(mined_entry.fee.is_some());
         assert!(!mined_entry.transaction.transaction.input.is_empty());
@@ -93,7 +93,7 @@ fn blockchain__get_block__modelled() {
         let mined_entry = block_v3
             .tx
             .iter()
-            .find(|entry| entry.transaction.transaction.txid() == mined_txid)
+            .find(|entry| entry.transaction.transaction.compute_txid() == mined_txid)
             .expect("mined transaction should be present in verbosity=3 results");
         assert_eq!(
             mined_entry.prevouts.len(),

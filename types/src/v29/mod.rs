@@ -261,12 +261,13 @@ mod util;
 pub use self::{
     blockchain::{
         ActivityEntry, ChainState, GetBlockHeader, GetBlockHeaderError, GetBlockHeaderVerbose,
-        GetBlockHeaderVerboseError, GetBlockVerboseOne, GetBlockVerboseOneError, GetBlockVerboseThree,
-        GetBlockVerboseThreeError, GetBlockVerboseThreePrevout, GetBlockVerboseThreeTransaction,
-        GetBlockVerboseTwo, GetBlockVerboseTwoError, GetBlockVerboseTwoTransaction,
-        GetBlockchainInfo, GetBlockchainInfoError, GetChainStates, GetChainStatesError,
-        GetDescriptorActivity, GetDescriptorActivityError, GetRawTransactionVerboseWithPrevout,
-        RawTransactionInputWithPrevout, ReceiveActivity, SpendActivity,
+        GetBlockHeaderVerboseError, GetBlockVerboseOne, GetBlockVerboseOneError,
+        GetBlockVerboseThree, GetBlockVerboseThreeError, GetBlockVerboseThreePrevout,
+        GetBlockVerboseThreeTransaction, GetBlockVerboseTwo, GetBlockVerboseTwoError,
+        GetBlockVerboseTwoTransaction, GetBlockchainInfo, GetBlockchainInfoError, GetChainStates,
+        GetChainStatesError, GetDescriptorActivity, GetDescriptorActivityError,
+        GetRawTransactionVerboseWithPrevout, RawTransactionInputWithPrevout, ReceiveActivity,
+        SpendActivity,
     },
     hidden::{
         GetOrphanTxs, GetOrphanTxsVerboseOne, GetOrphanTxsVerboseOneEntry,

@@ -21,7 +21,7 @@ impl GetBlockVerboseOne {
         let hash = self.hash.parse::<BlockHash>().map_err(E::Hash)?;
         let stripped_size =
             self.stripped_size.map(|size| crate::to_u32(size, "stripped_size")).transpose()?;
-        let weight = Weight::from_wu(self.weight); 
+        let weight = Weight::from_wu(self.weight);
         let version = block::Version::from_consensus(self.version);
         let tx = self
             .tx
@@ -75,7 +75,7 @@ impl GetBlockVerboseTwo {
         let hash = self.hash.parse::<BlockHash>().map_err(E::Hash)?;
         let stripped_size =
             self.stripped_size.map(|size| crate::to_u32(size, "stripped_size")).transpose()?;
-        let weight = Weight::from_wu(self.weight); 
+        let weight = Weight::from_wu(self.weight);
         let version = block::Version::from_consensus(self.version);
         let tx = self
             .tx
@@ -129,10 +129,7 @@ impl GetRawTransactionVerboseWithPrevout {
     fn into_model_with_prevouts(
         self,
     ) -> Result<
-        (
-            model::GetRawTransactionVerbose,
-            Vec<Option<model::GetBlockVerboseThreePrevout>>,
-        ),
+        (model::GetRawTransactionVerbose, Vec<Option<model::GetBlockVerboseThreePrevout>>),
         GetBlockVerboseThreeError,
     > {
         use GetBlockVerboseThreeError as E;
@@ -151,12 +148,14 @@ impl GetRawTransactionVerboseWithPrevout {
                     let value = Amount::from_btc(prevout.value).map_err(E::PrevoutValue)?;
                     let script_pubkey =
                         prevout.script_pubkey.into_model().map_err(E::PrevoutScriptPubkey)?;
-                    Ok::<model::GetBlockVerboseThreePrevout, GetBlockVerboseThreeError>(model::GetBlockVerboseThreePrevout {
-                        generated: prevout.generated,
-                        height,
-                        value,
-                        script_pubkey,
-                    })
+                    Ok::<model::GetBlockVerboseThreePrevout, GetBlockVerboseThreeError>(
+                        model::GetBlockVerboseThreePrevout {
+                            generated: prevout.generated,
+                            height,
+                            value,
+                            script_pubkey,
+                        },
+                    )
                 })
                 .transpose()?;
 
@@ -173,8 +172,11 @@ impl GetRawTransactionVerboseWithPrevout {
             .map_err(E::Outputs)?;
 
         let transaction = Transaction { version, lock_time, input, output };
-        let block_hash =
-            self.block_hash.map(|s| s.parse::<BlockHash>()).transpose().map_err(E::TransactionBlockHash)?;
+        let block_hash = self
+            .block_hash
+            .map(|s| s.parse::<BlockHash>())
+            .transpose()
+            .map_err(E::TransactionBlockHash)?;
 
         Ok((
             model::GetRawTransactionVerbose {
@@ -198,7 +200,7 @@ impl GetBlockVerboseThree {
         let hash = self.hash.parse::<BlockHash>().map_err(E::Hash)?;
         let stripped_size =
             self.stripped_size.map(|size| crate::to_u32(size, "stripped_size")).transpose()?;
-        let weight = Weight::from_wu(self.weight); 
+        let weight = Weight::from_wu(self.weight);
         let version = block::Version::from_consensus(self.version);
         let tx = self
             .tx
