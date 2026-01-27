@@ -131,6 +131,9 @@ impl std::error::Error for GetBlockVerboseTwoError {
     }
 }
 
+impl From<NumericError> for GetBlockVerboseTwoError {
+    fn from(e: NumericError) -> Self { Self::Numeric(e) }
+}
 
 /// Error when converting a `GetBlockVerboseThree` type into the model type.
 #[derive(Debug)]
