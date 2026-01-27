@@ -42,7 +42,7 @@ macro_rules! impl_client_v29__get_descriptor_activity {
 macro_rules! impl_client_v29__get_block {
     () => {
         impl Client {
-            /// Gets a block by blockhash.
+            /// Gets a block by blockhash. Kept for compatibility; uses verbose set to 0.
             pub fn get_block(&self, hash: BlockHash) -> Result<Block> {
                 let json = self.get_block_verbose_zero(hash)?;
                 Ok(json.block()?)
