@@ -15,7 +15,7 @@ use bitcoin::{
 };
 use serde::{Deserialize, Serialize};
 
-use super::ScriptPubkey;
+use super::{GetRawTransactionVerbose, ScriptPubkey};
 
 /// Models the result of JSON-RPC method `dumptxoutset`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -83,6 +83,125 @@ pub struct GetBlockVerboseOne {
     pub previous_block_hash: Option<BlockHash>,
     /// The hash of the next block (if available).
     pub next_block_hash: Option<BlockHash>,
+}
+
+/// Models the result of JSON-RPC method `getblock` with verbosity set to 2.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct GetBlockVerboseTwo {
+    /// The block hash (same as provided) in RPC call.
+    pub hash: BlockHash,
+    /// The number of confirmations, or -1 if the block is not on the main chain.
+    pub confirmations: i64,
+    /// The block size.
+    pub size: u32,
+    /// The block size excluding witness data.
+    pub stripped_size: Option<u32>,
+    /// The block weight as defined in BIP-141.
+    pub weight: Weight,
+    /// The block height or index.
+    pub height: u32,
+    /// The block version.
+    pub version: block::Version,
+    /// The merkle root.
+    pub merkle_root: String,
+    /// The transactions.
+    pub tx: Vec<GetBlockVerboseTwoTransaction>,
+    /// The block time expressed in UNIX epoch time.
+    pub time: u32,
+    /// The median block time expressed in UNIX epoch time.
+    pub median_time: Option<u32>,
+    /// The nonce.
+    pub nonce: u32,
+    /// The bits.
+    pub bits: CompactTarget,
+    /// The difficulty target.
+    pub target: Option<Target>,
+    /// The difficulty.
+    pub difficulty: f64,
+    /// Expected number of hashes required to produce the chain up to this block (in hex).
+    pub chain_work: Work,
+    /// The number of transactions in the block.
+    pub n_tx: u32,
+    /// The hash of the previous block (if available).
+    pub previous_block_hash: Option<BlockHash>,
+    /// The hash of the next block (if available).
+    pub next_block_hash: Option<BlockHash>,
+}
+
+/// A transaction entry for `getblock` verbosity 2.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct GetBlockVerboseTwoTransaction {
+    /// The transaction data (same as `getrawtransaction` verbose output).
+    pub transaction: GetRawTransactionVerbose,
+    /// The transaction fee in BTC (omitted if block undo data is not available).
+    pub fee: Option<Amount>,
+}
+
+/// Models the result of JSON-RPC method `getblock` with verbosity set to 3.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct GetBlockVerboseThree {
+    /// The block hash (same as provided) in RPC call.
+    pub hash: BlockHash,
+    /// The number of confirmations, or -1 if the block is not on the main chain.
+    pub confirmations: i64,
+    /// The block size.
+    pub size: u32,
+    /// The block size excluding witness data.
+    pub stripped_size: Option<u32>,
+    /// The block weight as defined in BIP-141.
+    pub weight: Weight,
+    /// The block height or index.
+    pub height: u32,
+    /// The block version.
+    pub version: block::Version,
+    /// The merkle root.
+    pub merkle_root: String,
+    /// The transactions.
+    pub tx: Vec<GetBlockVerboseThreeTransaction>,
+    /// The block time expressed in UNIX epoch time.
+    pub time: u32,
+    /// The median block time expressed in UNIX epoch time.
+    pub median_time: Option<u32>,
+    /// The nonce.
+    pub nonce: u32,
+    /// The bits.
+    pub bits: CompactTarget,
+    /// The difficulty target.
+    pub target: Option<Target>,
+    /// The difficulty.
+    pub difficulty: f64,
+    /// Expected number of hashes required to produce the chain up to this block (in hex).
+    pub chain_work: Work,
+    /// The number of transactions in the block.
+    pub n_tx: u32,
+    /// The hash of the previous block (if available).
+    pub previous_block_hash: Option<BlockHash>,
+    /// The hash of the next block (if available).
+    pub next_block_hash: Option<BlockHash>,
+}
+
+/// A transaction entry for `getblock` verbosity 3.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct GetBlockVerboseThreeTransaction {
+    /// The transaction data (same as `getrawtransaction` verbose output).
+    pub transaction: GetRawTransactionVerbose,
+    /// The prevout data aligned with the transaction input order.
+    pub prevouts: Vec<Option<GetBlockVerboseThreePrevout>>,
+    /// The transaction fee in BTC (omitted if block undo data is not available).
+    pub fee: Option<Amount>,
+}
+
+/// The prevout information for a transaction input (verbosity 3 only).
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct GetBlockVerboseThreePrevout {
+    /// Coinbase or not.
+    pub generated: bool,
+    /// The height of the prevout.
+    pub height: u32,
+    /// The value in BTC.
+    pub value: Amount,
+    /// The script pubkey.
+    pub script_pubkey: ScriptPubkey,
 }
 
 /// Models the result of JSON-RPC method `getblockchaininfo`.
