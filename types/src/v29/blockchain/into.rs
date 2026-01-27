@@ -21,7 +21,7 @@ impl GetBlockVerboseOne {
         let hash = self.hash.parse::<BlockHash>().map_err(E::Hash)?;
         let stripped_size =
             self.stripped_size.map(|size| crate::to_u32(size, "stripped_size")).transpose()?;
-        let weight = Weight::from_wu(self.weight); // FIXME: Confirm this uses weight units.
+        let weight = Weight::from_wu(self.weight); 
         let version = block::Version::from_consensus(self.version);
         let tx = self
             .tx
@@ -75,7 +75,7 @@ impl GetBlockVerboseTwo {
         let hash = self.hash.parse::<BlockHash>().map_err(E::Hash)?;
         let stripped_size =
             self.stripped_size.map(|size| crate::to_u32(size, "stripped_size")).transpose()?;
-        let weight = Weight::from_wu(self.weight); // FIXME: Confirm this uses weight units.
+        let weight = Weight::from_wu(self.weight); 
         let version = block::Version::from_consensus(self.version);
         let tx = self
             .tx
@@ -198,7 +198,7 @@ impl GetBlockVerboseThree {
         let hash = self.hash.parse::<BlockHash>().map_err(E::Hash)?;
         let stripped_size =
             self.stripped_size.map(|size| crate::to_u32(size, "stripped_size")).transpose()?;
-        let weight = Weight::from_wu(self.weight); // FIXME: Confirm this uses weight units.
+        let weight = Weight::from_wu(self.weight); 
         let version = block::Version::from_consensus(self.version);
         let tx = self
             .tx
