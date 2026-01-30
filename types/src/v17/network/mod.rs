@@ -36,8 +36,9 @@ pub struct AddedNode {
     pub added_node: String,
     /// If connected.
     pub connected: bool,
-    /// Only when connected = true.
-    pub addresses: Vec<AddedNodeAddress>,
+    /// Only present when connected = true.
+    #[serde(default)]
+    pub addresses: Option<Vec<AddedNodeAddress>>,
 }
 
 /// An added node address item. Part of `getaddednodeinfo`.
