@@ -8,9 +8,7 @@ use alloc::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
-/// Result of JSON-RPC method `getmemoryinfo`.
-///
-/// We only support the default "stats" mode.
+/// Result of JSON-RPC method `getmemoryinfo` with mode="stats".
 ///
 /// > getmemoryinfo ("mode")
 ///
@@ -25,6 +23,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct GetMemoryInfoStats(pub BTreeMap<String, Locked>);
+
+/// Result of JSON-RPC method `getmemoryinfo` with mode="mallocinfo".
+///
+/// Returns an XML string describing low-level heap state.
+/// Only available if compiled with glibc 2.10+.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+pub struct GetMemoryInfoMallocInfo(pub String);
 
 /// Information about locked memory manager. Part of `getmemoryinfo`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]

@@ -294,7 +294,7 @@ pub use crate::{
         GetBlockHeaderError, GetBlockHeaderVerbose, GetBlockHeaderVerboseError, GetBlockStatsError,
         GetBlockTemplate, GetBlockTemplateError, GetBlockVerboseOne, GetBlockVerboseOneError,
         GetBlockVerboseZero, GetChainTips, GetChainTxStatsError, GetConnectionCount, GetDifficulty,
-        GetMemoryInfoStats, GetMempoolInfoError, GetMiningInfo, GetNetTotals,
+        GetMemoryInfoMallocInfo, GetMemoryInfoStats, GetMempoolInfoError, GetMiningInfo, GetNetTotals,
         GetNetworkInfoAddress, GetNetworkInfoError, GetNetworkInfoNetwork, GetNewAddress,
         GetRawChangeAddress, GetRawMempool, GetRawTransaction, GetRawTransactionVerbose,
         GetRawTransactionVerboseError, GetReceivedByAddress, GetTransactionDetailError, GetTxOut,

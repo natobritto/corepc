@@ -282,7 +282,7 @@ pub use crate::{
         GetAddressInfoEmbeddedError, GetAddressesByLabel, GetBalance, GetBestBlockHash,
         GetBlockCount, GetBlockHash, GetBlockStatsError, GetBlockTemplate, GetBlockTemplateError,
         GetBlockVerboseZero, GetChainTips, GetChainTxStatsError, GetConnectionCount, GetDifficulty,
-        GetMemoryInfoStats, GetMempoolInfoError, GetNetTotals, GetNetworkInfoAddress,
+        GetMemoryInfoMallocInfo, GetMemoryInfoStats, GetMempoolInfoError, GetNetTotals, GetNetworkInfoAddress,
         GetNetworkInfoError, GetNetworkInfoNetwork, GetNewAddress, GetRawChangeAddress,
         GetRawMempool, GetRawTransaction, GetRawTransactionVerbose, GetRawTransactionVerboseError,
         GetReceivedByAddress, GetTransactionDetailError, GetTxOut, GetTxOutError,

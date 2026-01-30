@@ -14,8 +14,17 @@
 macro_rules! impl_client_v17__get_memory_info {
     () => {
         impl Client {
+            /// Calls `getmemoryinfo` with default mode ("stats").
             pub fn get_memory_info(&self) -> Result<GetMemoryInfoStats> {
                 self.call("getmemoryinfo", &[])
+            }
+
+            /// Calls `getmemoryinfo` with mode="mallocinfo".
+            ///
+            /// Returns an XML string describing low-level heap state.
+            /// Only available if Bitcoin Core is compiled with glibc 2.10+.
+            pub fn get_memory_info_malloc_info(&self) -> Result<GetMemoryInfoMallocInfo> {
+                self.call("getmemoryinfo", &["mallocinfo".into()])
             }
         }
     };

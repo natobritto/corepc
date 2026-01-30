@@ -248,7 +248,7 @@ pub use self::{
         ScanTxOutSetError, ScanTxOutSetStart, ScanTxOutSetStatus, ScanTxOutSetUnspent, Softfork,
         SoftforkReject, VerifyChain, VerifyTxOutProof,
     },
-    control::{GetMemoryInfoStats, Locked, Logging},
+    control::{GetMemoryInfoMallocInfo, GetMemoryInfoStats, Locked, Logging},
     generating::{Generate, GenerateToAddress},
     hidden::{
         EstimateRawFee, EstimateRawFeeError, RawFeeDetail, RawFeeRange, WaitForBlock,
