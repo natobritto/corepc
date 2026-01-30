@@ -350,17 +350,16 @@ pub use crate::{
     v25::{
         DescriptorInfo, GenerateBlock, GenerateBlockError, GetBlockStats, ListDescriptors,
         MempoolAcceptance, MempoolAcceptanceError, MempoolAcceptanceFees, ScanBlocksAbort,
-        ScanBlocksStart, ScanBlocksStartError, ScanBlocksStatus, TestMempoolAccept,
-        TestMempoolAcceptError,
+        ScanBlocksStartError, ScanBlocksStatus, TestMempoolAccept, TestMempoolAcceptError,
     },
     v26::{
         AddrManInfoNetwork, ChainState, CreateWallet, DescriptorProcessPsbt,
         DescriptorProcessPsbtError, DumpTxOutSet, DumpTxOutSetError, GetAddrManInfo, GetBalances,
         GetBalancesError, GetChainStates, GetChainStatesError, GetPeerInfo, GetTransactionError,
-        GetTxOutSetInfo, GetTxOutSetInfoError, GetWalletInfo, GetWalletInfoError,
-        GetWalletInfoScanning, LastProcessedBlock, LastProcessedBlockError, LoadTxOutSet,
-        LoadTxOutSetError, LoadWallet, PeerInfo, UnloadWallet, WalletProcessPsbt,
-        WalletProcessPsbtError,
+        GetTxOutSetInfo, GetTxOutSetInfoBlockInfo, GetTxOutSetInfoError,
+        GetTxOutSetInfoUnspendables, GetWalletInfo, GetWalletInfoError, GetWalletInfoScanning,
+        LastProcessedBlock, LastProcessedBlockError, LoadTxOutSet, LoadTxOutSetError, LoadWallet,
+        PeerInfo, ScanBlocksStart, UnloadWallet, WalletProcessPsbt, WalletProcessPsbtError,
     },
     v27::{GetPrioritisedTransactions, PrioritisedTransaction},
 };

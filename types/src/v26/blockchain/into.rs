@@ -5,9 +5,10 @@ use bitcoin::{Amount, BlockHash};
 
 use super::{
     DumpTxOutSet, DumpTxOutSetError, GetChainStates, GetChainStatesError, GetTxOutSetInfo,
-    GetTxOutSetInfoError, LoadTxOutSet, LoadTxOutSetError,
+    GetTxOutSetInfoError, LoadTxOutSet, LoadTxOutSetError, ScanBlocksStart,
 };
 use crate::model;
+use crate::v25::ScanBlocksStartError;
 
 impl GetChainStates {
     /// Converts v26 GetChainStates (and its ChainState subtypes) to model::GetChainStates
@@ -71,11 +72,43 @@ impl GetTxOutSetInfo {
 
         let height = crate::to_u32(self.height, "height")?;
         let best_block = self.best_block.parse::<BlockHash>().map_err(E::BestBlock)?;
-        let transactions = crate::to_u32(self.transactions, "transactions")?;
+        let transactions =
+            self.transactions.map(|v| crate::to_u32(v, "transactions")).transpose()?;
         let tx_outs = crate::to_u32(self.tx_outs, "tx_outs")?;
         let bogo_size = crate::to_u32(self.bogo_size, "bogo_size")?;
-        let disk_size = crate::to_u32(self.disk_size, "disk_size")?;
+        let disk_size = self.disk_size.map(|v| crate::to_u32(v, "disk_size")).transpose()?;
         let total_amount = Amount::from_btc(self.total_amount).map_err(E::TotalAmount)?;
+        let total_unspendable_amount = self
+            .total_unspendable_amount
+            .map(|v| Amount::from_btc(v).map_err(E::TotalUnspendableAmount))
+            .transpose()?;
+        let block_info = match self.block_info {
+            Some(b) => {
+                let prevout_spent = Amount::from_btc(b.prevout_spent).map_err(E::PrevoutSpent)?;
+                let coinbase = Amount::from_btc(b.coinbase).map_err(E::Coinbase)?;
+                let new_outputs_ex_coinbase =
+                    Amount::from_btc(b.new_outputs_ex_coinbase).map_err(E::NewOutputsExCoinbase)?;
+                let unspendable = Amount::from_btc(b.unspendable).map_err(E::Unspendable)?;
+                let unspendables = model::GetTxOutSetInfoUnspendables {
+                    genesis_block: Amount::from_btc(b.unspendables.genesis_block)
+                        .map_err(E::UnspendablesGenesisBlock)?,
+                    bip30: Amount::from_btc(b.unspendables.bip30).map_err(E::UnspendablesBip30)?,
+                    scripts: Amount::from_btc(b.unspendables.scripts)
+                        .map_err(E::UnspendablesScripts)?,
+                    unclaimed_rewards: Amount::from_btc(b.unspendables.unclaimed_rewards)
+                        .map_err(E::UnspendablesUnclaimedRewards)?,
+                };
+
+                Some(model::GetTxOutSetInfoBlockInfo {
+                    prevout_spent,
+                    coinbase,
+                    new_outputs_ex_coinbase,
+                    unspendable,
+                    unspendables,
+                })
+            }
+            None => None,
+        };
 
         Ok(model::GetTxOutSetInfo {
             height,
@@ -87,6 +120,9 @@ impl GetTxOutSetInfo {
             hash_serialized_3: self.hash_serialized_3,
             disk_size,
             total_amount,
+            muhash: self.muhash,
+            total_unspendable_amount,
+            block_info,
         })
     }
 }
@@ -101,5 +137,25 @@ impl LoadTxOutSet {
         let coins_loaded = Amount::from_btc(self.coins_loaded).map_err(E::CoinsLoaded)?;
 
         Ok(model::LoadTxOutSet { coins_loaded, tip_hash, base_height, path: self.path })
+    }
+}
+
+impl ScanBlocksStart {
+    pub fn into_model(self) -> Result<model::ScanBlocksStart, ScanBlocksStartError> {
+        use ScanBlocksStartError as E;
+
+        let relevant_blocks = self
+            .relevant_blocks
+            .iter()
+            .map(|s| s.parse())
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(E::RelevantBlocks)?;
+
+        Ok(model::ScanBlocksStart {
+            from_height: crate::to_u32(self.from_height, "from_height")?,
+            to_height: crate::to_u32(self.to_height, "to_height")?,
+            relevant_blocks,
+            completed: Some(self.completed),
+        })
     }
 }
