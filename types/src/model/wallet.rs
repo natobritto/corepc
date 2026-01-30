@@ -391,8 +391,8 @@ pub struct GetTransactionDetail {
     pub involves_watch_only: Option<bool>,
     /// DEPRECATED. The account name involved in the transaction, can be "" for the default account.
     pub account: Option<String>, // Docs are wrong, this is not documented as optional.
-    /// The bitcoin address involved in the transaction.
-    pub address: Address<NetworkUnchecked>,
+    /// The bitcoin address involved in the transaction. Optional in v30 and later (e.g., OP_RETURN).
+    pub address: Option<Address<NetworkUnchecked>>,
     /// The category, either 'send' or 'receive'.
     pub category: TransactionCategory,
     ///  The amount.
@@ -675,8 +675,8 @@ pub struct ListUnspentItem {
     pub txid: Txid,
     /// The vout value.
     pub vout: u32,
-    /// The bitcoin address of the transaction.
-    pub address: Address<NetworkUnchecked>,
+    /// The bitcoin address of the transaction. Optional in v30 and later.
+    pub address: Option<Address<NetworkUnchecked>>,
     /// The associated label, or "" for the default label.
     pub label: String,
     /// The script key.
@@ -687,10 +687,14 @@ pub struct ListUnspentItem {
     pub confirmations: u32, // Docs do not indicate what negative value means?
     /// The redeemScript if scriptPubKey is P2SH.
     pub redeem_script: Option<ScriptBuf>,
+    /// The witnessScript if scriptPubKey is P2WSH. v30 and later only.
+    pub witness_script: Option<ScriptBuf>,
     /// Whether we have the private keys to spend this output.
     pub spendable: bool,
     /// Whether we know how to spend this output, ignoring the lack of keys.
     pub solvable: bool,
+    /// Whether this output is reused/dirty (sent to an address that was previously spent from). v30 and later only.
+    pub reused: Option<bool>,
     /// A descriptor for spending this output (only when solvable)
     pub descriptor: Option<String>,
     /// Whether this output is considered safe to spend. Unconfirmed transactions from outside keys
@@ -700,6 +704,12 @@ pub struct ListUnspentItem {
     /// List of parent descriptors for the scriptPubKey of this coin. v24 and later only.
     #[serde(rename = "parent_descs")]
     pub parent_descriptors: Option<Vec<String>>,
+    /// The number of in-mempool ancestor transactions. v30 and later only.
+    pub ancestor_count: Option<u32>,
+    /// The virtual transaction size of in-mempool ancestors (including this one). v30 and later only.
+    pub ancestor_size: Option<u32>,
+    /// The total fees of in-mempool ancestors (including this one) in satoshis. v30 and later only.
+    pub ancestor_fees: Option<Amount>,
 }
 
 /// Models the result of JSON-RPC method `listwallets`.
@@ -733,8 +743,8 @@ pub struct PsbtBumpFee {
 pub struct RescanBlockchain {
     /// The block height where the rescan has started.
     pub start_height: u32,
-    /// The height of the last rescanned block.
-    pub stop_height: u32,
+    /// The height of the last rescanned block. May be None in rare cases if there was a reorg.
+    pub stop_height: Option<u32>,
 }
 
 /// Models the result of JSON-RPC method `send`.
