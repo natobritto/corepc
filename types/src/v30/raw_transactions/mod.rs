@@ -317,3 +317,29 @@ pub mod taproot {
         }
     }
 }
+
+/// Result of JSON-RPC method `testmempoolaccept`.
+///
+/// > testmempoolaccept ["rawtxs"] ( maxfeerate )
+/// >
+/// > Returns result of mempool acceptance tests indicating if raw transactions (serialized,
+/// > hex-encoded) would be accepted by mempool.
+/// >
+/// > This checks if transactions violate the consensus or policy rules.
+///
+/// In v30, this adds `package-error` for package validation failures.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct TestMempoolAccept {
+    /// Test results for each raw transaction in the input array.
+    #[serde(rename = "tx-results")]
+    pub tx_results: Vec<MempoolAcceptance>,
+    /// Package validation error, if any (v30+).
+    #[serde(rename = "package-error")]
+    pub package_error: Option<String>,
+}
+
+/// A single mempool acceptance test result. Part of `testmempoolaccept`.
+///
+/// Re-exported from v29 with `allowed` made optional for v30 compatibility.
+pub use crate::v29::MempoolAcceptance;

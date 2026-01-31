@@ -462,3 +462,15 @@ fn build_taproot_tree(leaves: Vec<TaprootLeaf>) -> Result<TapTree, TaprootLeafEr
     let tree = builder.try_into_taptree().map_err(E::IncompleteBuilder)?;
     Ok(tree)
 }
+
+impl super::TestMempoolAccept {
+    /// Converts version specific type to a version nonspecific, more strongly typed type.
+    pub fn into_model(
+        self,
+    ) -> Result<model::TestMempoolAccept, crate::v29::TestMempoolAcceptError> {
+        let results =
+            self.tx_results.into_iter().map(|r| r.into_model()).collect::<Result<_, _>>()?;
+
+        Ok(model::TestMempoolAccept { results, package_error: self.package_error })
+    }
+}

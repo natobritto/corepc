@@ -259,10 +259,10 @@ pub use self::{
     mining::{GetMiningInfo, GetMiningInfoError},
     raw_transactions::{
         ControlBlocksError, DecodePsbt, DecodePsbtError, GlobalXpub, GlobalXpubError,
-        Musig2PartialSig, Musig2ParticipantPubkeys, Musig2Pubnonce, Proprietary, PsbtInput,
-        PsbtInputError, PsbtOutput, PsbtOutputError, TaprootBip32Deriv, TaprootBip32DerivsError,
-        TaprootLeaf, TaprootLeafError, TaprootScript, TaprootScriptError, TaprootScriptPathSig,
-        TaprootScriptPathSigError,
+        MempoolAcceptance, Musig2PartialSig, Musig2ParticipantPubkeys, Musig2Pubnonce, Proprietary,
+        PsbtInput, PsbtInputError, PsbtOutput, PsbtOutputError, TaprootBip32Deriv,
+        TaprootBip32DerivsError, TaprootLeaf, TaprootLeafError, TaprootScript, TaprootScriptError,
+        TaprootScriptPathSig, TaprootScriptPathSigError, TestMempoolAccept,
     },
     wallet::{
         GetWalletInfo, GetWalletInfoError, GetWalletInfoScanning, LastProcessedBlock,
@@ -360,7 +360,6 @@ pub use crate::{
         GetBlockHeaderVerbose, GetBlockHeaderVerboseError, GetBlockVerboseOne,
         GetBlockVerboseOneError, GetBlockchainInfo, GetBlockchainInfoError, GetChainStates,
         GetChainStatesError, GetDescriptorActivity, GetDescriptorActivityError, GetDescriptorInfo,
-        MempoolAcceptance, MempoolAcceptanceFees, NextBlockInfo, NextBlockInfoError,
-        ReceiveActivity, SpendActivity, TestMempoolAccept,
+        MempoolAcceptanceFees, NextBlockInfo, NextBlockInfoError, ReceiveActivity, SpendActivity,
     },
 };

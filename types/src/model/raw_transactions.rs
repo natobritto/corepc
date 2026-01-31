@@ -252,6 +252,8 @@ pub struct SubmitPackageTxResultFees {
 pub struct TestMempoolAccept {
     /// Test results for each raw transaction in the input array.
     pub results: Vec<MempoolAcceptance>,
+    /// Package validation error, if any (v30+).
+    pub package_error: Option<String>,
 }
 
 /// Models a single mempool acceptance test result. Part of `testmempoolaccept`.
@@ -262,7 +264,8 @@ pub struct MempoolAcceptance {
     /// The transaction witness hash in hex.
     pub wtxid: Option<Wtxid>,
     /// If the mempool allows this transaction to be inserted.
-    pub allowed: bool,
+    /// May be absent in v30+ when package validation fails.
+    pub allowed: Option<bool>,
     /// Virtual transaction size as defined in BIP 141 (only present when 'allowed' is true).
     pub vsize: Option<u32>,
     /// Transaction fee in BTC (only present if 'allowed' is true).

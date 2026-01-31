@@ -451,7 +451,7 @@ impl TestMempoolAccept {
     pub fn into_model(self) -> Result<model::TestMempoolAccept, hex::HexToArrayError> {
         let results = self.0.into_iter().map(|r| r.into_model()).collect::<Result<_, _>>()?;
 
-        Ok(model::TestMempoolAccept { results })
+        Ok(model::TestMempoolAccept { results, package_error: None })
     }
 }
 
@@ -463,7 +463,7 @@ impl MempoolAcceptance {
         Ok(model::MempoolAcceptance {
             txid,
             wtxid: None, // v22 and later only.
-            allowed: self.allowed,
+            allowed: Some(self.allowed),
             vsize: None, // v21 and later only.
             fees: None,  // v21 and later only.
             reject_reason: self.reject_reason,

@@ -37,7 +37,8 @@ pub struct MempoolAcceptance {
     /// The transaction witness hash in hex.
     pub wtxid: String,
     /// If the mempool allows this tx to be inserted.
-    pub allowed: bool,
+    /// May be absent in v30+ when package validation fails.
+    pub allowed: Option<bool>,
     /// Virtual transaction size as defined in BIP 141. This is different from actual serialized size for witness transactions as witness data is discounted (only present when 'allowed' is true).
     pub vsize: Option<i64>,
     /// Transaction fees (only present if 'allowed' is true).
