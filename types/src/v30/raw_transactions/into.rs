@@ -111,6 +111,10 @@ impl Proprietary {
 
 impl PsbtInput {
     /// Converts this PSBT data into a PSBT input.
+    ///
+    /// Note: MuSig2 fields (`musig2_participant_pubkeys`, `musig2_pubnonces`, `musig2_partial_sigs`)
+    /// are not converted because `rust-bitcoin` does not yet support MuSig2 PSBT fields.
+    /// These fields are silently dropped during conversion.
     pub fn into_input(self) -> Result<psbt::Input, PsbtInputError> {
         use PsbtInputError as E;
 
@@ -226,9 +230,10 @@ impl PsbtInput {
             Some(vec) => {
                 let mut map = BTreeMap::default();
                 for elem in vec.iter() {
-                    let (control_block, (script, key_source)) =
-                        elem.to_key_value_pair().map_err(E::TaprootScripts)?;
-                    map.insert(control_block, (script, key_source));
+                    let pairs = elem.to_key_value_pairs().map_err(E::TaprootScripts)?;
+                    for (control_block, (script, leaf_version)) in pairs {
+                        map.insert(control_block, (script, leaf_version));
+                    }
                 }
                 map
             }
@@ -302,6 +307,10 @@ impl PsbtInput {
 
 impl PsbtOutput {
     /// Converts this PSBT data into a PSBT output.
+    ///
+    /// Note: MuSig2 fields (`musig2_participant_pubkeys`) are not converted because
+    /// `rust-bitcoin` does not yet support MuSig2 PSBT fields.
+    /// These fields are silently dropped during conversion.
     pub fn into_output(self) -> Result<psbt::Output, PsbtOutputError> {
         use PsbtOutputError as E;
 
@@ -389,10 +398,13 @@ impl TaprootScriptPathSig {
 }
 
 impl TaprootScript {
-    /// Converts list element to a map entry suitable to use in `bitcoin::psbt::Input`.
-    pub fn to_key_value_pair(
+    /// Converts list element to map entries suitable to use in `bitcoin::psbt::Input`.
+    ///
+    /// Returns one entry for each control block. The same script with the same leaf version
+    /// can have multiple valid control blocks (different merkle paths to the same leaf).
+    pub fn to_key_value_pairs(
         &self,
-    ) -> Result<(ControlBlock, (ScriptBuf, LeafVersion)), TaprootScriptError> {
+    ) -> Result<Vec<(ControlBlock, (ScriptBuf, LeafVersion))>, TaprootScriptError> {
         use TaprootScriptError as E;
 
         let script = ScriptBuf::from_hex(&self.script).map_err(E::Script)?;
@@ -400,26 +412,31 @@ impl TaprootScript {
         let leaf_version = self.leaf_version as u8; // FIXME: Is this cast ok?
         let version = LeafVersion::from_consensus(leaf_version).map_err(E::LeafVer)?;
 
-        let control_block = control_block(&self.control_blocks).map_err(E::ControlBlocks)?;
+        let control_blocks = parse_control_blocks(&self.control_blocks).map_err(E::ControlBlocks)?;
 
-        Ok((control_block, (script, version)))
+        Ok(control_blocks
+            .into_iter()
+            .map(|cb| (cb, (script.clone(), version)))
+            .collect())
     }
 }
 
-// FIXME: I (Tobin) cannot work out why Core returns a vector of control blocks. From my
-// reading of rust-bitcoin code and also BIP-341 there is exactly one control block per script?
-fn control_block(control_blocks: &[String]) -> Result<ControlBlock, ControlBlocksError> {
+/// Parses a list of hex-encoded control blocks.
+fn parse_control_blocks(control_blocks: &[String]) -> Result<Vec<ControlBlock>, ControlBlocksError> {
     use ControlBlocksError as E;
 
-    match control_blocks.len() {
+    if control_blocks.is_empty() {
         // FIXME: How can this be empty, there would be nothing to key the `tap_scripts` map by?
-        0 => Err(E::Missing),
-        1 => {
-            let bytes = Vec::from_hex(&control_blocks[0]).map_err(E::Parse)?;
-            Ok(ControlBlock::decode(&bytes).map_err(E::Decode)?)
-        }
-        n => Err(E::Multiple(n)),
+        return Err(E::Missing);
     }
+
+    control_blocks
+        .iter()
+        .map(|cb_hex| {
+            let bytes = Vec::from_hex(cb_hex).map_err(E::Parse)?;
+            Ok(ControlBlock::decode(&bytes).map_err(E::Decode)?)
+        })
+        .collect()
 }
 
 impl TaprootBip32Deriv {

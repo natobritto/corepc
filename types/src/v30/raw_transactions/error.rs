@@ -362,8 +362,6 @@ impl std::error::Error for TaprootScriptError {
 pub enum ControlBlocksError {
     /// No control block returned by Core for this script.
     Missing,
-    /// Multiple control blocks returned by Core for this script.
-    Multiple(usize),
     /// Failed to parse control block hex string.
     Parse(hex::HexToBytesError),
     /// Failed to decode parsed bytes.
@@ -374,8 +372,6 @@ impl fmt::Display for ControlBlocksError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Self::Missing => write!(f, "no control block returned by Core for this script"),
-            Self::Multiple(n) =>
-                write!(f, "multiple control blocks returned by Core for this script: {}", n),
             Self::Parse(ref e) => write_err!(f, "failed to parse control block hex"; e),
             Self::Decode(ref e) => write_err!(f, "failed to decode control block from bytes"; e),
         }
@@ -387,7 +383,6 @@ impl std::error::Error for ControlBlocksError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match *self {
             Self::Missing => None,
-            Self::Multiple(_) => None,
             Self::Parse(ref e) => Some(e),
             Self::Decode(ref e) => Some(e),
         }
