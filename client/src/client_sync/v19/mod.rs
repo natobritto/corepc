@@ -76,6 +76,7 @@ crate::impl_client_v17__reconsider_block!();
 
 // == Mining ==
 crate::impl_client_v17__get_block_template!();
+crate::impl_client_v17__get_block_template_proposal!();
 crate::impl_client_v17__get_mining_info!();
 crate::impl_client_v17__get_network_hashes_per_second!();
 crate::impl_client_v17__prioritise_transaction!();

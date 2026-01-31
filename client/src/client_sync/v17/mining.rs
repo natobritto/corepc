@@ -24,6 +24,28 @@ macro_rules! impl_client_v17__get_block_template {
     };
 }
 
+/// Implements Bitcoin Core JSON-RPC API method `getblocktemplate` in proposal mode.
+///
+/// When `mode` is set to "proposal" in the request, the response is different:
+/// - Returns `None` if the block proposal is valid
+/// - Returns `Some(reason)` with a rejection reason string if invalid
+#[macro_export]
+macro_rules! impl_client_v17__get_block_template_proposal {
+    () => {
+        impl Client {
+            /// Submit a block proposal for validation.
+            ///
+            /// Returns `None` if the block is valid, or `Some(reason)` with a rejection string.
+            pub fn get_block_template_proposal(
+                &self,
+                request: &TemplateRequest,
+            ) -> Result<Option<String>> {
+                self.call("getblocktemplate", &[into_json(request)?])
+            }
+        }
+    };
+}
+
 /// Implements Bitcoin Core JSON-RPC API method `getmininginfo`.
 #[macro_export]
 macro_rules! impl_client_v17__get_mining_info {
