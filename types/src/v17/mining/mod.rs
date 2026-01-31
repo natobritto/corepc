@@ -95,9 +95,9 @@ pub struct GetBlockTemplate {
     /// Limit of block size.
     #[serde(rename = "sizelimit")]
     pub size_limit: i64,
-    /// Limit of block weight.
+    /// Limit of block weight. May be absent in v30+ if weightlimit is not applicable.
     #[serde(rename = "weightlimit")]
-    pub weight_limit: i64,
+    pub weight_limit: Option<i64>,
     /// Current timestamp in seconds since epoch (Jan 1 1970 GMT).
     #[serde(rename = "curtime")]
     pub current_time: u64,
@@ -129,10 +129,10 @@ pub struct BlockTemplateTransaction {
     /// transactions, this is a negative Number of the total collected block fees (ie, not including
     /// the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there
     /// isn't one.
-    pub fee: i64,
+    pub fee: Option<i64>,
     /// Total SigOps cost, as counted for purposes of block limits; if key is not present, sigop
     /// cost is unknown and clients MUST NOT assume it is zero.
-    pub sigops: i64,
+    pub sigops: Option<i64>,
     /// Total transaction weight, as counted for purposes of block limits.
     pub weight: u64,
 }

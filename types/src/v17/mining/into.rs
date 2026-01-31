@@ -30,7 +30,7 @@ impl GetBlockTemplate {
         let coinbase_value = SignedAmount::from_sat(self.coinbase_value);
         let target = Vec::from_hex(&self.target).map_err(E::Target)?;
         let sigop_limit = crate::to_u32(self.sigop_limit, "sigop_limit")?;
-        let weight_limit = crate::to_u32(self.weight_limit, "weight_limit")?;
+        let weight_limit = self.weight_limit.map(|w| crate::to_u32(w, "weight_limit")).transpose()?;
         let size_limit = crate::to_u32(self.size_limit, "size_limit")?;
         let bits = CompactTarget::from_unprefixed_hex(&self.bits).map_err(E::Bits)?;
         let height = crate::to_u32(self.height, "height")?;
@@ -78,8 +78,8 @@ impl BlockTemplateTransaction {
             .iter()
             .map(|x| crate::to_u32(*x, "depend"))
             .collect::<Result<Vec<_>, _>>()?;
-        let fee = SignedAmount::from_sat(self.fee);
-        let sigops = crate::to_u32(self.sigops, "sigops")?;
+        let fee = self.fee.map(SignedAmount::from_sat);
+        let sigops = self.sigops.map(|s| crate::to_u32(s, "sigops")).transpose()?;
         let weight = Weight::from_wu(self.weight); // FIXME: Is this the correct unit?
 
         Ok(model::BlockTemplateTransaction { data, txid, wtxid, depends, fee, sigops, weight })

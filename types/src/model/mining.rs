@@ -56,8 +56,8 @@ pub struct GetBlockTemplate {
     pub sigop_limit: u32,
     /// Limit of block size.
     pub size_limit: u32,
-    /// Limit of block weight.
-    pub weight_limit: u32,
+    /// Limit of block weight. May be absent in v30+ if weightlimit is not applicable.
+    pub weight_limit: Option<u32>,
     /// Current timestamp in seconds since epoch (Jan 1 1970 GMT).
     pub current_time: u64,
     /// Compressed target of next block.
@@ -87,11 +87,11 @@ pub struct BlockTemplateTransaction {
     /// transactions, this is a negative Number of the total collected block fees (ie, not including
     /// the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there
     /// isn't one.
-    #[serde(with = "bitcoin::amount::serde::as_sat")]
-    pub fee: SignedAmount,
+    #[serde(default, with = "bitcoin::amount::serde::as_sat::opt")]
+    pub fee: Option<SignedAmount>,
     /// Total SigOps cost, as counted for purposes of block limits; if key is not present, sigop
     /// cost is unknown and clients MUST NOT assume it is zero.
-    pub sigops: u32,
+    pub sigops: Option<u32>,
     /// Total transaction weight, as counted for purposes of block limits.
     pub weight: Weight,
 }
