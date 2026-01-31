@@ -321,6 +321,8 @@ pub enum SignFailError {
     Txid(hex::HexToArrayError),
     /// Conversion of the transaction `script_sig` field failed.
     ScriptSig(hex::HexToBytesError),
+    /// Conversion of the `witness` field failed.
+    Witness(hex::HexToBytesError),
 }
 
 impl fmt::Display for SignFailError {
@@ -329,6 +331,7 @@ impl fmt::Display for SignFailError {
             Self::Txid(ref e) => write_err!(f, "conversion of the `txid` field failed"; e),
             Self::ScriptSig(ref e) =>
                 write_err!(f, "conversion of the `script_sig` field failed"; e),
+            Self::Witness(ref e) => write_err!(f, "conversion of the `witness` field failed"; e),
         }
     }
 }
@@ -339,6 +342,7 @@ impl std::error::Error for SignFailError {
         match *self {
             Self::Txid(ref e) => Some(e),
             Self::ScriptSig(ref e) => Some(e),
+            Self::Witness(ref e) => Some(e),
         }
     }
 }

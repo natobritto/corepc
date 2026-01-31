@@ -200,6 +200,8 @@ pub struct SignFail {
     pub script_sig: ScriptBuf,
     /// Script sequence number.
     pub sequence: Sequence,
+    /// The witness data (v30+).
+    pub witness: Option<bitcoin::Witness>,
     /// Verification or signing error related to the input.
     pub error: String,
 }

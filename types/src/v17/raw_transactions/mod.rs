@@ -451,6 +451,9 @@ pub struct SignFail {
     pub script_sig: String,
     /// Script sequence number.
     pub sequence: u32,
+    /// The hex-encoded witness data (v30+).
+    #[serde(default)]
+    pub witness: Option<Vec<String>>,
     /// Verification or signing error related to the input.
     pub error: String,
 }

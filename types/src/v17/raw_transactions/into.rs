@@ -441,8 +441,20 @@ impl SignFail {
         let txid = self.txid.parse::<Txid>().map_err(E::Txid)?;
         let script_sig = ScriptBuf::from_hex(&self.script_sig).map_err(E::ScriptSig)?;
         let sequence = Sequence::from_consensus(self.sequence);
+        let witness = self
+            .witness
+            .map(|v| crate::witness_from_hex_slice(&v))
+            .transpose()
+            .map_err(E::Witness)?;
 
-        Ok(model::SignFail { txid, vout: self.vout, script_sig, sequence, error: self.error })
+        Ok(model::SignFail {
+            txid,
+            vout: self.vout,
+            script_sig,
+            sequence,
+            witness,
+            error: self.error,
+        })
     }
 }
 
