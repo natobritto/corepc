@@ -231,21 +231,30 @@ pub struct Input {
     pub sequence: Option<bitcoin::Sequence>,
 }
 
-/// Output used as parameter to `create_raw_transaction`.
-// Abuse `HashMap` so we can derive serialize to get the correct JSON object.
+/// Output used as parameter to `create_raw_transaction` and `create_psbt`.
+///
+/// This enum supports both regular address outputs and data outputs (OP_RETURN).
 #[derive(Debug, Serialize)]
-pub struct Output(
-    /// Map of address to value. Always only has a single item in it.
-    HashMap<String, f64>,
-);
+#[serde(untagged)]
+pub enum Output {
+    /// A regular output sending to an address.
+    Address(HashMap<String, f64>),
+    /// A data output (OP_RETURN) containing hex-encoded data.
+    Data { data: String },
+}
 
 impl Output {
     /// Creates a single output that serializes as Core expects.
     pub fn new(addr: Address, value: Amount) -> Self {
         let mut map = HashMap::new();
         map.insert(addr.to_string(), value.to_btc());
-        Output(map)
+        Output::Address(map)
     }
+
+    /// Creates a data output (OP_RETURN) with hex-encoded data.
+    ///
+    /// The data should be hex-encoded bytes that will be embedded in an OP_RETURN output.
+    pub fn new_data(hex_data: impl Into<String>) -> Self { Output::Data { data: hex_data.into() } }
 }
 
 /// An element in the `inputs` argument of method `walletcreatefundedpsbt`.
