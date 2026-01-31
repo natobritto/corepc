@@ -150,8 +150,9 @@ pub struct GetPrioritisedTransactions(pub BTreeMap<Txid, PrioritisedTransaction>
 /// An individual prioritised transaction. Part of `getprioritisedtransactions`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct PrioritisedTransaction {
-    /// Transaction fee delta in satoshis.
-    pub fee_delta: Amount,
+    /// Transaction fee delta in satoshis. Can be negative.
+    #[serde(with = "bitcoin::amount::serde::as_sat")]
+    pub fee_delta: SignedAmount,
     /// Whether this transaction is currently in mempool.
     pub in_mempool: bool,
     /// Modified fee in satoshis. Only returned if in_mempool=true.
