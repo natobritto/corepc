@@ -15,8 +15,8 @@ use serde::{Deserialize, Serialize};
 /// Models the result of JSON-RPC method `analyzepsbt`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct AnalyzePsbt {
-    /// Array of input objects.
-    pub inputs: Vec<AnalyzePsbtInput>,
+    /// Array of input objects. May be absent if there is a top-level error (v30+).
+    pub inputs: Option<Vec<AnalyzePsbtInput>>,
     /// Estimated vsize of the final signed transaction.
     pub estimated_vsize: Option<u32>,
     /// Estimated feerate of the final signed transaction in BTC/kB.
@@ -27,6 +27,8 @@ pub struct AnalyzePsbt {
     pub fee: Option<Amount>,
     /// Role of the next person that this psbt needs to go to.
     pub next: String,
+    /// Error message if the PSBT could not be analyzed (v30+).
+    pub error: Option<String>,
 }
 
 /// An input in a PSBT operation. Part of `analyzepsbt`.

@@ -17,9 +17,12 @@ impl AnalyzePsbt {
 
         let inputs = self
             .inputs
-            .into_iter()
-            .map(|input| input.into_model())
-            .collect::<Result<_, _>>()
+            .map(|v| {
+                v.into_iter()
+                    .map(|input| input.into_model())
+                    .collect::<Result<Vec<_>, _>>()
+            })
+            .transpose()
             .map_err(E::Inputs)?;
         let estimated_fee_rate = self
             .estimated_fee_rate
@@ -35,6 +38,7 @@ impl AnalyzePsbt {
             estimated_fee_rate,
             fee,
             next: self.next,
+            error: self.error,
         })
     }
 }

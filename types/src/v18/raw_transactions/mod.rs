@@ -22,8 +22,9 @@ pub use self::error::{AnalyzePsbtError, AnalyzePsbtInputMissingError};
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct AnalyzePsbt {
-    /// Array of input objects.
-    pub inputs: Vec<AnalyzePsbtInput>,
+    /// Array of input objects. May be absent if there is a top-level error (v30+).
+    #[serde(default)]
+    pub inputs: Option<Vec<AnalyzePsbtInput>>,
     /// Estimated vsize of the final signed transaction.
     pub estimated_vsize: Option<u32>,
     /// Estimated feerate of the final signed transaction in BTC/kB.
@@ -35,6 +36,8 @@ pub struct AnalyzePsbt {
     pub fee: Option<f64>,
     /// Role of the next person that this psbt needs to go to.
     pub next: String,
+    /// Error message if the PSBT could not be analyzed (v30+).
+    pub error: Option<String>,
 }
 
 /// Represents an input in a PSBT operation. Part of `analyzepsbt`.
