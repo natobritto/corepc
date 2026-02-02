@@ -15,14 +15,10 @@ that describes all available RPC methods and their input/output schemas.
 ### Generate types for a specific version
 
 ```bash
-# Generate types for Bitcoin Core v30 from its OpenRPC.json
-cargo run -p corepc-codegen -- \
-    --input OpenRPC.json \
-    --output /tmp/generated_v30 \
-    --core-version v30
+cargo run -- --input ../OpenRPC.json --output genv30 --core-version 30
 ```
 
-### Command-line options
+### Command-line option
 
 - `-i, --input <PATH>`: Path to the OpenRPC.json file
 - `-o, --output <PATH>`: Output directory for generated files  
