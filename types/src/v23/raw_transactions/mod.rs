@@ -161,9 +161,6 @@ pub struct DecodeScript {
     pub p2sh: Option<String>,
     /// Segwit data (see `DecodeScriptSegwit` for explanation).
     pub segwit: Option<DecodeScriptSegwit>,
-    /// Address of the P2SH script wrapping this witness redeem script
-    #[serde(rename = "p2sh-segwit")]
-    pub p2sh_segwit: Option<String>,
 }
 
 /// Segwit data. Part of `decodescript`.
@@ -189,5 +186,5 @@ pub struct DecodeScriptSegwit {
     pub descriptor: Option<String>,
     /// Address of P2SH script wrapping this redeem script (not returned if the script is already a P2SH).
     #[serde(rename = "p2sh-segwit")]
-    pub p2sh_segwit: Option<String>,
+    pub p2sh_segwit: String,
 }
