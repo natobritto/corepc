@@ -15,7 +15,7 @@ that describes all available RPC methods and their input/output schemas.
 ### Generate types for a specific version
 
 ```bash
-cargo run -- --input ../OpenRPC.json --output genv30 --core-version 30
+cargo run -- --input ../OpenRPC.json --output .. --core-version 30 --single-file
 ```
 
 ### Command-line option

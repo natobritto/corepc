@@ -1,0 +1,290 @@
+{
+  "openrpc": "1.2.6",
+  "info": {
+    "title": "Bitcoin Core RPC",
+    "version": "v30.2.0"
+  },
+  "methods": [
+    {
+      "name": "getblock",
+      "summary": "If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.",
+      "description": "If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.\nIf verbosity is 1, returns an Object with information about block <hash>.\nIf verbosity is 2, returns an Object with information about block <hash> and information about each transaction.\nIf verbosity is 3, returns an Object with information about block <hash> and information about each transaction, including prevout information for inputs (only for unpruned blocks in the current best chain).",
+      "paramStructure": "by-position",
+      "params": [
+        {
+          "name": "blockhash",
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]*$",
+            "x-bitcoin-type": "hex",
+            "description": "The block hash"
+          },
+          "required": true,
+          "description": "The block hash"
+        },
+        {
+          "name": "verbosity",
+          "schema": {
+            "type": "number",
+            "description": "0 for hex-encoded data, 1 for a JSON object, 2 for JSON object with transaction data, and 3 for JSON object with transaction data including prevout information for inputs",
+            "x-bitcoin-skip-type-check": true,
+            "default": 1
+          },
+          "required": false,
+          "description": "0 for hex-encoded data, 1 for a JSON object, 2 for JSON object with transaction data, and 3 for JSON object with transaction data including prevout information for inputs",
+          "x-bitcoin-aliases": ["verbose"]
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]*$",
+              "x-bitcoin-type": "hex",
+              "description": "A string that is serialized, hex-encoded data for block 'hash'",
+              "x-bitcoin-condition": "for verbosity = 0"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "the block hash (same as provided)"
+                },
+                "confirmations": {
+                  "type": "number",
+                  "description": "The number of confirmations, or -1 if the block is not on the main chain"
+                },
+                "size": {
+                  "type": "number",
+                  "description": "The block size"
+                },
+                "strippedsize": {
+                  "type": "number",
+                  "description": "The block size excluding witness data"
+                },
+                "weight": {
+                  "type": "number",
+                  "description": "The block weight as defined in BIP 141"
+                },
+                "height": {
+                  "type": "number",
+                  "description": "The block height or index"
+                },
+                "version": {
+                  "type": "number",
+                  "description": "The block version"
+                },
+                "versionHex": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "The block version formatted in hexadecimal"
+                },
+                "merkleroot": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "The merkle root"
+                },
+                "tx": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]*$",
+                    "x-bitcoin-type": "hex",
+                    "description": "The transaction id"
+                  },
+                  "description": "The transaction ids"
+                },
+                "time": {
+                  "type": "number",
+                  "x-bitcoin-format": "unix-time",
+                  "description": "The block time expressed in UNIX epoch time"
+                },
+                "mediantime": {
+                  "type": "number",
+                  "x-bitcoin-format": "unix-time",
+                  "description": "The median block time expressed in UNIX epoch time"
+                },
+                "nonce": {
+                  "type": "number",
+                  "description": "The nonce"
+                },
+                "bits": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "nBits: compact representation of the block difficulty target"
+                },
+                "target": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "The difficulty target"
+                },
+                "difficulty": {
+                  "type": "number",
+                  "description": "The difficulty"
+                },
+                "chainwork": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "Expected number of hashes required to produce the chain up to this block (in hex)"
+                },
+                "nTx": {
+                  "type": "number",
+                  "description": "The number of transactions in the block"
+                },
+                "previousblockhash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "The hash of the previous block (if available)",
+                  "x-bitcoin-optional": true
+                },
+                "nextblockhash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]*$",
+                  "x-bitcoin-type": "hex",
+                  "description": "The hash of the next block (if available)",
+                  "x-bitcoin-optional": true
+                }
+              },
+              "required": [
+                "hash",
+                "confirmations",
+                "size",
+                "strippedsize",
+                "weight",
+                "height",
+                "version",
+                "versionHex",
+                "merkleroot",
+                "tx",
+                "time",
+                "mediantime",
+                "nonce",
+                "bits",
+                "target",
+                "difficulty",
+                "chainwork",
+                "nTx"
+              ],
+              "additionalProperties": false,
+              "x-bitcoin-condition": "for verbosity = 1"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "tx": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fee": {
+                        "type": "number",
+                        "description": "The transaction fee in BTC, omitted if block undo data is not available"
+                      }
+                    },
+                    "required": ["fee"],
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "required": ["tx"],
+              "additionalProperties": true,
+              "x-bitcoin-condition": "for verbosity = 2"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "tx": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "vin": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "prevout": {
+                              "type": "object",
+                              "properties": {
+                                "generated": {
+                                  "type": "boolean",
+                                  "description": "Coinbase or not"
+                                },
+                                "height": {
+                                  "type": "number",
+                                  "description": "The height of the prevout"
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "x-bitcoin-type": "amount",
+                                  "description": "The value in BTC"
+                                },
+                                "scriptPubKey": {
+                                  "type": "object",
+                                  "properties": {
+                                    "asm": {
+                                      "type": "string",
+                                      "description": "Disassembly of the output script"
+                                    },
+                                    "desc": {
+                                      "type": "string",
+                                      "description": "Inferred descriptor for the output"
+                                    },
+                                    "hex": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-fA-F]*$",
+                                      "x-bitcoin-type": "hex",
+                                      "description": "The raw output script bytes, hex-encoded"
+                                    },
+                                    "address": {
+                                      "type": "string",
+                                      "description": "The Bitcoin address (only if a well-defined address exists)",
+                                      "x-bitcoin-optional": true
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "description": "The type (one of: nonstandard, anchor, pubkey, pubkeyhash, scripthash, multisig, nulldata, witness_v0_scripthash, witness_v0_keyhash, witness_v1_taproot, witness_unknown)"
+                                    }
+                                  },
+                                  "required": ["asm", "desc", "hex", "type"],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": ["generated", "height", "value", "scriptPubKey"],
+                              "additionalProperties": false,
+                              "description": "(Only if undo information is available)"
+                            }
+                          },
+                          "required": ["prevout"],
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "required": ["vin"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": ["tx"],
+              "additionalProperties": true,
+              "x-bitcoin-condition": "for verbosity = 3"
+            }
+          ]
+        }
+      },
+      "x-bitcoin-category": "blockchain",
+      "x-bitcoin-examples": "> bitcoin-cli getblock \"00000000c937983704a73af28acdec37b049d214adbda81d7e2a3dd146f6ed09\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"getblock\", \"params\": [\"00000000c937983704a73af28acdec37b049d214adbda81d7e2a3dd146f6ed09\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+    }
+  ]
+}
