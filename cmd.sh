@@ -1,16 +1,25 @@
-cargo expand -p corepc-types --lib v30 > flattened.rs
-# OR: cargo expand --manifest-path types/Cargo.toml --lib v30 > flattened.rs
-# OR: python flatten_mods.py types/src/v30/mod.rs > flattened.rs
+#!/bin/bash
+# Generate files for comparison between implemented types and OpenRPC spec
 
-cd codegen; cargo run -- --input ../OpenRPC.json --output .. --core-version 30 --single-file # this creates generated.rs
+set -e
 
+# 1. Generate generated.rs from OpenRPC.json spec
+echo "==> Generating generated.rs from OpenRPC.json..."
+cd codegen && cargo run -- --input ../OpenRPC.json --output .. --core-version 30 --single-file && cd ..
 
-I need to generate flattened.md file in a format as similar as possible to  generated.rs file.
-The codegen module generates generated.rs from OpenRPC.json spec, meanwhile the flattened.rs is generated from the rust source code in this repo.
-The reason is I need to make a tool that: receives OpenRPC.json spec to compare to current implemented types to find differences in implementation, what is missing, what is different.
-what you did before is not what was needed. I dont need to make one file from the other, i need to have them somehow share the same structure. It would be ideal if the generated.rs had output similar to what this repo has.
-The final goal here is to be able to compare them. In an ideal world, that would be a simple `diff` to capture all the changes that need to be done on types of this repo to match the OpenRPC spec.
-You are free to modify:
-- the codegen in codegen/ folder
-- the command in cmd.sh
-- the python file in flatten_mods.py file which is an alternative attempt to do the same as  `cargo expand -p corepc-types --lib v30 > flattened.rs`
+# 2. Generate flattened.rs from the actual source code (all versions, extracts just structs)
+echo "==> Extracting structs from source code..."
+python3 flatten_mods.py --all-versions --types-dir types/src -o flattened.rs
+
+# 3. Run comparison
+echo "" 
+python3 compare_types.py --repo flattened.rs --spec generated.rs  > compare.txt
+
+echo ""
+echo "Files generated:"
+echo "  generated.rs  - types from OpenRPC.json spec ($(grep -c '^pub struct' generated.rs) structs)"
+echo "  flattened.rs  - types from this repo's source code ($(grep -c '^pub struct' flattened.rs) structs)"
+echo ""
+echo "For manual diff: diff -u flattened.rs generated.rs | less"
+
+cat compare.txt
