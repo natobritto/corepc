@@ -39,8 +39,8 @@
 //! | getchainstates                       | version (GetChainstates) |                                        |
 //! | getchaintips                         | version (GetChainTips) |                                        |
 //! | getchaintxstats                      | version (GetChainTxstats) |                                        |
-//! | getdeploymentinfo                    | version (GetdeploymentInfo) |                                        |
-//! | getdescriptoractivity                | version (GetDescriptoractivity) |                                        |
+//! | getdeploymentinfo                    | version (GetDeploymentInfo) |                                        |
+//! | getdescriptoractivity                | version (GetDescriptorActivity) |                                        |
 //! | getdifficulty                        | returns number  |                                        |
 //! | getmempoolancestors                  | version (GetMempoolAncestors) |                                        |
 //! | getmempooldescendants                | version (GetMempoolDescendants) |                                        |
@@ -189,7 +189,7 @@
 //! | deriveaddresses                      | version (DeriveAddresses) |                                        |
 //! | estimatesmartfee                     | version (EstimateSmartFee) |                                        |
 //! | getdescriptorinfo                    | version (GetDescriptorInfo) |                                        |
-//! | getindexinfo                         | version (GetindexInfo) |                                        |
+//! | getindexinfo                         | version (GetIndexInfo) |                                        |
 //! | signmessagewithprivkey               | returns string  |                                        |
 //! | validateaddress                      | version (ValidateAddress) |                                        |
 //! | verifymessage                        | returns boolean |                                        |
@@ -271,15 +271,15 @@ pub mod signer;
 pub mod util;
 pub mod wallet;
 
-pub use self::blockchain::{DumpTxoutSet, GetBlock, GetBlockVerboseTxItem, GetBlockVerbose, GetBlockVerboseAltTxItem, GetBlockVerboseAltTxItemVinItem, GetBlockVerboseAltTxItemVinItemPrevoutScriptPubKey, GetBlockVerboseAltTxItemVinItemPrevout, GetBlockVerboseAlt, GetBlockchainInfo, GetBlockFilter, GetBlockFromPeer, GetBlockHeader, GetBlockstats, GetChainstates, GetChainstatesChainstatesItem, GetChainTxstats, GetdeploymentInfo, GetdeploymentInfoDeployments, GetdeploymentInfoDeploymentsBip9Statistics, GetdeploymentInfoDeploymentsBip9, GetDescriptoractivity, GetMempoolEntry, GetMempoolEntryFees, GetMempoolInfo, GetRawMempool, GetTxout, GetTxoutScriptPubKey, GetTxoutSetInfo, GetTxoutSetInfoBlockInfoUnspendables, GetTxoutSetInfoBlockInfo, ImportMempool, LoadTxoutSet, SaveMempool, ScanBlocks, ScanBlocksVerbose, ScanTxoutSet, ScanTxoutSetUnspentsItem, ScanTxoutSetVerbose, WaitForBlock, WaitForBlockHeight, WaitForNewBlock};
-pub use self::control::{Api, GetMemoryInfo, GetMemoryInfoLocked, GetRpcInfo, GetRpcInfoActiveCommandsItem, Logging};
-pub use self::hidden::{AddConnection, AddPeerAddress, EstimateRawFee, EstimateRawFeeLong, EstimateRawFeeMedium, EstimateRawFeeShortFail, EstimateRawFeeShortPass, EstimateRawFeeShort, GenerateBlock, GetRawAddrman, GetRawAddrmanEntryEntry, SendmsgToPeer};
-pub use self::mining::{GetBlocktemplate, GetBlocktemplateTransactionsItem, GetMiningInfo, GetMiningInfoNext, GetPrioritisedTransactions, GetPrioritisedTransactionsEntry};
-pub use self::network::{GetAddrmanInfo, GetAddrmanInfoEntry, GetNetTotals, GetNetTotalsUploadtarget, GetNetworkInfo, GetNetworkInfoLocaladdressesItem, GetNetworkInfoNetworksItem};
-pub use self::raw_transactions::{AnalyzePsbt, AnalyzePsbtInputsItem, AnalyzePsbtInputsItemMissing, DecodePsbt, DecodePsbtGlobalXpubsItem, DecodePsbtInputsItem, DecodePsbtInputsItemBip32DerivsItem, DecodePsbtInputsItemFinalScriptSig, DecodePsbtInputsItemMusig2PartialSigsItem, DecodePsbtInputsItemMusig2ParticipantPubkeysItem, DecodePsbtInputsItemMusig2PubnoncesItem, DecodePsbtInputsItemNonWitnessUtxo, DecodePsbtInputsItemProprietaryItem, DecodePsbtInputsItemRedeemScript, DecodePsbtInputsItemTaprootBip32DerivsItem, DecodePsbtInputsItemTaprootScriptPathSigsItem, DecodePsbtInputsItemTaprootScriptsItem, DecodePsbtInputsItemWitnessScript, DecodePsbtInputsItemWitnessUtxoScriptPubKey, DecodePsbtInputsItemWitnessUtxo, DecodePsbtOutputsItem, DecodePsbtOutputsItemBip32DerivsItem, DecodePsbtOutputsItemMusig2ParticipantPubkeysItem, DecodePsbtOutputsItemProprietaryItem, DecodePsbtOutputsItemRedeemScript, DecodePsbtOutputsItemTaprootBip32DerivsItem, DecodePsbtOutputsItemTaprootTreeItem, DecodePsbtOutputsItemWitnessScript, DecodePsbtProprietaryItem, DecodePsbtTx, DecodeRawTransaction, DecodeRawTransactionVinItem, DecodeRawTransactionVinItemScriptSig, DecodeRawTransactionVoutItem, DecodeRawTransactionVoutItemScriptPubKey, DecodeScript, DecodeScriptSegwit, DescriptorProcessPsbt, FinalizePsbt, FundRawTransaction, GetRawTransaction, GetRawTransactionVinItem, GetRawTransactionVinItemScriptSig, GetRawTransactionVoutItem, GetRawTransactionVoutItemScriptPubKey, GetRawTransactionVerboseVinItem, GetRawTransactionVerboseVinItemPrevoutScriptPubKey, GetRawTransactionVerboseVinItemPrevout, GetRawTransactionVerbose, SignRawTransactionwithKey, SignRawTransactionwithKeyErrorsItem, SubmitPackage, SubmitPackageTxResults, SubmitPackageTxResultsFees};
+pub use self::blockchain::{DumpTxoutSet, GetBestBlockHash, GetBlockVerboseZero, GetBlockVerboseOne, GetBlockVerboseTwoTxItem, GetBlockVerboseTwo, GetBlockVerboseThreeTxItem, GetBlockVerboseThreeTxItemVinItem, GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey, GetBlockVerboseThreeTxItemVinItemPrevout, GetBlockVerboseThree, GetBlockchainInfo, GetBlockCount, GetBlockFilter, GetBlockFromPeer, GetBlockHash, GetBlockHeaderVerboseZero, GetBlockHeaderVerboseOne, GetBlockstats, GetChainstates, GetChainstatesChainstatesItem, GetChainTips, GetChainTxstats, GetDeploymentInfo, GetDeploymentInfoDeployments, GetDeploymentInfoDeploymentsBip9Statistics, GetDeploymentInfoDeploymentsBip9, GetDescriptorActivity, GetDifficulty, GetMempoolAncestorsVerboseOne, GetMempoolDescendantsVerboseOne, GetMempoolEntry, GetMempoolEntryFees, GetMempoolInfo, GetRawMempoolVerboseOne, GetRawMempoolVerboseTwo, GetTxoutVerboseOne, GetTxoutVerboseOneScriptPubKey, GetTxoutProof, GetTxoutSetInfo, GetTxoutSetInfoBlockInfoUnspendables, GetTxoutSetInfoBlockInfo, GetTxspendingprevOut, ImportMempool, LoadTxoutSet, PruneBlockchain, SaveMempool, ScanBlocksVerboseOne, ScanBlocksVerboseTwo, ScanBlocksVerboseThree, ScanTxoutSetVerboseZero, ScanTxoutSetVerboseZeroUnspentsItem, ScanTxoutSetVerboseOne, ScanTxoutSetVerboseTwo, VerifyChain, VerifyTxoutProof, WaitForBlock, WaitForBlockHeight, WaitForNewBlock};
+pub use self::control::{Api, GetMemoryInfoVerboseZero, GetMemoryInfoVerboseZeroLocked, GetMemoryInfoVerboseOne, GetRpcInfo, GetRpcInfoActiveCommandsItem, Help, Logging, Stop, Uptime};
+pub use self::hidden::{AddConnection, AddPeerAddress, Echo, EchoIpc, EchoJson, EstimateRawFee, EstimateRawFeeLong, EstimateRawFeeMedium, EstimateRawFeeShortFail, EstimateRawFeeShortPass, EstimateRawFeeShort, Generate, GenerateBlock, GenerateToAddress, GenerateToDescriptor, GetRawAddrman, GetRawAddrmanEntryEntry, SendmsgToPeer};
+pub use self::mining::{GetBlocktemplateVerboseOne, GetBlocktemplateVerboseTwoTransactionsItem, GetBlocktemplateVerboseTwo, GetMiningInfo, GetMiningInfoNext, GetNetworkHashps, GetPrioritisedTransactions, GetPrioritisedTransactionsEntry, PrioritiseTransaction, SubmitBlockVerboseOne};
+pub use self::network::{GetAddedNodeInfo, GetAddrmanInfo, GetAddrmanInfoEntry, GetConnectionCount, GetNetTotals, GetNetTotalsUploadtarget, GetNetworkInfo, GetNetworkInfoLocaladdressesItem, GetNetworkInfoNetworksItem, GetNodeAddresses, GetPeerInfo, ListBanned, SetNetworkactive};
+pub use self::raw_transactions::{AnalyzePsbt, AnalyzePsbtInputsItem, AnalyzePsbtInputsItemMissing, CombinePsbt, CombineRawTransaction, ConvertToPsbt, CreatePsbt, CreateRawTransaction, DecodePsbt, DecodePsbtGlobalXpubsItem, DecodePsbtInputsItem, DecodePsbtInputsItemBip32DerivsItem, DecodePsbtInputsItemFinalScriptSig, DecodePsbtInputsItemMusig2PartialSigsItem, DecodePsbtInputsItemMusig2ParticipantPubkeysItem, DecodePsbtInputsItemMusig2PubnoncesItem, DecodePsbtInputsItemNonWitnessUtxo, DecodePsbtInputsItemProprietaryItem, DecodePsbtInputsItemRedeemScript, DecodePsbtInputsItemTaprootBip32DerivsItem, DecodePsbtInputsItemTaprootScriptPathSigsItem, DecodePsbtInputsItemTaprootScriptsItem, DecodePsbtInputsItemWitnessScript, DecodePsbtInputsItemWitnessUtxoScriptPubKey, DecodePsbtInputsItemWitnessUtxo, DecodePsbtOutputsItem, DecodePsbtOutputsItemBip32DerivsItem, DecodePsbtOutputsItemMusig2ParticipantPubkeysItem, DecodePsbtOutputsItemProprietaryItem, DecodePsbtOutputsItemRedeemScript, DecodePsbtOutputsItemTaprootBip32DerivsItem, DecodePsbtOutputsItemTaprootTreeItem, DecodePsbtOutputsItemWitnessScript, DecodePsbtProprietaryItem, DecodePsbtTx, DecodeRawTransaction, DecodeRawTransactionVinItem, DecodeRawTransactionVinItemScriptSig, DecodeRawTransactionVoutItem, DecodeRawTransactionVoutItemScriptPubKey, DecodeScript, DecodeScriptSegwit, DescriptorProcessPsbt, FinalizePsbt, FundRawTransaction, GetRawTransactionVerboseZero, GetRawTransactionVerboseOneVinItem, GetRawTransactionVerboseOneVinItemScriptSig, GetRawTransactionVerboseOneVoutItem, GetRawTransactionVerboseOneVoutItemScriptPubKey, GetRawTransactionVerboseOne, GetRawTransactionVerboseTwoVinItem, GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey, GetRawTransactionVerboseTwoVinItemPrevout, GetRawTransactionVerboseTwo, JoinPsbts, SendRawTransaction, SignRawTransactionwithKey, SignRawTransactionwithKeyErrorsItem, SubmitPackage, SubmitPackageTxResults, SubmitPackageTxResultsFees, TestMempoolaccept, UtxoUpdatePsbt};
 pub use self::signer::{EnumerateSigners, EnumerateSignersSignersItem};
-pub use self::util::{CreateMultisig, EstimateSmartFee, GetDescriptorInfo, GetindexInfo, GetindexInfoEntry, ValidateAddress};
-pub use self::wallet::{BumpFee, CreateWallet, CreateWalletDescriptor, GetAddressesbyLabel, GetAddressesbyLabelEntry, GetAddressInfo, GetAddressInfoEmbedded, GetBalances, GetBalancesLastprocessedblock, GetBalancesMine, GetTransaction, GetTransactionDecoded, GetTransactionDetailsItem, GetTransactionLastprocessedblock, GetWalletInfo, GetWalletInfoLastprocessedblock, GetWalletInfoScanning, ListDescriptors, ListDescriptorsDescriptorsItem, ListSinceBlock, ListSinceBlockTransactionsItem, ListWalletDir, ListWalletDirWalletsItem, LoadWallet, MigrateWallet, PsbtBumpFee, RescanBlockchain, RestoreWallet, Send, SendAll, Sendmany, SendToAddress, SetWalletflag, SignRawTransactionwithWallet, SignRawTransactionwithWalletErrorsItem, SimulateRawTransaction, UnloadWallet, WalletCreateFundedPsbt, WalletDisplayAddress, WalletProcessPsbt};
+pub use self::util::{CreateMultisig, EstimateSmartFee, GetDescriptorInfo, GetIndexInfo, GetIndexInfoEntry, SignMessagewithPrivKey, ValidateAddress, VerifyMessage};
+pub use self::wallet::{AbortRescan, BumpFee, CreateWallet, CreateWalletDescriptor, EncryptWallet, GetAddressesbyLabel, GetAddressesbyLabelEntry, GetAddressInfo, GetAddressInfoEmbedded, GetBalance, GetBalances, GetBalancesLastprocessedblock, GetBalancesMine, GetHdKeys, GetNewAddress, GetRawChangeAddress, GetReceivedbyAddress, GetReceivedbyLabel, GetTransaction, GetTransactionDecoded, GetTransactionDetailsItem, GetTransactionLastprocessedblock, GetWalletInfo, GetWalletInfoLastprocessedblock, GetWalletInfoScanning, ImportDescriptors, ListAddressGroupings, ListDescriptors, ListDescriptorsDescriptorsItem, ListLabels, ListLockUnspent, ListReceivedbyAddress, ListReceivedbyLabel, ListSinceBlock, ListSinceBlockTransactionsItem, ListTransactions, ListUnspent, ListWalletDir, ListWalletDirWalletsItem, ListWallets, LoadWallet, LockUnspent, MigrateWallet, PsbtBumpFee, RescanBlockchain, RestoreWallet, Send, SendAll, SendmanyVerboseZero, SendmanyVerboseOne, SendToAddressVerboseZero, SendToAddressVerboseOne, SetTxFee, SetWalletflag, SignMessage, SignRawTransactionwithWallet, SignRawTransactionwithWalletErrorsItem, SimulateRawTransaction, UnloadWallet, WalletCreateFundedPsbt, WalletDisplayAddress, WalletProcessPsbt};
 
 // ============ Generated Types ============
 
@@ -318,13 +318,115 @@ pub struct DumpTxoutSet {
     pub txoutset_hash: String,
 }
 
+/// Result of the JSON-RPC method `getbestblockhash`.
+///
+/// > getbestblockhash
+/// >
+/// > Returns the hash of the best (tip) block in the most-work fully-validated chain.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBestBlockHash(pub String);
+
+/// Result of the JSON-RPC method `getblockcount`.
+///
+/// > getblockcount
+/// >
+/// > Returns the height of the most-work fully-validated chain.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockCount(pub i64);
+
+/// Retrieve a BIP 157 content filter for a particular block.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockFilter {
+    /// the hex-encoded filter data
+    pub filter: String,
+    /// the hex-encoded filter header
+    pub header: String,
+}
+
+/// Attempt to fetch block from a given peer.
+/// 
+/// We must have the header for this block, e.g. using submitheader.
+/// The block will not have any undo data which can limit the usage of the block data in a context where the undo data is needed.
+/// Subsequent calls for the same block may cause the response from the previous peer to be ignored.
+/// Peers generally ignore requests for a stale block that they never fully verified, or one that is more than a month old.
+/// When a peer does not respond with a block, we will disconnect.
+/// Note: The block could be re-pruned as soon as it is received.
+/// 
+/// Returns an empty JSON object if the request was successfully scheduled.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockFromPeer {
+
+}
+
+/// Result of the JSON-RPC method `getblockhash`.
+///
+/// > getblockhash
+/// >
+/// > Returns hash of block in best-block-chain at height provided.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockHash(pub String);
+
+/// If verbose is false, returns a string that is serialized, hex-encoded data for blockheader 'hash'.
+/// If verbose is true, returns an Object with information about blockheader <hash>.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockHeaderVerboseOne(pub String);
+
+/// If verbose is false, returns a string that is serialized, hex-encoded data for blockheader 'hash'.
+/// If verbose is true, returns an Object with information about blockheader <hash>.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockHeaderVerboseZero {
+    /// nBits: compact representation of the block difficulty target
+    pub bits: String,
+    /// Expected number of hashes required to produce the current chain
+    pub chainwork: String,
+    /// The number of confirmations, or -1 if the block is not on the main chain
+    pub confirmations: i64,
+    /// The difficulty
+    pub difficulty: i64,
+    /// the block hash (same as provided)
+    pub hash: String,
+    /// The block height or index
+    pub height: i64,
+    /// The median block time expressed in UNIX epoch time
+    pub mediantime: i64,
+    /// The merkle root
+    pub merkleroot: String,
+    /// The number of transactions in the block
+    #[serde(rename = "nTx")]
+    pub n_tx: i64,
+    /// The hash of the next block (if available)
+    #[serde(rename = "nextblockhash")]
+    pub next_block_hash: Option<String>,
+    /// The nonce
+    pub nonce: i64,
+    /// The hash of the previous block (if available)
+    #[serde(rename = "previousblockhash")]
+    pub previous_block_hash: Option<String>,
+    /// The difficulty target
+    pub target: String,
+    /// The block time expressed in UNIX epoch time
+    pub time: i64,
+    /// The block version
+    pub version: i64,
+    /// The block version formatted in hexadecimal
+    #[serde(rename = "versionHex")]
+    pub version_hex: String,
+}
+
 /// If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.
 /// If verbosity is 1, returns an Object with information about block <hash>.
 /// If verbosity is 2, returns an Object with information about block <hash> and information about each transaction.
 /// If verbosity is 3, returns an Object with information about block <hash> and information about each transaction, including prevout information for inputs (only for unpruned blocks in the current best chain).
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlock {
+pub struct GetBlockVerboseOne {
     /// nBits: compact representation of the block difficulty target
     pub bits: String,
     /// Expected number of hashes required to produce the chain up to this block (in hex)
@@ -372,126 +474,47 @@ pub struct GetBlock {
     pub weight: i64,
 }
 
-/// Retrieve a BIP 157 content filter for a particular block.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockFilter {
-    /// the hex-encoded filter data
-    pub filter: String,
-    /// the hex-encoded filter header
-    pub header: String,
-}
-
-/// Attempt to fetch block from a given peer.
-/// 
-/// We must have the header for this block, e.g. using submitheader.
-/// The block will not have any undo data which can limit the usage of the block data in a context where the undo data is needed.
-/// Subsequent calls for the same block may cause the response from the previous peer to be ignored.
-/// Peers generally ignore requests for a stale block that they never fully verified, or one that is more than a month old.
-/// When a peer does not respond with a block, we will disconnect.
-/// Note: The block could be re-pruned as soon as it is received.
-/// 
-/// Returns an empty JSON object if the request was successfully scheduled.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockFromPeer {
-
-}
-
-/// If verbose is false, returns a string that is serialized, hex-encoded data for blockheader 'hash'.
-/// If verbose is true, returns an Object with information about blockheader <hash>.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockHeader {
-    /// nBits: compact representation of the block difficulty target
-    pub bits: String,
-    /// Expected number of hashes required to produce the current chain
-    pub chainwork: String,
-    /// The number of confirmations, or -1 if the block is not on the main chain
-    pub confirmations: i64,
-    /// The difficulty
-    pub difficulty: i64,
-    /// the block hash (same as provided)
-    pub hash: String,
-    /// The block height or index
-    pub height: i64,
-    /// The median block time expressed in UNIX epoch time
-    pub mediantime: i64,
-    /// The merkle root
-    pub merkleroot: String,
-    /// The number of transactions in the block
-    #[serde(rename = "nTx")]
-    pub n_tx: i64,
-    /// The hash of the next block (if available)
-    #[serde(rename = "nextblockhash")]
-    pub next_block_hash: Option<String>,
-    /// The nonce
-    pub nonce: i64,
-    /// The hash of the previous block (if available)
-    #[serde(rename = "previousblockhash")]
-    pub previous_block_hash: Option<String>,
-    /// The difficulty target
-    pub target: String,
-    /// The block time expressed in UNIX epoch time
-    pub time: i64,
-    /// The block version
-    pub version: i64,
-    /// The block version formatted in hexadecimal
-    #[serde(rename = "versionHex")]
-    pub version_hex: String,
-}
-
 /// If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.
 /// If verbosity is 1, returns an Object with information about block <hash>.
 /// If verbosity is 2, returns an Object with information about block <hash> and information about each transaction.
 /// If verbosity is 3, returns an Object with information about block <hash> and information about each transaction, including prevout information for inputs (only for unpruned blocks in the current best chain).
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerbose {
-    pub tx: Vec<GetBlockVerboseTxItem>,
-}
-
-/// If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.
-/// If verbosity is 1, returns an Object with information about block <hash>.
-/// If verbosity is 2, returns an Object with information about block <hash> and information about each transaction.
-/// If verbosity is 3, returns an Object with information about block <hash> and information about each transaction, including prevout information for inputs (only for unpruned blocks in the current best chain).
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerboseAlt {
-    pub tx: Vec<GetBlockVerboseAltTxItem>,
+pub struct GetBlockVerboseThree {
+    pub tx: Vec<GetBlockVerboseThreeTxItem>,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerboseAltTxItem {
-    pub vin: Vec<GetBlockVerboseAltTxItemVinItem>,
+pub struct GetBlockVerboseThreeTxItem {
+    pub vin: Vec<GetBlockVerboseThreeTxItemVinItem>,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerboseAltTxItemVinItem {
+pub struct GetBlockVerboseThreeTxItemVinItem {
     /// (Only if undo information is available)
     #[serde(rename = "prevout")]
-    pub prev_out: GetBlockVerboseAltTxItemVinItemPrevout,
+    pub prev_out: GetBlockVerboseThreeTxItemVinItemPrevout,
 }
 
 /// (Only if undo information is available)
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerboseAltTxItemVinItemPrevout {
+pub struct GetBlockVerboseThreeTxItemVinItemPrevout {
     /// Coinbase or not
     pub generated: bool,
     /// The height of the prevout
     pub height: i64,
     #[serde(rename = "scriptPubKey")]
-    pub script_pub_key: GetBlockVerboseAltTxItemVinItemPrevoutScriptPubKey,
+    pub script_pub_key: GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey,
     /// The value in BTC
     pub value: f64,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerboseAltTxItemVinItemPrevoutScriptPubKey {
+pub struct GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey {
     /// The Bitcoin address (only if a well-defined address exists)
     pub address: Option<String>,
     /// Disassembly of the output script
@@ -505,12 +528,30 @@ pub struct GetBlockVerboseAltTxItemVinItemPrevoutScriptPubKey {
     pub type_: String,
 }
 
+/// If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.
+/// If verbosity is 1, returns an Object with information about block <hash>.
+/// If verbosity is 2, returns an Object with information about block <hash> and information about each transaction.
+/// If verbosity is 3, returns an Object with information about block <hash> and information about each transaction, including prevout information for inputs (only for unpruned blocks in the current best chain).
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlockVerboseTxItem {
+pub struct GetBlockVerboseTwo {
+    pub tx: Vec<GetBlockVerboseTwoTxItem>,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockVerboseTwoTxItem {
     /// The transaction fee in BTC, omitted if block undo data is not available
     pub fee: i64,
 }
+
+/// If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.
+/// If verbosity is 1, returns an Object with information about block <hash>.
+/// If verbosity is 2, returns an Object with information about block <hash> and information about each transaction.
+/// If verbosity is 3, returns an Object with information about block <hash> and information about each transaction, including prevout information for inputs (only for unpruned blocks in the current best chain).
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlockVerboseZero(pub String);
 
 /// Returns an object containing various state info regarding blockchain processing.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -604,7 +645,8 @@ pub struct GetBlockstats {
     #[serde(rename = "mintxsize")]
     pub min_txs_ize: Option<i64>,
     /// The number of outputs
-    pub outs: Option<i64>,
+    #[serde(rename = "outs")]
+    pub out_s: Option<i64>,
     /// The block subsidy
     pub subsidy: Option<i64>,
     /// Total size of all segwit transactions
@@ -634,6 +676,13 @@ pub struct GetBlockstats {
     pub utxo_size_inc: Option<i64>,
     /// The increase/decrease in size for the utxo index, not counting unspendables
     pub utxo_size_inc_actual: Option<i64>,
+}
+
+/// Return information about all known tips in the block tree, including the main chain as well as orphaned branches.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetChainTips {
+
 }
 
 /// Compute statistics about the total number and rate of transactions in the chain.
@@ -697,13 +746,103 @@ pub struct GetChainstatesChainstatesItem {
     pub verification_progress: i64,
 }
 
+/// Returns an object containing various state info regarding deployments of consensus changes.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetDeploymentInfo {
+    pub deployments: std::collections::BTreeMap<String, GetDeploymentInfoDeployments>,
+    /// requested block hash (or tip)
+    pub hash: String,
+    /// requested block height (or tip)
+    pub height: i64,
+}
+
+/// name of the deployment
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetDeploymentInfoDeployments {
+    /// true if the rules are enforced for the mempool and the next block
+    pub active: bool,
+    /// status of bip9 softforks (only for "bip9" type)
+    pub bip9: Option<GetDeploymentInfoDeploymentsBip9>,
+    /// height of the first block which the rules are or will be enforced (only for "buried" type, or "bip9" type with "active" status)
+    pub height: Option<i64>,
+    /// one of "buried", "bip9"
+    #[serde(rename = "type")]
+    pub type_: String,
+}
+
+/// status of bip9 softforks (only for "bip9" type)
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetDeploymentInfoDeploymentsBip9 {
+    /// the bit (0-28) in the block version field used to signal this softfork (only for "started" and "locked_in" status)
+    pub bit: Option<i64>,
+    /// minimum height of blocks for which the rules may be enforced
+    pub min_activation_height: i64,
+    /// indicates blocks that signalled with a # and blocks that did not with a -
+    pub signalling: Option<String>,
+    /// height of the first block to which the status applies
+    pub since: i64,
+    /// the minimum median time past of a block at which the bit gains its meaning
+    pub start_time: i64,
+    /// numeric statistics about signalling for a softfork (only for "started" and "locked_in" status)
+    pub statistics: Option<GetDeploymentInfoDeploymentsBip9Statistics>,
+    /// status of deployment at specified block (one of "defined", "started", "locked_in", "active", "failed")
+    pub status: String,
+    /// status of deployment at the next block
+    pub status_next: String,
+    /// the median time past of a block at which the deployment is considered failed if not yet locked in
+    #[serde(rename = "timeout")]
+    pub time_out: i64,
+}
+
+/// numeric statistics about signalling for a softfork (only for "started" and "locked_in" status)
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetDeploymentInfoDeploymentsBip9Statistics {
+    /// the number of blocks with the version bit set in the current period
+    pub count: i64,
+    /// the number of blocks elapsed since the beginning of the current period
+    pub elapsed: i64,
+    /// the length in blocks of the signalling period
+    pub period: i64,
+    /// returns false if there are not enough blocks left in this period to pass activation threshold (only for "started" status)
+    pub possible: Option<bool>,
+    /// the number of blocks with the version bit set required to activate the feature (only for "started" status)
+    pub threshold: Option<i64>,
+}
+
 /// Get spend and receive activity associated with a set of descriptors for a set of blocks. This command pairs well with the `relevant_blocks` output of `scanblocks()`.
 /// This call may take several minutes. If you encounter timeouts, try specifying no RPC timeout (bitcoin-cli -rpcclienttimeout=0)
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetDescriptoractivity {
+pub struct GetDescriptorActivity {
     /// events
     pub activity: Vec<serde_json::Value>,
+}
+
+/// Result of the JSON-RPC method `getdifficulty`.
+///
+/// > getdifficulty
+/// >
+/// > Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetDifficulty(pub i64);
+
+/// If txid is in the mempool, returns all in-mempool ancestors.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetMempoolAncestorsVerboseOne {
+
+}
+
+/// If txid is in the mempool, returns all in-mempool descendants.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetMempoolDescendantsVerboseOne {
+
 }
 
 /// Returns mempool data for given transaction
@@ -803,44 +942,29 @@ pub struct GetMempoolInfo {
 /// Hint: use getmempoolentry to fetch a specific transaction from the mempool.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawMempool {
+pub struct GetRawMempoolVerboseOne {
+
+}
+
+/// Returns all transaction ids in memory pool as a json array of string transaction ids.
+/// 
+/// Hint: use getmempoolentry to fetch a specific transaction from the mempool.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawMempoolVerboseTwo {
     /// The mempool sequence value.
     pub mempool_sequence: i64,
     pub txids: Vec<String>,
 }
 
-/// Returns details about an unspent transaction output.
+/// Result of the JSON-RPC method `gettxoutproof`.
+///
+/// > gettxoutproof
+/// >
+/// > Returns a hex-encoded proof that "txid" was included in a block.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetTxout {
-    /// The hash of the block at the tip of the chain
-    pub bestblock: String,
-    /// Coinbase or not
-    #[serde(rename = "coinbase")]
-    pub coin_base: bool,
-    /// The number of confirmations
-    pub confirmations: i64,
-    #[serde(rename = "scriptPubKey")]
-    pub script_pub_key: GetTxoutScriptPubKey,
-    /// The transaction value in BTC
-    pub value: f64,
-}
-
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetTxoutScriptPubKey {
-    /// The Bitcoin address (only if a well-defined address exists)
-    pub address: Option<String>,
-    /// Disassembly of the output script
-    pub asm: String,
-    /// Inferred descriptor for the output
-    pub desc: String,
-    /// The raw output script bytes, hex-encoded
-    pub hex: String,
-    /// The type, eg pubkeyhash
-    #[serde(rename = "type")]
-    pub type_: String,
-}
+pub struct GetTxoutProof(pub String);
 
 /// Returns statistics about the unspent transaction output set.
 /// Note this call may take some time if you are not using coinstatsindex.
@@ -903,71 +1027,44 @@ pub struct GetTxoutSetInfoBlockInfoUnspendables {
     pub unclaimed_rewards: f64,
 }
 
-/// Returns an object containing various state info regarding deployments of consensus changes.
+/// Returns details about an unspent transaction output.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetdeploymentInfo {
-    pub deployments: std::collections::BTreeMap<String, GetdeploymentInfoDeployments>,
-    /// requested block hash (or tip)
-    pub hash: String,
-    /// requested block height (or tip)
-    pub height: i64,
+pub struct GetTxoutVerboseOne {
+    /// The hash of the block at the tip of the chain
+    pub bestblock: String,
+    /// Coinbase or not
+    #[serde(rename = "coinbase")]
+    pub coin_base: bool,
+    /// The number of confirmations
+    pub confirmations: i64,
+    #[serde(rename = "scriptPubKey")]
+    pub script_pub_key: GetTxoutVerboseOneScriptPubKey,
+    /// The transaction value in BTC
+    pub value: f64,
 }
 
-/// name of the deployment
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetdeploymentInfoDeployments {
-    /// true if the rules are enforced for the mempool and the next block
-    pub active: bool,
-    /// status of bip9 softforks (only for "bip9" type)
-    pub bip9: Option<GetdeploymentInfoDeploymentsBip9>,
-    /// height of the first block which the rules are or will be enforced (only for "buried" type, or "bip9" type with "active" status)
-    pub height: Option<i64>,
-    /// one of "buried", "bip9"
+pub struct GetTxoutVerboseOneScriptPubKey {
+    /// The Bitcoin address (only if a well-defined address exists)
+    pub address: Option<String>,
+    /// Disassembly of the output script
+    pub asm: String,
+    /// Inferred descriptor for the output
+    pub desc: String,
+    /// The raw output script bytes, hex-encoded
+    pub hex: String,
+    /// The type, eg pubkeyhash
     #[serde(rename = "type")]
     pub type_: String,
 }
 
-/// status of bip9 softforks (only for "bip9" type)
+/// Scans the mempool to find transactions spending any of the given outputs
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetdeploymentInfoDeploymentsBip9 {
-    /// the bit (0-28) in the block version field used to signal this softfork (only for "started" and "locked_in" status)
-    pub bit: Option<i64>,
-    /// minimum height of blocks for which the rules may be enforced
-    pub min_activation_height: i64,
-    /// indicates blocks that signalled with a # and blocks that did not with a -
-    pub signalling: Option<String>,
-    /// height of the first block to which the status applies
-    pub since: i64,
-    /// the minimum median time past of a block at which the bit gains its meaning
-    pub start_time: i64,
-    /// numeric statistics about signalling for a softfork (only for "started" and "locked_in" status)
-    pub statistics: Option<GetdeploymentInfoDeploymentsBip9Statistics>,
-    /// status of deployment at specified block (one of "defined", "started", "locked_in", "active", "failed")
-    pub status: String,
-    /// status of deployment at the next block
-    pub status_next: String,
-    /// the median time past of a block at which the deployment is considered failed if not yet locked in
-    #[serde(rename = "timeout")]
-    pub time_out: i64,
-}
+pub struct GetTxspendingprevOut {
 
-/// numeric statistics about signalling for a softfork (only for "started" and "locked_in" status)
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetdeploymentInfoDeploymentsBip9Statistics {
-    /// the number of blocks with the version bit set in the current period
-    pub count: i64,
-    /// the number of blocks elapsed since the beginning of the current period
-    pub elapsed: i64,
-    /// the length in blocks of the signalling period
-    pub period: i64,
-    /// returns false if there are not enough blocks left in this period to pass activation threshold (only for "started" status)
-    pub possible: Option<bool>,
-    /// the number of blocks with the version bit set required to activate the feature (only for "started" status)
-    pub threshold: Option<i64>,
 }
 
 /// Import a mempool.dat file and attempt to add its contents to the mempool.
@@ -997,6 +1094,15 @@ pub struct LoadTxoutSet {
     pub tip_hash: String,
 }
 
+/// Result of the JSON-RPC method `pruneblockchain`.
+///
+/// > pruneblockchain
+/// >
+/// > Attempts to delete block and undo data up to a specified height or timestamp, if eligible for pruning.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct PruneBlockchain(pub i64);
+
 /// Dumps the mempool to disk. It will fail until the previous dump is fully loaded.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
@@ -1009,7 +1115,7 @@ pub struct SaveMempool {
 /// This call may take several minutes. Make sure to use no RPC timeout (bitcoin-cli -rpcclienttimeout=0)
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct ScanBlocks {
+pub struct ScanBlocksVerboseOne {
     /// true if the scan process was not aborted
     pub completed: bool,
     /// The height we started the scan from
@@ -1024,7 +1130,13 @@ pub struct ScanBlocks {
 /// This call may take several minutes. Make sure to use no RPC timeout (bitcoin-cli -rpcclienttimeout=0)
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct ScanBlocksVerbose {
+pub struct ScanBlocksVerboseThree(pub bool);
+
+/// Return relevant blockhashes for given descriptors (requires blockfilterindex).
+/// This call may take several minutes. Make sure to use no RPC timeout (bitcoin-cli -rpcclienttimeout=0)
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ScanBlocksVerboseTwo {
     /// Height of the block currently being scanned
     pub current_height: i64,
     /// Approximate percent complete
@@ -1050,7 +1162,52 @@ pub struct ScanBlocksVerbose {
 /// For more information on output descriptors, see the documentation in the doc/descriptors.md file.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct ScanTxoutSet {
+pub struct ScanTxoutSetVerboseOne(pub bool);
+
+/// Scans the unspent transaction output set for entries that match certain output descriptors.
+/// Examples of output descriptors are:
+///     addr(<address>)                      Outputs whose output script corresponds to the specified address (does not include P2PK)
+///     raw(<hex script>)                    Outputs whose output script equals the specified hex-encoded bytes
+///     combo(<pubkey>)                      P2PK, P2PKH, P2WPKH, and P2SH-P2WPKH outputs for the given pubkey
+///     pkh(<pubkey>)                        P2PKH outputs for the given pubkey
+///     sh(multi(<n>,<pubkey>,<pubkey>,...)) P2SH-multisig outputs for the given threshold and pubkeys
+///     tr(<pubkey>)                         P2TR
+///     tr(<pubkey>,{pk(<pubkey>)})          P2TR with single fallback pubkey in tapscript
+///     rawtr(<pubkey>)                      P2TR with the specified key as output key rather than inner
+///     wsh(and_v(v:pk(<pubkey>),after(2)))  P2WSH miniscript with mandatory pubkey and a timelock
+/// 
+/// In the above, <pubkey> either refers to a fixed public key in hexadecimal notation, or to an xpub/xprv optionally followed by one
+/// or more path elements separated by "/", and optionally ending in "/*" (unhardened), or "/*'" or "/*h" (hardened) to specify all
+/// unhardened or hardened child keys.
+/// In the latter case, a range needs to be specified by below if different from 1000.
+/// For more information on output descriptors, see the documentation in the doc/descriptors.md file.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ScanTxoutSetVerboseTwo {
+    /// Approximate percent complete
+    pub progress: i64,
+}
+
+/// Scans the unspent transaction output set for entries that match certain output descriptors.
+/// Examples of output descriptors are:
+///     addr(<address>)                      Outputs whose output script corresponds to the specified address (does not include P2PK)
+///     raw(<hex script>)                    Outputs whose output script equals the specified hex-encoded bytes
+///     combo(<pubkey>)                      P2PK, P2PKH, P2WPKH, and P2SH-P2WPKH outputs for the given pubkey
+///     pkh(<pubkey>)                        P2PKH outputs for the given pubkey
+///     sh(multi(<n>,<pubkey>,<pubkey>,...)) P2SH-multisig outputs for the given threshold and pubkeys
+///     tr(<pubkey>)                         P2TR
+///     tr(<pubkey>,{pk(<pubkey>)})          P2TR with single fallback pubkey in tapscript
+///     rawtr(<pubkey>)                      P2TR with the specified key as output key rather than inner
+///     wsh(and_v(v:pk(<pubkey>),after(2)))  P2WSH miniscript with mandatory pubkey and a timelock
+/// 
+/// In the above, <pubkey> either refers to a fixed public key in hexadecimal notation, or to an xpub/xprv optionally followed by one
+/// or more path elements separated by "/", and optionally ending in "/*" (unhardened), or "/*'" or "/*h" (hardened) to specify all
+/// unhardened or hardened child keys.
+/// In the latter case, a range needs to be specified by below if different from 1000.
+/// For more information on output descriptors, see the documentation in the doc/descriptors.md file.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ScanTxoutSetVerboseZero {
     /// The hash of the block at the tip of the chain
     pub bestblock: String,
     /// The block height at which the scan was done
@@ -1063,12 +1220,12 @@ pub struct ScanTxoutSet {
     #[serde(rename = "txouts")]
     pub txout_s: i64,
     #[serde(rename = "unspents")]
-    pub unspent_s: Vec<ScanTxoutSetUnspentsItem>,
+    pub unspent_s: Vec<ScanTxoutSetVerboseZeroUnspentsItem>,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct ScanTxoutSetUnspentsItem {
+pub struct ScanTxoutSetVerboseZeroUnspentsItem {
     /// The total amount in BTC of the unspent output
     pub amount: f64,
     /// Blockhash of the unspent transaction output
@@ -1092,28 +1249,21 @@ pub struct ScanTxoutSetUnspentsItem {
     pub vout: i64,
 }
 
-/// Scans the unspent transaction output set for entries that match certain output descriptors.
-/// Examples of output descriptors are:
-///     addr(<address>)                      Outputs whose output script corresponds to the specified address (does not include P2PK)
-///     raw(<hex script>)                    Outputs whose output script equals the specified hex-encoded bytes
-///     combo(<pubkey>)                      P2PK, P2PKH, P2WPKH, and P2SH-P2WPKH outputs for the given pubkey
-///     pkh(<pubkey>)                        P2PKH outputs for the given pubkey
-///     sh(multi(<n>,<pubkey>,<pubkey>,...)) P2SH-multisig outputs for the given threshold and pubkeys
-///     tr(<pubkey>)                         P2TR
-///     tr(<pubkey>,{pk(<pubkey>)})          P2TR with single fallback pubkey in tapscript
-///     rawtr(<pubkey>)                      P2TR with the specified key as output key rather than inner
-///     wsh(and_v(v:pk(<pubkey>),after(2)))  P2WSH miniscript with mandatory pubkey and a timelock
-/// 
-/// In the above, <pubkey> either refers to a fixed public key in hexadecimal notation, or to an xpub/xprv optionally followed by one
-/// or more path elements separated by "/", and optionally ending in "/*" (unhardened), or "/*'" or "/*h" (hardened) to specify all
-/// unhardened or hardened child keys.
-/// In the latter case, a range needs to be specified by below if different from 1000.
-/// For more information on output descriptors, see the documentation in the doc/descriptors.md file.
+/// Result of the JSON-RPC method `verifychain`.
+///
+/// > verifychain
+/// >
+/// > Verifies blockchain database.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct ScanTxoutSetVerbose {
-    /// Approximate percent complete
-    pub progress: i64,
+pub struct VerifyChain(pub bool);
+
+/// Verifies that a proof points to a transaction in a block, returning the transaction it commits to
+/// and throwing an RPC error if the block is not in our best chain
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct VerifyTxoutProof {
+
 }
 
 /// Waits for a specific new block and returns useful info about it.
@@ -1182,16 +1332,21 @@ pub struct Api {
 /// Returns an object containing information about memory usage.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetMemoryInfo {
+pub struct GetMemoryInfoVerboseOne(pub String);
+
+/// Returns an object containing information about memory usage.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetMemoryInfoVerboseZero {
     /// Information about locked memory manager
     #[serde(rename = "locked")]
-    pub lock_ed: GetMemoryInfoLocked,
+    pub lock_ed: GetMemoryInfoVerboseZeroLocked,
 }
 
 /// Information about locked memory manager
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetMemoryInfoLocked {
+pub struct GetMemoryInfoVerboseZeroLocked {
     /// Number unused chunks
     pub chunks_free: i64,
     /// Number allocated chunks
@@ -1228,6 +1383,15 @@ pub struct GetRpcInfoActiveCommandsItem {
     pub method: String,
 }
 
+/// Result of the JSON-RPC method `help`.
+///
+/// > help
+/// >
+/// > List all commands, or get help for a specified command.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct Help(pub String);
+
 /// Result of the JSON-RPC method `logging`.
 ///
 /// > logging
@@ -1239,6 +1403,24 @@ pub struct Logging(
     /// keys are the logging categories, and values indicates its status
     pub std::collections::BTreeMap<String, bool>,
 );
+
+/// Result of the JSON-RPC method `stop`.
+///
+/// > stop
+/// >
+/// > Request a graceful shutdown of Bitcoin Core.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct Stop(pub String);
+
+/// Result of the JSON-RPC method `uptime`.
+///
+/// > uptime
+/// >
+/// > Returns the total uptime of the server.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct Uptime(pub i64);
 
 
 // --- hidden ---
@@ -1271,6 +1453,37 @@ pub struct AddPeerAddress {
     pub error: Option<String>,
     /// whether the peer address was successfully added to the address manager table
     pub success: bool,
+}
+
+/// Simply echo back the input arguments. This command is for testing.
+/// 
+/// It will return an internal bug report when arg9='trigger_internal_bug' is passed.
+/// 
+/// The difference between echo and echojson is that echojson has argument conversion enabled in the client-side table in bitcoin-cli and the GUI. There is no server-side difference.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct Echo {
+
+}
+
+/// Result of the JSON-RPC method `echoipc`.
+///
+/// > echoipc
+/// >
+/// > Echo back the input argument, passing it through a spawned process in a multiprocess build.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct EchoIpc(pub String);
+
+/// Simply echo back the input arguments. This command is for testing.
+/// 
+/// It will return an internal bug report when arg9='trigger_internal_bug' is passed.
+/// 
+/// The difference between echo and echojson is that echojson has argument conversion enabled in the client-side table in bitcoin-cli and the GUI. There is no server-side difference.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct EchoJson {
+
 }
 
 /// WARNING: This interface is unstable and may disappear or change!
@@ -1352,6 +1565,13 @@ pub struct EstimateRawFeeShortPass {
     pub withintarget: i64,
 }
 
+/// has been replaced by the -generate cli option. Refer to -help for more information.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct Generate {
+
+}
+
 /// Mine a set of ordered transactions to a specified address or descriptor and return the block hash.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
@@ -1360,6 +1580,20 @@ pub struct GenerateBlock {
     pub hash: String,
     /// hex of generated block, only present when submit=false
     pub hex: Option<String>,
+}
+
+/// Mine to a specified address and return the block hashes.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GenerateToAddress {
+
+}
+
+/// Mine to a specified descriptor and return the block hashes.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GenerateToDescriptor {
+
 }
 
 /// Result of the JSON-RPC method `getrawaddrman`.
@@ -1429,7 +1663,18 @@ use serde::{Deserialize, Serialize};
 ///     https://github.com/bitcoin/bips/blob/master/bip-0145.mediawiki
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlocktemplate {
+pub struct GetBlocktemplateVerboseOne(pub String);
+
+/// If the request parameters include a 'mode' key, that is used to explicitly select between the default 'template' request or a 'proposal'.
+/// It returns data needed to construct a block to work on.
+/// For full specification, see BIPs 22, 23, 9, and 145:
+///     https://github.com/bitcoin/bips/blob/master/bip-0022.mediawiki
+///     https://github.com/bitcoin/bips/blob/master/bip-0023.mediawiki
+///     https://github.com/bitcoin/bips/blob/master/bip-0009.mediawiki#getblocktemplate_changes
+///     https://github.com/bitcoin/bips/blob/master/bip-0145.mediawiki
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBlocktemplateVerboseTwo {
     /// compressed target of next block
     pub bits: String,
     pub capabilities: Vec<String>,
@@ -1470,7 +1715,7 @@ pub struct GetBlocktemplate {
     /// The hash target
     pub target: String,
     /// contents of non-coinbase transactions that should be included in the next block
-    pub transactions: Vec<GetBlocktemplateTransactionsItem>,
+    pub transactions: Vec<GetBlocktemplateVerboseTwoTransactionsItem>,
     /// set of pending, supported versionbit (BIP 9) softfork deployments
     pub vbavailable: std::collections::BTreeMap<String, i64>,
     /// bit mask of versionbits the server requires set in submissions
@@ -1484,7 +1729,7 @@ pub struct GetBlocktemplate {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetBlocktemplateTransactionsItem {
+pub struct GetBlocktemplateVerboseTwoTransactionsItem {
     /// transaction data encoded in hexadecimal (byte-for-byte)
     pub data: String,
     /// array of numbers
@@ -1552,6 +1797,15 @@ pub struct GetMiningInfoNext {
     pub target: String,
 }
 
+/// Result of the JSON-RPC method `getnetworkhashps`.
+///
+/// > getnetworkhashps
+/// >
+/// > Returns the estimated network hashes per second based on the last n blocks.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetNetworkHashps(pub i64);
+
 /// Result of the JSON-RPC method `getprioritisedtransactions`.
 ///
 /// > getprioritisedtransactions
@@ -1575,6 +1829,21 @@ pub struct GetPrioritisedTransactionsEntry {
     pub modified_fee: Option<i64>,
 }
 
+/// Result of the JSON-RPC method `prioritisetransaction`.
+///
+/// > prioritisetransaction
+/// >
+/// > Accepts the transaction into mined blocks at a higher (or lower) priority
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct PrioritiseTransaction(pub bool);
+
+/// Attempts to submit new block to network.
+/// See https://en.bitcoin.it/wiki/BIP_0022 for full specification.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SubmitBlockVerboseOne(pub String);
+
 
 // --- network ---
 
@@ -1587,6 +1856,14 @@ pub struct GetPrioritisedTransactionsEntry {
 //! This file is auto-generated from OpenRPC specification.
 
 use serde::{Deserialize, Serialize};
+
+/// Returns information about the given added node, or all added nodes
+/// (note that onetry addnodes are not listed here)
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetAddedNodeInfo {
+
+}
 
 /// Result of the JSON-RPC method `getaddrmaninfo`.
 ///
@@ -1611,6 +1888,15 @@ pub struct GetAddrmanInfoEntry {
     /// number of addresses in the tried table, which represent peers the node has successfully connected to in the past.
     pub tried: i64,
 }
+
+/// Result of the JSON-RPC method `getconnectioncount`.
+///
+/// > getconnectioncount
+/// >
+/// > Returns the number of connections to other nodes.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetConnectionCount(pub i64);
 
 /// Returns information about network traffic, including bytes in, bytes out,
 /// and current system time.
@@ -1716,6 +2002,38 @@ pub struct GetNetworkInfoNetworksItem {
     pub reachable: bool,
 }
 
+/// Return known addresses, after filtering for quality and recency.
+/// These can potentially be used to find new peers in the network.
+/// The total number of addresses known to the node may be higher.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetNodeAddresses {
+
+}
+
+/// Returns data about each connected network peer as a json array of objects.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetPeerInfo {
+
+}
+
+/// List all manually banned IPs/Subnets.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListBanned {
+
+}
+
+/// Result of the JSON-RPC method `setnetworkactive`.
+///
+/// > setnetworkactive
+/// >
+/// > Disable/enable all p2p network activity.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SetNetworkactive(pub bool);
+
 
 // --- raw_transactions ---
 
@@ -1771,6 +2089,51 @@ pub struct AnalyzePsbtInputsItemMissing {
     #[serde(rename = "witnessscript")]
     pub witness_script: Option<String>,
 }
+
+/// Result of the JSON-RPC method `combinepsbt`.
+///
+/// > combinepsbt
+/// >
+/// > Combine multiple partially signed Bitcoin transactions into one transaction.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CombinePsbt(pub String);
+
+/// Result of the JSON-RPC method `combinerawtransaction`.
+///
+/// > combinerawtransaction
+/// >
+/// > Combine multiple partially signed transactions into one transaction.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CombineRawTransaction(pub String);
+
+/// Result of the JSON-RPC method `converttopsbt`.
+///
+/// > converttopsbt
+/// >
+/// > Converts a network serialized transaction to a PSBT. This should be used only with createrawtransaction and fundrawtransaction
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ConvertToPsbt(pub String);
+
+/// Result of the JSON-RPC method `createpsbt`.
+///
+/// > createpsbt
+/// >
+/// > Creates a transaction in the Partially Signed Transaction format.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CreatePsbt(pub String);
+
+/// Result of the JSON-RPC method `createrawtransaction`.
+///
+/// > createrawtransaction
+/// >
+/// > Create a transaction spending the given inputs and creating new outputs.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CreateRawTransaction(pub String);
 
 /// Return a JSON object representing the serialized, base64-encoded partially signed Bitcoin transaction.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -2302,7 +2665,7 @@ pub struct FundRawTransaction {
 /// If verbosity is 2, returns a JSON Object with information about the transaction, including fee and prevout information.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransaction {
+pub struct GetRawTransactionVerboseOne {
     /// the block hash
     #[serde(rename = "blockhash")]
     pub block_hash: Option<String>,
@@ -2327,12 +2690,68 @@ pub struct GetRawTransaction {
     pub txid: String,
     /// The version
     pub version: i64,
-    pub vin: Vec<GetRawTransactionVinItem>,
-    pub vout: Vec<GetRawTransactionVoutItem>,
+    pub vin: Vec<GetRawTransactionVerboseOneVinItem>,
+    pub vout: Vec<GetRawTransactionVerboseOneVoutItem>,
     /// The virtual transaction size (differs from size for witness transactions)
     pub vsize: i64,
     /// The transaction's weight (between vsize*4-3 and vsize*4)
     pub weight: i64,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawTransactionVerboseOneVinItem {
+    /// The coinbase value (only if coinbase transaction)
+    #[serde(rename = "coinbase")]
+    pub coin_base: Option<String>,
+    /// The script (if not coinbase transaction)
+    #[serde(rename = "scriptSig")]
+    pub script_sig: Option<GetRawTransactionVerboseOneVinItemScriptSig>,
+    /// The script sequence number
+    pub sequence: i64,
+    /// The transaction id (if not coinbase transaction)
+    pub txid: Option<String>,
+    #[serde(rename = "txinwitness")]
+    pub tx_inwitness: Option<Vec<String>>,
+    /// The output number (if not coinbase transaction)
+    pub vout: Option<i64>,
+}
+
+/// The script (if not coinbase transaction)
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawTransactionVerboseOneVinItemScriptSig {
+    /// Disassembly of the signature script
+    pub asm: String,
+    /// The raw signature script bytes, hex-encoded
+    pub hex: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawTransactionVerboseOneVoutItem {
+    /// index
+    pub n: i64,
+    #[serde(rename = "scriptPubKey")]
+    pub script_pub_key: GetRawTransactionVerboseOneVoutItemScriptPubKey,
+    /// The value in BTC
+    pub value: f64,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawTransactionVerboseOneVoutItemScriptPubKey {
+    /// The Bitcoin address (only if a well-defined address exists)
+    pub address: Option<String>,
+    /// Disassembly of the output script
+    pub asm: String,
+    /// Inferred descriptor for the output
+    pub desc: String,
+    /// The raw output script bytes, hex-encoded
+    pub hex: String,
+    /// The type (one of: nonstandard, anchor, pubkey, pubkeyhash, scripthash, multisig, nulldata, witness_v0_scripthash, witness_v0_keyhash, witness_v1_taproot, witness_unknown)
+    #[serde(rename = "type")]
+    pub type_: String,
 }
 
 /// By default, this call only returns a transaction if it is in the mempool. If -txindex is enabled
@@ -2347,38 +2766,38 @@ pub struct GetRawTransaction {
 /// If verbosity is 2, returns a JSON Object with information about the transaction, including fee and prevout information.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVerbose {
+pub struct GetRawTransactionVerboseTwo {
     /// transaction fee in BTC, omitted if block undo data is not available
     pub fee: Option<i64>,
-    pub vin: Vec<GetRawTransactionVerboseVinItem>,
+    pub vin: Vec<GetRawTransactionVerboseTwoVinItem>,
 }
 
 /// utxo being spent
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVerboseVinItem {
+pub struct GetRawTransactionVerboseTwoVinItem {
     /// The previous output, omitted if block undo data is not available
     #[serde(rename = "prevout")]
-    pub prev_out: Option<GetRawTransactionVerboseVinItemPrevout>,
+    pub prev_out: Option<GetRawTransactionVerboseTwoVinItemPrevout>,
 }
 
 /// The previous output, omitted if block undo data is not available
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVerboseVinItemPrevout {
+pub struct GetRawTransactionVerboseTwoVinItemPrevout {
     /// Coinbase or not
     pub generated: bool,
     /// The height of the prevout
     pub height: i64,
     #[serde(rename = "scriptPubKey")]
-    pub script_pub_key: GetRawTransactionVerboseVinItemPrevoutScriptPubKey,
+    pub script_pub_key: GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey,
     /// The value in BTC
     pub value: f64,
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVerboseVinItemPrevoutScriptPubKey {
+pub struct GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey {
     /// The Bitcoin address (only if a well-defined address exists)
     pub address: Option<String>,
     /// Disassembly of the output script
@@ -2392,61 +2811,37 @@ pub struct GetRawTransactionVerboseVinItemPrevoutScriptPubKey {
     pub type_: String,
 }
 
+/// By default, this call only returns a transaction if it is in the mempool. If -txindex is enabled
+/// and no blockhash argument is passed, it will return the transaction if it is in the mempool or any block.
+/// If a blockhash argument is passed, it will return the transaction if
+/// the specified block is available and the transaction is in that block.
+/// 
+/// Hint: Use gettransaction for wallet transactions.
+/// 
+/// If verbosity is 0 or omitted, returns the serialized transaction as a hex-encoded string.
+/// If verbosity is 1, returns a JSON Object with information about the transaction.
+/// If verbosity is 2, returns a JSON Object with information about the transaction, including fee and prevout information.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVinItem {
-    /// The coinbase value (only if coinbase transaction)
-    #[serde(rename = "coinbase")]
-    pub coin_base: Option<String>,
-    /// The script (if not coinbase transaction)
-    #[serde(rename = "scriptSig")]
-    pub script_sig: Option<GetRawTransactionVinItemScriptSig>,
-    /// The script sequence number
-    pub sequence: i64,
-    /// The transaction id (if not coinbase transaction)
-    pub txid: Option<String>,
-    #[serde(rename = "txinwitness")]
-    pub tx_inwitness: Option<Vec<String>>,
-    /// The output number (if not coinbase transaction)
-    pub vout: Option<i64>,
-}
+pub struct GetRawTransactionVerboseZero(pub String);
 
-/// The script (if not coinbase transaction)
+/// Result of the JSON-RPC method `joinpsbts`.
+///
+/// > joinpsbts
+/// >
+/// > Joins multiple distinct PSBTs with different inputs and outputs into one PSBT with inputs and outputs from all of the PSBTs
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVinItemScriptSig {
-    /// Disassembly of the signature script
-    pub asm: String,
-    /// The raw signature script bytes, hex-encoded
-    pub hex: String,
-}
+pub struct JoinPsbts(pub String);
 
+/// Result of the JSON-RPC method `sendrawtransaction`.
+///
+/// > sendrawtransaction
+/// >
+/// > Submit a raw transaction (serialized, hex-encoded) to local node and network.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVoutItem {
-    /// index
-    pub n: i64,
-    #[serde(rename = "scriptPubKey")]
-    pub script_pub_key: GetRawTransactionVoutItemScriptPubKey,
-    /// The value in BTC
-    pub value: f64,
-}
-
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetRawTransactionVoutItemScriptPubKey {
-    /// The Bitcoin address (only if a well-defined address exists)
-    pub address: Option<String>,
-    /// Disassembly of the output script
-    pub asm: String,
-    /// Inferred descriptor for the output
-    pub desc: String,
-    /// The raw output script bytes, hex-encoded
-    pub hex: String,
-    /// The type (one of: nonstandard, anchor, pubkey, pubkeyhash, scripthash, multisig, nulldata, witness_v0_scripthash, witness_v0_keyhash, witness_v1_taproot, witness_unknown)
-    #[serde(rename = "type")]
-    pub type_: String,
-}
+pub struct SendRawTransaction(pub String);
 
 /// Sign inputs for raw transaction (serialized, hex-encoded).
 /// The second argument is an array of base58-encoded private
@@ -2528,6 +2923,32 @@ pub struct SubmitPackageTxResultsFees {
     #[serde(rename = "effective-includes")]
     pub effective_includes: Option<Vec<String>>,
 }
+
+/// Returns result of mempool acceptance tests indicating if raw transaction(s) (serialized, hex-encoded) would be accepted by mempool.
+/// 
+/// If multiple transactions are passed in, parents must come before children and package policies apply: the transactions cannot conflict with any mempool transactions or each other.
+/// 
+/// If one transaction fails, other transactions may not be fully validated (the 'allowed' key will be blank).
+/// 
+/// The maximum number of transactions allowed is 25.
+/// 
+/// This checks if transactions violate the consensus or policy rules.
+/// 
+/// See sendrawtransaction call.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct TestMempoolaccept {
+
+}
+
+/// Result of the JSON-RPC method `utxoupdatepsbt`.
+///
+/// > utxoupdatepsbt
+/// >
+/// > Updates all segwit inputs and outputs in a PSBT with data from output descriptors, the UTXO set, txindex, or the mempool.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct UtxoUpdatePsbt(pub String);
 
 
 // --- signer ---
@@ -2631,20 +3052,29 @@ pub struct GetDescriptorInfo {
 /// > Returns the status of one or all available indices currently running in the node.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetindexInfo(
+pub struct GetIndexInfo(
     /// Map entries
-    pub std::collections::BTreeMap<String, GetindexInfoEntry>,
+    pub std::collections::BTreeMap<String, GetIndexInfoEntry>,
 );
 
 /// The name of the index
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetindexInfoEntry {
+pub struct GetIndexInfoEntry {
     /// The block height to which the index is synced
     pub best_block_height: i64,
     /// Whether the index is synced or not
     pub synced: bool,
 }
+
+/// Result of the JSON-RPC method `signmessagewithprivkey`.
+///
+/// > signmessagewithprivkey
+/// >
+/// > Sign a message with the private key of an address
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SignMessagewithPrivKey(pub String);
 
 /// Return information about the given bitcoin address.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -2671,6 +3101,15 @@ pub struct ValidateAddress {
     pub witness_version: Option<i64>,
 }
 
+/// Result of the JSON-RPC method `verifymessage`.
+///
+/// > verifymessage
+/// >
+/// > Verify a signed message.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct VerifyMessage(pub bool);
+
 
 // --- wallet ---
 
@@ -2683,6 +3122,15 @@ pub struct ValidateAddress {
 //! This file is auto-generated from OpenRPC specification.
 
 use serde::{Deserialize, Serialize};
+
+/// Result of the JSON-RPC method `abortrescan`.
+///
+/// > abortrescan
+/// >
+/// > Stops current wallet rescan triggered by an RPC call, e.g. by a rescanblockchain call.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct AbortRescan(pub bool);
 
 /// Bumps the fee of a transaction T, replacing it with a new transaction B.
 /// A transaction with the given txid must be in the wallet.
@@ -2728,6 +3176,15 @@ pub struct CreateWalletDescriptor {
     #[serde(rename = "descs")]
     pub desc_s: Vec<String>,
 }
+
+/// Result of the JSON-RPC method `encryptwallet`.
+///
+/// > encryptwallet
+/// >
+/// > Encrypts the wallet with 'passphrase'. This is for first time encryption.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct EncryptWallet(pub String);
 
 /// Return information about the given bitcoin address.
 /// Some of the information will only be present if the address is in the active wallet.
@@ -2819,6 +3276,15 @@ pub struct GetAddressesbyLabelEntry {
     pub purpose: String,
 }
 
+/// Result of the JSON-RPC method `getbalance`.
+///
+/// > getbalance
+/// >
+/// > Returns the total available balance.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetBalance(pub String);
+
 /// Returns an object with all balances in BTC.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
@@ -2854,6 +3320,49 @@ pub struct GetBalancesMine {
     /// (only present if avoid_reuse is set) balance from coins sent to addresses that were previously spent from (potentially privacy violating)
     pub used: Option<f64>,
 }
+
+/// List all BIP 32 HD keys in the wallet and which descriptors use them.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetHdKeys {
+
+}
+
+/// Result of the JSON-RPC method `getnewaddress`.
+///
+/// > getnewaddress
+/// >
+/// > Returns a new Bitcoin address for receiving payments.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetNewAddress(pub String);
+
+/// Result of the JSON-RPC method `getrawchangeaddress`.
+///
+/// > getrawchangeaddress
+/// >
+/// > Returns a new Bitcoin address, for receiving change.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawChangeAddress(pub String);
+
+/// Result of the JSON-RPC method `getreceivedbyaddress`.
+///
+/// > getreceivedbyaddress
+/// >
+/// > Returns the total amount received by the given address in transactions with at least minconf confirmations.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetReceivedbyAddress(pub String);
+
+/// Result of the JSON-RPC method `getreceivedbylabel`.
+///
+/// > getreceivedbylabel
+/// >
+/// > Returns the total amount received by addresses with <label> in transactions with at least [minconf] confirmations.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetReceivedbyLabel(pub String);
 
 /// Get detailed information about in-wallet transaction <txid>
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -3032,6 +3541,27 @@ pub struct GetWalletInfoScanning {
     pub progress: i64,
 }
 
+/// Import descriptors. This will trigger a rescan of the blockchain based on the earliest timestamp of all descriptors being imported. Requires a new wallet backup.
+/// When importing descriptors with multipath key expressions, if the multipath specifier contains exactly two elements, the descriptor produced from the second element will be imported as an internal descriptor.
+/// 
+/// Note: This call can take over an hour to complete if using an early timestamp; during that time, other rpc calls
+/// may report that the imported keys, addresses or scripts exist but related transactions are still missing.
+/// The rescan is significantly faster if block filters are available (using startup option "-blockfilterindex=1").
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ImportDescriptors {
+
+}
+
+/// Lists groups of addresses which have had their common ownership
+/// made public by common use as inputs or as the resulting change
+/// in past transactions
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListAddressGroupings {
+
+}
+
 /// List all descriptors present in a wallet.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
@@ -3060,6 +3590,35 @@ pub struct ListDescriptorsDescriptorsItem {
     /// The creation time of the descriptor
     #[serde(rename = "timestamp")]
     pub times_tamp: i64,
+}
+
+/// Returns the list of all labels, or labels that are assigned to addresses with a specific purpose.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListLabels {
+
+}
+
+/// Returns list of temporarily unspendable outputs.
+/// See the lockunspent call to lock and unlock transactions for spending.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListLockUnspent {
+
+}
+
+/// List balances by receiving address.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListReceivedbyAddress {
+
+}
+
+/// List received transactions by label.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListReceivedbyLabel {
+
 }
 
 /// Get all transactions in blocks since block [blockhash], or all transactions if omitted.
@@ -3152,6 +3711,24 @@ pub struct ListSinceBlockTransactionsItem {
     pub wtxid: String,
 }
 
+/// If a label name is provided, this will return only incoming transactions paying to addresses with the specified label.
+/// 
+/// Returns up to 'count' most recent transactions skipping the first 'from' transactions.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListTransactions {
+
+}
+
+/// Returns array of unspent transaction outputs
+/// with between minconf and maxconf (inclusive) confirmations.
+/// Optionally filter to only include txouts paid to specified addresses.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListUnspent {
+
+}
+
 /// Returns a list of wallets in the wallet directory.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
@@ -3168,6 +3745,14 @@ pub struct ListWalletDirWalletsItem {
     pub warnings: Option<Vec<String>>,
 }
 
+/// Returns a list of currently loaded wallets.
+/// For full information on the wallet, use "getwalletinfo"
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ListWallets {
+
+}
+
 /// Loads a wallet from a wallet file or directory.
 /// Note that all wallet command-line options used when starting bitcoind will be
 /// applied to the new wallet.
@@ -3179,6 +3764,15 @@ pub struct LoadWallet {
     /// Warning messages, if any, related to loading the wallet.
     pub warnings: Option<Vec<String>>,
 }
+
+/// Result of the JSON-RPC method `lockunspent`.
+///
+/// > lockunspent
+/// >
+/// > Updates list of temporarily unspendable outputs.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct LockUnspent(pub bool);
 
 /// Migrate the wallet to a descriptor wallet.
 /// A new wallet backup will need to be made.
@@ -3292,10 +3886,28 @@ pub struct SendAll {
 /// Requires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct SendToAddress {
+pub struct SendToAddressVerboseOne {
     /// The transaction fee reason.
     pub fee_reason: String,
     /// The transaction id.
+    pub txid: String,
+}
+
+/// Send an amount to a given address.
+/// Requires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SendToAddressVerboseZero(pub String);
+
+/// Send multiple times. Amounts are double-precision floating point numbers.
+/// Requires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SendmanyVerboseOne {
+    /// The transaction fee reason.
+    pub fee_reason: String,
+    /// The transaction id for the send. Only 1 transaction is created regardless of
+/// the number of addresses.
     pub txid: String,
 }
 
@@ -3303,13 +3915,16 @@ pub struct SendToAddress {
 /// Requires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct Sendmany {
-    /// The transaction fee reason.
-    pub fee_reason: String,
-    /// The transaction id for the send. Only 1 transaction is created regardless of
-/// the number of addresses.
-    pub txid: String,
-}
+pub struct SendmanyVerboseZero(pub String);
+
+/// Result of the JSON-RPC method `settxfee`.
+///
+/// > settxfee
+/// >
+/// > (DEPRECATED) Set the transaction fee rate in BTC/kvB for this wallet. Overrides the global -paytxfee command line parameter.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SetTxFee(pub bool);
 
 /// Change the state of the given wallet flag for a wallet.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -3322,6 +3937,15 @@ pub struct SetWalletflag {
     /// Any warnings associated with the change
     pub warnings: Option<String>,
 }
+
+/// Result of the JSON-RPC method `signmessage`.
+///
+/// > signmessage
+/// >
+/// > Sign a message with the private key of an address
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SignMessage(pub String);
 
 /// Sign inputs for raw transaction (serialized, hex-encoded).
 /// The second optional argument (may be null) is an array of previous transaction outputs that

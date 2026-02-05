@@ -379,6 +379,62 @@ pub branch_length: i64,
 pub status: ChainTipsStatus,
 }
 
+/// Result of JSON-RPC method `combinepsbt`.
+///
+/// > combinepsbt ["psbt",...]
+/// >
+/// > Combine multiple partially signed Bitcoin transactions into one transaction.
+/// > Implements the Combiner role.
+/// >
+/// > Arguments:
+/// > 1. "txs"                   (string) A json array of base64 strings of partially signed transactions
+/// >     [
+/// >       "psbt"             (string) A base64 string of a PSBT
+/// >       ,...
+/// >     ]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CombinePsbt(
+/// The base64-encoded partially signed transaction.
+pub String,
+);
+
+/// Result of JSON-RPC method `combinerawtransaction`.
+///
+/// > combinerawtransaction ["hexstring",...]
+/// >
+/// > Combine multiple partially signed transactions into one transaction.
+/// > The combined transaction may be another partially signed transaction or a
+/// > fully signed transaction.
+/// > Arguments:
+/// > 1. "txs"         (string) A json array of hex strings of partially signed transactions
+/// >     [
+/// >       "hexstring"     (string) A transaction hash
+/// >       ,...
+/// >     ]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CombineRawTransaction(
+/// The hex-encoded raw transaction with signature(s).
+pub String,
+);
+
+/// Result of JSON-RPC method `converttopsbt`.
+///
+/// > converttopsbt "hexstring" ( permitsigdata iswitness )
+/// >
+/// > Converts a network serialized transaction to a PSBT. This should be used only with createrawtransaction and fundrawtransaction
+/// > createpsbt and walletcreatefundedpsbt should be used for new applications.
+/// >
+/// > Arguments:
+/// > 1. "hexstring"              (string, required) The hex string of a raw transaction
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct ConvertToPsbt(
+/// The resulting raw transaction (base64-encoded string).
+pub String,
+);
+
 /// Result of JSON-RPC method `createmultisig`.
 ///
 /// > createmultisig nrequired ["key",...] ( "address_type" )
@@ -406,6 +462,49 @@ pub descriptor: String,
 /// Any warnings resulting from the creation of this multisig.
 pub warnings: Option<Vec<String>>,
 }
+
+/// Result of JSON-RPC method `createpsbt`.
+///
+/// > createpsbt [{"txid":"id","vout":n},...] [{"address":amount},{"data":"hex"},...] ( locktime ) ( replaceable )
+/// >
+/// > Creates a transaction in the Partially Signed Transaction format.
+/// > Implements the Creator role.
+/// >
+/// > Arguments:
+/// > 1. "inputs"                (array, required) A json array of json objects
+/// >      [
+/// >        {
+/// >          "txid":"id",      (string, required) The transaction id
+/// >          "vout":n,         (numeric, required) The output number
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CreatePsbt(
+/// The resulting raw transaction (base64-encoded string).
+pub String,
+);
+
+/// Result of JSON-RPC method `createrawtransaction`.
+///
+/// > createrawtransaction [{"txid":"id","vout":n},...] [{"address":amount},{"data":"hex"},...] ( locktime ) ( replaceable )
+/// >
+/// > Create a transaction spending the given inputs and creating new outputs.
+/// > Outputs can be addresses or data.
+/// > Returns hex-encoded raw transaction.
+/// > Note that the transaction's inputs are not signed, and
+/// > it is not stored in the wallet or transmitted to the network.
+/// >
+/// > Arguments:
+/// > 1. "inputs"                (array, required) A json array of json objects
+/// >      [
+/// >        {
+/// >          "txid":"id",      (string, required) The transaction id
+/// >          "vout":n,         (numeric, required) The output number
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct CreateRawTransaction(
+/// hex string of the transaction.
+pub String,
+);
 
 /// Result of the JSON-RPC method `createwallet`.
 ///
@@ -478,6 +577,29 @@ pub outputs: Vec<PsbtOutput>,
 /// The transaction fee paid if all UTXOs slots in the PSBT have been filled.
 pub fee: Option<f64>,
 }
+
+/// Result of JSON-RPC method `decoderawtransaction`.
+///
+/// > decoderawtransaction "hexstring" ( iswitness )
+/// >
+/// > Return a JSON object representing the serialized, hex-encoded transaction.
+/// >
+/// > Arguments:
+/// > 1. "hexstring"      (string, required) The transaction hex string
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct DecodeRawTransaction(pub RawTransaction);
+/// Result of JSON-RPC method `decodescript`.
+///
+/// > decodescript "hexstring"
+/// >
+/// > Decode a hex-encoded script.
+/// >
+/// > Arguments:
+/// > 1. "hexstring"     (string) the hex encoded script
+// The docs on Core v0.17 appear to be way off what is actually returned.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
@@ -782,6 +904,56 @@ pub fee_rate: Option<f64>,
 pub errors: Option<Vec<String>>,
 /// Block number where estimate was found.
 pub blocks: u32,
+}
+
+/// Result of JSON-RPC method `finalizepsbt`.
+///
+/// > finalizepsbt "psbt" ( extract )
+/// > Finalize the inputs of a PSBT. If the transaction is fully signed, it will produce a
+/// > network serialized transaction which can be broadcast with sendrawtransaction. Otherwise a PSBT will be
+/// > created which has the final_scriptSig and final_scriptWitness fields filled for inputs that are complete.
+/// > Implements the Finalizer and Extractor roles.
+/// >
+/// > Arguments:
+/// > 1. "psbt"                 (string) A base64 string of a PSBT
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct FinalizePsbt {
+/// The base64-encoded partially signed transaction if not extracted.
+pub psbt: Option<String>,
+/// The hex-encoded network transaction if extracted.
+pub hex: Option<String>,
+/// If the transaction has a complete set of signatures.
+pub complete: bool,
+}
+
+/// Result of JSON-RPC method `fundrawtransaction`.
+///
+/// > fundrawtransaction "hexstring" ( options iswitness )
+/// >
+/// > Add inputs to a transaction until it has enough in value to meet its out value.
+/// > This will not modify existing inputs, and will add at most one change output to the outputs.
+/// > No existing outputs will be modified unless "subtractFeeFromOutputs" is specified.
+/// > Note that inputs which were signed may need to be resigned after completion since in/outputs have been added.
+/// > The inputs added will not be signed, use signrawtransaction for that.
+/// > Note that all existing inputs must have their previous output transaction be in the wallet.
+/// > Note that all inputs selected must be of standard form and P2SH scripts must be
+/// > in the wallet using importaddress or addmultisigaddress (to calculate fees).
+/// > You can see whether this is the case by checking the "solvable" field in the listunspent output.
+/// > Only pay-to-pubkey, multisig, and P2SH versions thereof are currently supported for watch-only
+/// >
+/// > Arguments:
+/// > 1. "hexstring"           (string, required) The hex string of the raw transaction
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct FundRawTransaction {
+/// The resulting raw transaction (hex-encoded string).
+pub hex: String,
+/// Fee in BTC the resulting transaction pays.
+pub fee: f64,
+/// The position of the added change output, or -1.
+#[serde(rename = "changepos")]
+pub change_position: i64,
 }
 
 /// Result of JSON-RPC method `generate`.
@@ -2107,6 +2279,76 @@ pub struct GetRawMempoolVerbose(pub BTreeMap<String, MempoolEntry>);
 /// Mempool data. Part of `getmempoolentry`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+
+/// Result of JSON-RPC method `getrawtransaction` with verbose set to `false`.
+///
+/// > getrawtransaction "txid" ( verbose "blockhash" )
+/// >
+/// > NOTE: By default this function only works for mempool transactions. If the -txindex option is
+/// > enabled, it also works for blockchain transactions. If the block which contains the transaction
+/// > is known, its hash can be provided even for nodes without -txindex. Note that if a blockhash is
+/// > provided, only that block will be searched and if the transaction is in the mempool or other
+/// > blocks, or if this node does not have the given block available, the transaction will not be found.
+/// > DEPRECATED: for now, it also works for transactions with unspent outputs.
+/// >
+/// > Return the raw transaction data.
+/// >
+/// > If verbose is 'true', returns an Object with information about 'txid'.
+/// > If verbose is 'false' or omitted, returns a string that is serialized, hex-encoded data for 'txid'.
+/// >
+/// > Arguments:
+/// > 1. "txid"      (string, required) The transaction id
+/// > 2. verbose     (bool, optional, default=false) If false, return a string, otherwise return a json object
+/// > 3. "blockhash" (string, optional) The block in which to look for the transaction
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawTransaction(
+/// The serialized, hex-encoded data for 'txid'.
+pub String,
+);
+
+/// Result of JSON-RPC method `getrawtransaction` with verbose set to `true`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct GetRawTransactionVerbose {
+/// Whether specified block is in the active chain or not (only present with explicit "blockhash" argument).
+pub in_active_chain: Option<bool>,
+/// The serialized, hex-encoded data for 'txid'.
+pub hex: String,
+/// The transaction id (same as provided).
+pub txid: String,
+/// The transaction hash (differs from txid for witness transactions).
+pub hash: String,
+/// The serialized transaction size.
+pub size: u64,
+/// The virtual transaction size (differs from size for witness transactions).
+pub vsize: u64,
+/// The transaction's weight (between vsize*4-3 and vsize*4).
+pub weight: u64,
+/// The version.
+pub version: i32,
+/// The lock time.
+#[serde(rename = "locktime")]
+pub lock_time: u32,
+/// Array of transaction inputs.
+#[serde(rename = "vin")]
+pub inputs: Vec<RawTransactionInput>,
+/// Array of transaction outputs.
+#[serde(rename = "vout")]
+pub outputs: Vec<RawTransactionOutput>,
+// The following fields are all `None` if the transaction is in the mempool.
+/// The block hash.
+#[serde(rename = "blockhash")]
+pub block_hash: Option<String>,
+/// The confirmations.
+pub confirmations: Option<u64>,
+/// The transaction time in seconds since epoch (Jan 1 1970 GMT).
+#[serde(rename = "time")]
+pub transaction_time: Option<u64>,
+/// The block time in seconds since epoch (Jan 1 1970 GMT).
+#[serde(rename = "blocktime")]
+pub block_time: Option<u64>,
+}
 
 pub struct GetReceivedByAddress(pub f64); // Amount in BTC.
 /// Result of the JSON-RPC method `gettransaction`.
@@ -3704,6 +3946,24 @@ pub txid: String,
 pub fee_reason: String,
 }
 
+/// Result of JSON-RPC method `sendrawtransaction`.
+///
+/// > sendrawtransaction "hexstring" ( allowhighfees )
+/// >
+/// > Submits raw transaction (serialized, hex-encoded) to local node and network.
+/// >
+/// > Also see createrawtransaction and signrawtransactionwithkey calls.
+/// >
+/// > Arguments:
+/// > 1. hexstring        (string, required) The hex string of the raw transaction
+/// > 2. allowhighfees    (boolean, optional, default=false) Allow high fees
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SendRawTransaction(
+/// The transaction hash in hex.
+pub String,
+);
+
 /// Result of the JSON-RPC method `sendtoaddress`.
 ///
 /// > sendtoaddress "address" amount ( "comment" "comment_to" subtractfeefromamount replaceable conf_target "estimate_mode")
@@ -3767,6 +4027,23 @@ pub flag_state: bool,
 pub warnings: Option<String>,
 }
 
+/// A script verification error. Part of `signrawtransaction`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SignFail {
+/// The hash of the referenced, previous transaction.
+pub txid: String,
+/// The index of the output to spent and used as input.
+pub vout: u64,
+/// The hex-encoded signature script.
+#[serde(rename = "scriptSig")]
+pub script_sig: String,
+/// Script sequence number.
+pub sequence: u32,
+/// Verification or signing error related to the input.
+pub error: String,
+}
+
 pub struct SignMessage(
 /// The signature of the message encoded in base 64.
 pub String,
@@ -3798,6 +4075,30 @@ pub struct SignMessageWithPrivKey(pub String);
 /// > 1. "address"                    (string, required) The bitcoin address to validate
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+
+/// Result of JSON-RPC method `signrawtransaction`.
+///
+/// > signrawtransaction "hexstring" ( [{"txid":"id","vout":n,"scriptPubKey":"hex","redeemScript":"hex"},...] ["privatekey1",...] sighashtype )
+/// >
+/// > DEPRECATED. Sign inputs for raw transaction (serialized, hex-encoded).
+/// > The second optional argument (may be null) is an array of previous transaction outputs that
+/// > this transaction depends on but may not yet be in the block chain.
+/// > The third optional argument (may be null) is an array of base58-encoded private
+/// > keys that, if given, will be the only keys used to sign the transaction.
+/// >
+/// >
+/// > Arguments:
+/// > 1. "hexstring"     (string, required) The transaction hex string
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct SignRawTransaction {
+/// The hex-encoded raw transaction with signature(s).
+pub hex: String,
+/// If the transaction has a complete set of signatures.
+pub complete: bool,
+/// Script verification errors (if there are any).
+pub errors: Option<Vec<SignFail>>,
+}
 
 /// An signer item. Part of `enumeratesigners`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]

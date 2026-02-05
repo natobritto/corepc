@@ -13,7 +13,11 @@ import re
 from pathlib import Path
 from typing import Set, List, Tuple, Optional
 
-MOD_RE = re.compile(r'^(?P<attrs>(?:\s*#\[[^\]]+\]\s*)*)\s*mod\s+(?P<name>[a-zA-Z_]\w*)\s*;\s*$')
+MOD_RE = re.compile(
+    r'^(?P<attrs>(?:\s*#\[[^\]]+\]\s*)*)\s*'
+    r'(?P<vis>pub(?:\([^)]*\))?\s+)?'
+    r'mod\s+(?P<name>[a-zA-Z_]\w*)\s*;\s*$'
+)
 
 
 def find_mod_file(base: Path, name: str) -> Path:
@@ -43,11 +47,12 @@ def flatten_file(path: Path, seen: Set[Path]) -> str:
             continue
 
         attrs = m.group("attrs") or ""
+        vis = m.group("vis") or ""
         name = m.group("name")
         mod_path = find_mod_file(base_dir, name)
 
         out_lines.append(attrs)
-        out_lines.append(f"mod {name} {{\n")
+        out_lines.append(f"{vis}mod {name} {{\n")
         body = flatten_file(mod_path, seen)
         indented = "".join(("    " + l if l.strip() else l) for l in body.splitlines(True))
         out_lines.append(indented)
@@ -92,7 +97,7 @@ def extract_structs_from_source(text: str) -> str:
             continue
         
         # Skip mod into { ... } and mod error { ... } blocks entirely
-        if re.match(r'^\s*mod\s+(into|error)\s*\{', stripped):
+        if re.match(r'^\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+(into|error)\s*\{', stripped):
             skip_depth = stripped.count('{') - stripped.count('}')
             i += 1
             continue
@@ -122,7 +127,7 @@ def extract_structs_from_source(text: str) -> str:
             continue
         
         # Skip module declarations wrapper lines: `mod name {`
-        if re.match(r'^\s*mod\s+\w+\s*\{\s*$', stripped):
+        if re.match(r'^\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+\w+\s*\{\s*$', stripped):
             i += 1
             continue
         
@@ -220,6 +225,9 @@ def collect_all_versions(types_src: Path, latest_only: bool = True, show_version
             
             for line in structs_text.splitlines(keepends=True):
                 stripped = line.strip()
+                if 'CreateRawTransaction' in stripped:
+                    print("Debug: Found CreateRawTransaction line")
+                    pass 
                 
                 # Check if this starts a new struct
                 match = re.match(r'^pub struct (\w+)', line)
