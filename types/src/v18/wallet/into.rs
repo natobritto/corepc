@@ -299,7 +299,7 @@ impl ListUnspentItem {
 
         let txid = self.txid.parse::<Txid>().map_err(E::Txid)?;
         let vout = crate::to_u32(self.vout, "vout")?;
-        let address = self.address.parse::<Address<_>>().map_err(E::Address)?;
+        let address = Some(self.address.parse::<Address<_>>().map_err(E::Address)?);
         let script_pubkey = ScriptBuf::from_hex(&self.script_pubkey).map_err(E::ScriptPubkey)?;
 
         let amount = Amount::from_btc(self.amount).map_err(E::Amount)?;
@@ -317,11 +317,16 @@ impl ListUnspentItem {
             amount,
             confirmations,
             redeem_script,
+            witness_script: None,     // v30 and later only.
             spendable: self.spendable,
             solvable: self.solvable,
+            reused: None,             // v30 and later only.
             descriptor: self.descriptor,
             safe: self.safe,
             parent_descriptors: None, // v24 and later only.
+            ancestor_count: None,     // v30 and later only.
+            ancestor_size: None,      // v30 and later only.
+            ancestor_fees: None,      // v30 and later only.
         })
     }
 }

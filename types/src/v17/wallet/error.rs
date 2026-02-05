@@ -555,6 +555,8 @@ pub enum ListUnspentItemError {
     Amount(ParseAmountError),
     /// Conversion of the `redeem_script` field failed.
     RedeemScript(hex::HexToBytesError),
+    /// Conversion of the `witness_script` field failed.
+    WitnessScript(hex::HexToBytesError),
     /// Conversion of the `fee` field failed.
     Fee(ParseAmountError),
 }
@@ -570,6 +572,8 @@ impl fmt::Display for ListUnspentItemError {
             Self::Amount(ref e) => write_err!(f, "conversion of the `amount` field failed"; e),
             Self::RedeemScript(ref e) =>
                 write_err!(f, "conversion of the `redeem_script` field failed"; e),
+            Self::WitnessScript(ref e) =>
+                write_err!(f, "conversion of the `witness_script` field failed"; e),
             Self::Fee(ref e) => write_err!(f, "conversion of the `fee` field failed"; e),
         }
     }
@@ -585,6 +589,7 @@ impl std::error::Error for ListUnspentItemError {
             Self::ScriptPubkey(ref e) => Some(e),
             Self::Amount(ref e) => Some(e),
             Self::RedeemScript(ref e) => Some(e),
+            Self::WitnessScript(ref e) => Some(e),
             Self::Fee(ref e) => Some(e),
         }
     }

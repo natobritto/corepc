@@ -103,3 +103,20 @@ pub struct ListWalletDirWallet {
     /// Warning messages, if any, related to loading the wallet.
     pub warnings: Option<Vec<String>>,
 }
+
+/// Result of the JSON-RPC method `restorewallet`.
+///
+/// > restorewallet "wallet_name" "backup_file" ( load_on_startup )
+/// >
+/// > Restore and loads a wallet from backup.
+///
+/// In v30, `warnings` is an array instead of a single optional string.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct RestoreWallet {
+    /// The wallet name if restored successfully.
+    pub name: String,
+    /// Warning messages, if any, related to restoring the wallet.
+    #[serde(default)]
+    pub warnings: Vec<String>,
+}

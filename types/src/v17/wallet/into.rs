@@ -387,7 +387,7 @@ impl GetTransactionDetail {
     pub fn into_model(self) -> Result<model::GetTransactionDetail, GetTransactionDetailError> {
         use GetTransactionDetailError as E;
 
-        let address = self.address.parse::<Address<_>>().map_err(E::Address)?;
+        let address = Some(self.address.parse::<Address<_>>().map_err(E::Address)?);
         let amount = SignedAmount::from_btc(self.amount).map_err(E::Amount)?;
         let fee = self.fee.map(|fee| SignedAmount::from_btc(fee).map_err(E::Fee)).transpose()?;
 
@@ -657,7 +657,7 @@ impl ListUnspentItem {
 
         let txid = self.txid.parse::<Txid>().map_err(E::Txid)?;
         let vout = crate::to_u32(self.vout, "vout")?;
-        let address = self.address.parse::<Address<_>>().map_err(E::Address)?;
+        let address = Some(self.address.parse::<Address<_>>().map_err(E::Address)?);
         let script_pubkey = ScriptBuf::from_hex(&self.script_pubkey).map_err(E::ScriptPubkey)?;
 
         let amount = Amount::from_btc(self.amount).map_err(E::Amount)?;
@@ -676,11 +676,16 @@ impl ListUnspentItem {
             amount,
             confirmations,
             redeem_script,
+            witness_script: None,     // v30 and later only.
             spendable: self.spendable,
             solvable: self.solvable,
+            reused: None,             // v30 and later only.
             descriptor: None,
             safe: self.safe,
             parent_descriptors: None, // v24 and later only.
+            ancestor_count: None,     // v30 and later only.
+            ancestor_size: None,      // v30 and later only.
+            ancestor_fees: None,      // v30 and later only.
         })
     }
 }
@@ -701,7 +706,7 @@ impl RescanBlockchain {
     /// Converts version specific type to a version nonspecific, more strongly typed type.
     pub fn into_model(self) -> Result<model::RescanBlockchain, NumericError> {
         let start_height = crate::to_u32(self.start_height, "start_height")?;
-        let stop_height = crate::to_u32(self.stop_height, "stop_height")?;
+        let stop_height = self.stop_height.map(|h| crate::to_u32(h, "stop_height")).transpose()?;
 
         Ok(model::RescanBlockchain { start_height, stop_height })
     }

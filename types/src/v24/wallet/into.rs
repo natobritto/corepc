@@ -80,7 +80,10 @@ impl GetTransactionDetail {
     pub fn into_model(self) -> Result<model::GetTransactionDetail, GetTransactionDetailError> {
         use GetTransactionDetailError as E;
 
-        let address = self.address.parse::<Address<_>>().map_err(E::Address)?;
+        let address = self
+            .address
+            .map(|a| a.parse::<Address<_>>().map_err(E::Address))
+            .transpose()?;
         let amount = SignedAmount::from_btc(self.amount).map_err(E::Amount)?;
         let fee = self.fee.map(|fee| SignedAmount::from_btc(fee).map_err(E::Fee)).transpose()?;
 
@@ -214,7 +217,10 @@ impl ListUnspentItem {
 
         let txid = self.txid.parse::<Txid>().map_err(E::Txid)?;
         let vout = crate::to_u32(self.vout, "vout")?;
-        let address = self.address.parse::<Address<_>>().map_err(E::Address)?;
+        let address = self
+            .address
+            .map(|a| a.parse::<Address<_>>().map_err(E::Address))
+            .transpose()?;
         let script_pubkey = ScriptBuf::from_hex(&self.script_pubkey).map_err(E::ScriptPubkey)?;
         let label = self.label.unwrap_or_default();
 
@@ -224,6 +230,13 @@ impl ListUnspentItem {
             .redeem_script
             .map(|hex| ScriptBuf::from_hex(&hex).map_err(E::RedeemScript))
             .transpose()?;
+        let witness_script = self
+            .witness_script
+            .map(|hex| ScriptBuf::from_hex(&hex).map_err(E::WitnessScript))
+            .transpose()?;
+        let ancestor_count = self.ancestorcount.map(|v| crate::to_u32(v, "ancestorcount")).transpose()?;
+        let ancestor_size = self.ancestorsize.map(|v| crate::to_u32(v, "ancestorsize")).transpose()?;
+        let ancestor_fees = self.ancestorfees.map(|v| Amount::from_sat(v as u64));
 
         Ok(model::ListUnspentItem {
             txid,
@@ -234,11 +247,16 @@ impl ListUnspentItem {
             amount,
             confirmations,
             redeem_script,
+            witness_script,
             spendable: self.spendable,
             solvable: self.solvable,
+            reused: self.reused,
             descriptor: self.descriptor,
             safe: self.safe,
             parent_descriptors: self.parent_descriptors,
+            ancestor_count,
+            ancestor_size,
+            ancestor_fees,
         })
     }
 }

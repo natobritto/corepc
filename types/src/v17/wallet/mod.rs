@@ -890,8 +890,8 @@ pub struct LockUnspent(pub bool);
 pub struct RescanBlockchain {
     /// The block height where the rescan has started.
     pub start_height: i64,
-    /// The height of the last rescanned block.
-    pub stop_height: i64,
+    /// The height of the last rescanned block. May be null in rare cases if there was a reorg.
+    pub stop_height: Option<i64>,
 }
 
 /// Result of the JSON-RPC method `sendmany`.
