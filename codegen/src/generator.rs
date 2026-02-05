@@ -18,6 +18,8 @@ pub struct GeneratorConfig {
     /// Whether to generate into_model conversions (reserved for future use).
     #[allow(dead_code)]
     pub generate_model_conversions: bool,
+    /// Whether to generate wrapper types for simple return values (string, bool, number).
+    pub generate_simple_wrappers: bool,
 }
 
 impl Default for GeneratorConfig {
@@ -25,6 +27,7 @@ impl Default for GeneratorConfig {
         Self {
             deny_unknown_fields: true,
             generate_model_conversions: false, // Model types require manual work
+            generate_simple_wrappers: true,    // Generate AbortRescan(bool), etc.
         }
     }
 }
@@ -58,7 +61,7 @@ impl Generator {
 
     /// Generate a Rust type for a method's result.
     pub fn generate_method_result(&mut self, method: &Method) -> Option<GeneratedType> {
-        // Skip methods that return null or simple types
+        // Skip methods that return null
         if method.returns_null() {
             return None;
         }
@@ -66,8 +69,11 @@ impl Generator {
         let schema = &method.result.schema;
         let struct_name = method.struct_name();
 
-        // For simple types, we don't generate a struct
+        // For simple types, generate a wrapper struct if configured
         if method.returns_simple_type() && !schema.is_dynamic_object() {
+            if self.config.generate_simple_wrappers {
+                return self.generate_simple_wrapper(method);
+            }
             return None;
         }
 
@@ -87,6 +93,91 @@ impl Generator {
         self.generate_struct_type(&struct_name, schema, Some(&method.description))
     }
 
+    /// Generate a simple wrapper type like `pub struct AbortRescan(pub bool);`
+    fn generate_simple_wrapper(&mut self, method: &Method) -> Option<GeneratedType> {
+        let struct_name = method.struct_name();
+        
+        if self.generated_names.contains(&struct_name) {
+            return None;
+        }
+        self.generated_names.insert(struct_name.clone());
+
+        let inner_type = match method.result.schema.type_.as_deref() {
+            Some("string") => "String",
+            Some("boolean") => "bool",
+            Some("number") | Some("integer") => "i64",
+            _ => return None,
+        };
+
+        let doc = format!(
+            "/// Result of the JSON-RPC method `{}`.\n///\n/// > {}\n/// >\n/// > {}",
+            method.name,
+            method.name,
+            method.summary.lines().collect::<Vec<_>>().join("\n/// > ")
+        );
+
+        let deny_unknown = if self.config.deny_unknown_fields {
+            "\n#[cfg_attr(feature = \"serde-deny-unknown-fields\", serde(deny_unknown_fields))]"
+        } else {
+            ""
+        };
+
+        let definition = format!(
+            r#"{doc}
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]{deny_unknown}
+pub struct {struct_name}(pub {inner_type});
+"#,
+        );
+
+        Some(GeneratedType {
+            definition,
+            nested_types: vec![],
+            name: struct_name,
+        })
+    }
+
+    /// Generate a simple wrapper type from a schema (used for oneOf/anyOf variants).
+    fn generate_simple_wrapper_from_schema(
+        &mut self,
+        name: &str,
+        schema: &Schema,
+        doc: Option<&str>,
+    ) -> Option<GeneratedType> {
+        if self.generated_names.contains(name) {
+            return None;
+        }
+        self.generated_names.insert(name.to_string());
+
+        let inner_type = match schema.type_.as_deref() {
+            Some("string") => "String",
+            Some("boolean") => "bool",
+            Some("number") | Some("integer") => "i64",
+            _ => return None,
+        };
+
+        let doc_str = doc
+            .map(|d| format!("/// {}\n", escape_doc(d)))
+            .unwrap_or_default();
+
+        let deny_unknown = if self.config.deny_unknown_fields {
+            "\n#[cfg_attr(feature = \"serde-deny-unknown-fields\", serde(deny_unknown_fields))]"
+        } else {
+            ""
+        };
+
+        let definition = format!(
+            r#"{doc_str}#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]{deny_unknown}
+pub struct {name}(pub {inner_type});
+"#,
+        );
+
+        Some(GeneratedType {
+            definition,
+            nested_types: vec![],
+            name: name.to_string(),
+        })
+    }
+
     /// Generate types for oneOf/anyOf schemas.
     /// For Bitcoin Core, these typically represent different verbosity levels.
     fn generate_one_of_type(
@@ -95,24 +186,20 @@ impl Generator {
         variants: &[Schema],
         doc: Option<&str>,
     ) -> Option<GeneratedType> {
-        // Find all object variants (these are the interesting ones)
-        let object_variants: Vec<_> = variants
-            .iter()
-            .filter(|s| s.type_.as_deref() == Some("object") && s.properties.is_some())
-            .collect();
-
-        // If there's only one object variant, generate just that struct
-        if object_variants.len() == 1 {
-            return self.generate_struct_type(name, object_variants[0], doc);
+        if variants.len() == 1 {
+            if variants[0].type_.as_deref() == Some("object") {
+                return self.generate_struct_type(name, &variants[0], doc);
+            }
+            return self.generate_simple_wrapper_from_schema(name, &variants[0], doc);
         }
 
-        // If there are multiple object variants (e.g., different verbosity levels),
-        // generate a struct for each with a suffix
+        // If there are multiple variants (e.g., different verbosity levels),
+        // generate a struct or wrapper for each with a suffix
         let mut all_types = Vec::new();
         let mut all_names = Vec::new();
 
-        for (i, variant) in object_variants.iter().enumerate() {
-            let variant_name = if object_variants.len() > 1 {
+        for (i, variant) in variants.iter().enumerate() {
+            let variant_name = if variants.len() > 1 {
                 // Try to use x-bitcoin-condition for naming
                 let suffix = variant
                     .description
@@ -131,16 +218,29 @@ impl Generator {
                         }
                     })
                     .unwrap_or_else(|| match i {
-                        0 => "",
-                        1 => "Verbose",
-                        _ => "VerboseAlt",
+                        0 => "VerboseZero",
+                        1 => "VerboseOne",
+                        2 => "VerboseTwo",
+                        3 => "VerboseThree",
+                        4 => "VerboseFour",
+                        _ => "---------ERROR_badtype",
                     });
                 format!("{}{}", name, suffix)
             } else {
                 name.to_string()
             };
 
-            if let Some(generated) = self.generate_struct_type(&variant_name, variant, doc) {
+            if variant_name.contains("GetRawTran") {
+                println!("Debug: Generating variant '{}' for method '{}'", variant_name, name);
+            }
+
+            let generated = if variant.type_.as_deref() == Some("object") {
+                self.generate_struct_type(&variant_name, variant, doc)
+            } else {
+                self.generate_simple_wrapper_from_schema(&variant_name, variant, doc)
+            };
+
+            if let Some(generated) = generated {
                 all_names.push(generated.name.clone());
                 all_types.push(generated);
             }
@@ -182,7 +282,12 @@ impl Generator {
         let value_type = match &schema.additional_properties {
             Some(AdditionalProperties::Schema(inner_schema)) => {
                 // Generate the inner type
-                let inner_name = format!("{}Entry", struct_name);
+                // Avoid double Entry suffix (e.g., GetRawAddrmanEntryEntry)
+                let inner_name = if struct_name.ends_with("Entry") {
+                    format!("{}Item", struct_name)
+                } else {
+                    format!("{}Entry", struct_name)
+                };
                 self.generate_inner_type(&inner_name, inner_schema)
             }
             _ => ("serde_json::Value".to_string(), vec![]),
@@ -235,7 +340,8 @@ pub struct {struct_name}(
         }
         self.generated_names.insert(name.to_string());
 
-        let properties = schema.properties.as_ref()?;
+        let empty_props = std::collections::HashMap::new();
+        let properties = schema.properties.as_ref().unwrap_or(&empty_props);
         let required = schema.required.as_ref().map(|v| v.iter().collect::<HashSet<_>>());
 
         let mut fields = Vec::new();
@@ -564,7 +670,7 @@ fn split_into_snake_case(name: &str) -> String {
         "unconfirmed", "unlock", "unspent", "used", "utxos", "utxo", "values",
         "value", "verification", "versions", "version", "vsize", "wallets",
         "wallet", "warnings", "watch", "weights", "weight", "witness", "work",
-        "written",
+        "written", "out", "stats", "spending",  "accept"
     ];
 
     let mut result = Vec::new();

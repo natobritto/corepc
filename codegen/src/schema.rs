@@ -210,12 +210,12 @@ fn method_name_to_pascal_case(name: &str) -> String {
         "analyze", "ancestors", "api", "backup", "balance", "balances", "banned",
         "best", "bip125", "blockchain", "block", "blocks", "bump", "chain",
         "change", "clear", "combine", "connection", "control", "convert", "count",
-        "create", "decode", "delete", "derive", "descendants", "descriptor",
+        "create", "decode", "delete", "deployment", "derive", "descendants", "descriptor",
         "descriptors", "difficulty", "dir", "disconnect", "display", "dump",
         "echo", "encrypt", "entry", "enumerate", "estimate", "fee", "filter",
         "finalize", "from", "fund", "funded", "generate", "get", "group",
         "groupings", "hash", "hashps", "hd", "header", "height", "help", "hex",
-        "import", "info", "ipc", "join", "json", "key", "keys", "label", "labels",
+        "import", "index", "info", "ipc", "join", "json", "key", "keys", "label", "labels",
         "list", "load", "loaded", "lock", "logging", "mempool", "memory", "message",
         "mining", "multisig", "net", "network", "new", "node", "orphan", "outset",
         "out", "package", "passphrase", "peer", "peers", "pool", "precious",
@@ -226,7 +226,7 @@ fn method_name_to_pascal_case(name: &str) -> String {
         "stop", "submit", "test", "tips", "to", "totals", "transactions",
         "transaction", "txout", "txs", "tx", "unload", "unlock", "unspent",
         "update", "upgrade", "uptime", "utxo", "validate", "verify", "wait",
-        "wallet", "wallets", "zmq", "for",
+        "wallet", "wallets", "zmq", "for", "activity", "descriptor",
     ];
 
     let mut result = String::new();
