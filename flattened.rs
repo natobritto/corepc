@@ -124,36 +124,6 @@ pub struct AddressInformation {
 pub purpose: AddressPurpose,
 }
 
-/// Represents an input in a PSBT operation. Part of `analyzepsbt`.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct AnalyzeDecodePsbtInputsItem {
-/// Whether a UTXO is provided.
-pub has_utxo: bool,
-/// Whether the input is finalized.
-pub is_final: bool,
-/// Things that are missing that are required to complete this input.
-pub missing: Option<AnalyzeDecodePsbtInputsItemMissing>,
-/// Role of the next person that this input needs to go to.
-pub next: Option<String>,
-}
-
-/// Represents missing elements required to complete an input. Part of `analyzepsbt`.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct AnalyzeDecodePsbtInputsItemMissing {
-/// Public key ID, hash160 of the public key, of a public key whose BIP 32 derivation path is missing.
-pub pubkeys: Option<Vec<String>>,
-/// Public key ID, hash160 of the public key, of a public key whose signature is missing.
-pub signatures: Option<Vec<String>>,
-/// Hash160 of the redeemScript that is missing.
-#[serde(rename = "redeemscript")]
-pub redeem_script: Option<String>,
-/// SHA256 of the witnessScript that is missing.
-#[serde(rename = "witnessscript")]
-pub witness_script: Option<String>,
-}
-
 /// Result of JSON-RPC method `analyzepsbt`.
 ///
 /// analyzepsbt "psbt"
@@ -166,7 +136,7 @@ pub witness_script: Option<String>,
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct AnalyzePsbt {
 /// Array of input objects.
-pub inputs: Vec<AnalyzeDecodePsbtInputsItem>,
+pub inputs: Vec<AnalyzePsbtInput>,
 /// Estimated vsize of the final signed transaction.
 pub estimated_vsize: Option<u32>,
 /// Estimated feerate of the final signed transaction in BTC/kB.
@@ -178,6 +148,36 @@ pub estimated_fee_rate: Option<f64>,
 pub fee: Option<f64>,
 /// Role of the next person that this psbt needs to go to.
 pub next: String,
+}
+
+/// Represents an input in a PSBT operation. Part of `analyzepsbt`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct AnalyzePsbtInput {
+/// Whether a UTXO is provided.
+pub has_utxo: bool,
+/// Whether the input is finalized.
+pub is_final: bool,
+/// Things that are missing that are required to complete this input.
+pub missing: Option<AnalyzePsbtInputMissing>,
+/// Role of the next person that this input needs to go to.
+pub next: Option<String>,
+}
+
+/// Represents missing elements required to complete an input. Part of `analyzepsbt`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct AnalyzePsbtInputMissing {
+/// Public key ID, hash160 of the public key, of a public key whose BIP 32 derivation path is missing.
+pub pubkeys: Option<Vec<String>>,
+/// Public key ID, hash160 of the public key, of a public key whose signature is missing.
+pub signatures: Option<Vec<String>>,
+/// Hash160 of the redeemScript that is missing.
+#[serde(rename = "redeemscript")]
+pub redeem_script: Option<String>,
+/// SHA256 of the witnessScript that is missing.
+#[serde(rename = "witnessscript")]
+pub witness_script: Option<String>,
 }
 
 pub struct Banned {
@@ -561,9 +561,9 @@ pub descriptors: Vec<String>,
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct DecodePsbt {
 /// The decoded network-serialized unsigned transaction.
-pub tx: DecodePsbtTx,
+pub tx: RawTransaction,
 /// The global xpubs.
-pub global_xpubs: Vec<DecodePsbtGlobalXpubsItem>,
+pub global_xpubs: Vec<GlobalXpub>,
 /// The PSBT version number. Not to be confused with the unsigned transaction version.
 pub psbt_version: u32,
 /// The global proprietary map.
@@ -571,105 +571,11 @@ pub proprietary: Option<Vec<Proprietary>>,
 /// The unknown global fields.
 pub unknown: Option<HashMap<String, String>>,
 /// Array of transaction inputs.
-pub inputs: Vec<DecodePsbtInputsItem>,
+pub inputs: Vec<PsbtInput>,
 /// Array of transaction outputs.
-pub outputs: Vec<DecodePsbtOutputsItem>,
+pub outputs: Vec<PsbtOutput>,
 /// The transaction fee paid if all UTXOs slots in the PSBT have been filled.
 pub fee: Option<f64>,
-}
-
-/// An item from the global xpubs list. Part of `decodepsbt`.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct DecodePsbtGlobalXpubsItem {
-/// The extended public key this path corresponds to.
-pub xpub: String,
-/// The fingerprint of the master key.
-pub master_fingerprint: String,
-/// The path.
-pub path: String,
-}
-
-/// An input in a partially signed Bitcoin transaction. Part of `decodepsbt`.
-///
-/// TODO: Update model once Musig is supported in rust-bitcoin.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct DecodePsbtInputsItem {
-/// Decoded network transaction for non-witness UTXOs.
-pub non_witness_utxo: Option<RawTransaction>,
-/// Transaction output for witness UTXOs.
-pub witness_utxo: Option<WitnessUtxo>,
-/// The public key and signature that corresponds to it.
-pub partial_signatures: Option<HashMap<String, String>>,
-/// The sighash type to be used.
-pub sighash: Option<String>,
-/// The redeem script.
-pub redeem_script: Option<PsbtScript>,
-/// The witness script.
-pub witness_script: Option<PsbtScript>,
-/// The public key with the derivation path as the value.
-pub bip32_derivs: Option<Vec<Bip32Deriv>>,
-/// The final scriptsig.
-#[serde(rename = "final_scriptsig")]
-pub final_script_sig: Option<ScriptSig>,
-/// Hex-encoded witness data (if any).
-#[serde(rename = "final_scriptwitness")]
-pub final_script_witness: Option<Vec<String>>,
-/// The hash and preimage that corresponds to it.
-pub ripemd160_preimages: Option<HashMap<String, String>>,
-/// The hash and preimage that corresponds to it.
-pub sha256_preimages: Option<HashMap<String, String>>,
-/// The hash and preimage that corresponds to it.
-pub hash160_preimages: Option<HashMap<String, String>>,
-/// The hash and preimage that corresponds to it.
-pub hash256_preimages: Option<HashMap<String, String>>,
-/// Hex-encoded signature for the Taproot key path spend.
-pub taproot_key_path_sig: Option<String>,
-/// The signature for the pubkey and leaf hash combination.
-pub taproot_script_path_sigs: Option<Vec<TaprootScriptPathSig>>,
-/// Scripts and control blocks for script path spends.
-pub taproot_scripts: Option<Vec<TaprootScript>>,
-/// BIP-32 derivation paths for keys.
-pub taproot_bip32_derivs: Option<Vec<TaprootBip32Deriv>>,
-/// The hex-encoded Taproot x-only internal key.
-pub taproot_internal_key: Option<String>,
-/// The hex-encoded Taproot merkle root.
-pub taproot_merkle_root: Option<String>,
-/// MuSig2 participant public keys.
-pub musig2_participant_pubkeys: Option<Vec<Musig2ParticipantPubkeys>>,
-/// MuSig2 public nonces.
-pub musig2_pubnonces: Option<Vec<Musig2Pubnonce>>,
-/// MuSig2 partial signatures.
-pub musig2_partial_sigs: Option<Vec<Musig2PartialSig>>,
-/// The input proprietary map.
-pub proprietary: Option<Vec<Proprietary>>,
-/// The unknown input fields.
-pub unknown: Option<HashMap<String, String>>,
-}
-
-/// An output in a partially signed Bitcoin transaction. Part of `decodepsbt`.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct DecodePsbtOutputsItem {
-/// The redeem script.
-pub redeem_script: Option<PsbtScript>,
-/// The witness script.
-pub witness_script: Option<PsbtScript>,
-/// The public key with the derivation path as the value.
-pub bip32_derivs: Option<Vec<Bip32Deriv>>,
-/// The hex-encoded Taproot x-only internal key.
-pub taproot_internal_key: Option<String>,
-/// The tuples that make up the Taproot tree, in depth first search order.
-pub taproot_tree: Option<Vec<TaprootLeaf>>,
-/// BIP32 derivation paths for keys.
-pub taproot_bip32_derivs: Option<Vec<TaprootBip32Deriv>>,
-/// MuSig2 participant public keys.
-pub musig2_participant_pubkeys: Option<Vec<Musig2ParticipantPubkeys>>,
-/// The output proprietary map.
-pub proprietary: Option<Vec<Proprietary>>,
-/// The unknown global fields.
-pub unknown: Option<HashMap<String, String>>,
 }
 
 /// Result of JSON-RPC method `decoderawtransaction`.
@@ -3659,6 +3565,88 @@ pub original_fee: f64,
 pub fee: f64,
 /// Errors encountered during processing (may be empty).
 pub errors: Vec<String>,
+}
+
+/// An input in a partially signed Bitcoin transaction. Part of `decodepsbt`.
+///
+/// TODO: Update model once Musig is supported in rust-bitcoin.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct PsbtInput {
+/// Decoded network transaction for non-witness UTXOs.
+pub non_witness_utxo: Option<RawTransaction>,
+/// Transaction output for witness UTXOs.
+pub witness_utxo: Option<WitnessUtxo>,
+/// The public key and signature that corresponds to it.
+pub partial_signatures: Option<HashMap<String, String>>,
+/// The sighash type to be used.
+pub sighash: Option<String>,
+/// The redeem script.
+pub redeem_script: Option<PsbtScript>,
+/// The witness script.
+pub witness_script: Option<PsbtScript>,
+/// The public key with the derivation path as the value.
+pub bip32_derivs: Option<Vec<Bip32Deriv>>,
+/// The final scriptsig.
+#[serde(rename = "final_scriptsig")]
+pub final_script_sig: Option<ScriptSig>,
+/// Hex-encoded witness data (if any).
+#[serde(rename = "final_scriptwitness")]
+pub final_script_witness: Option<Vec<String>>,
+/// The hash and preimage that corresponds to it.
+pub ripemd160_preimages: Option<HashMap<String, String>>,
+/// The hash and preimage that corresponds to it.
+pub sha256_preimages: Option<HashMap<String, String>>,
+/// The hash and preimage that corresponds to it.
+pub hash160_preimages: Option<HashMap<String, String>>,
+/// The hash and preimage that corresponds to it.
+pub hash256_preimages: Option<HashMap<String, String>>,
+/// Hex-encoded signature for the Taproot key path spend.
+pub taproot_key_path_sig: Option<String>,
+/// The signature for the pubkey and leaf hash combination.
+pub taproot_script_path_sigs: Option<Vec<TaprootScriptPathSig>>,
+/// Scripts and control blocks for script path spends.
+pub taproot_scripts: Option<Vec<TaprootScript>>,
+/// BIP-32 derivation paths for keys.
+pub taproot_bip32_derivs: Option<Vec<TaprootBip32Deriv>>,
+/// The hex-encoded Taproot x-only internal key.
+pub taproot_internal_key: Option<String>,
+/// The hex-encoded Taproot merkle root.
+pub taproot_merkle_root: Option<String>,
+/// MuSig2 participant public keys.
+pub musig2_participant_pubkeys: Option<Vec<Musig2ParticipantPubkeys>>,
+/// MuSig2 public nonces.
+pub musig2_pubnonces: Option<Vec<Musig2Pubnonce>>,
+/// MuSig2 partial signatures.
+pub musig2_partial_sigs: Option<Vec<Musig2PartialSig>>,
+/// The input proprietary map.
+pub proprietary: Option<Vec<Proprietary>>,
+/// The unknown input fields.
+pub unknown: Option<HashMap<String, String>>,
+}
+
+/// An output in a partially signed Bitcoin transaction. Part of `decodepsbt`.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
+pub struct PsbtOutput {
+/// The redeem script.
+pub redeem_script: Option<PsbtScript>,
+/// The witness script.
+pub witness_script: Option<PsbtScript>,
+/// The public key with the derivation path as the value.
+pub bip32_derivs: Option<Vec<Bip32Deriv>>,
+/// The hex-encoded Taproot x-only internal key.
+pub taproot_internal_key: Option<String>,
+/// The tuples that make up the Taproot tree, in depth first search order.
+pub taproot_tree: Option<Vec<TaprootLeaf>>,
+/// BIP32 derivation paths for keys.
+pub taproot_bip32_derivs: Option<Vec<TaprootBip32Deriv>>,
+/// MuSig2 participant public keys.
+pub musig2_participant_pubkeys: Option<Vec<Musig2ParticipantPubkeys>>,
+/// The output proprietary map.
+pub proprietary: Option<Vec<Proprietary>>,
+/// The unknown global fields.
+pub unknown: Option<HashMap<String, String>>,
 }
 
 /// An entry in the address manager table. Part of `getrawaddrman`.
