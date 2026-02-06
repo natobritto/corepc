@@ -266,8 +266,8 @@ pub use self::{
     mining::GetMiningInfo,
     network::GetNetworkInfo,
     raw_transactions::{
-        SubmitPackage, SubmitPackageError, SubmitPackageTxResult, SubmitPackageTxResultError,
-        SubmitPackageTxResultFees, SubmitPackageTxResultFeesError,
+        SubmitPackage, SubmitPackageError, SubmitPackageTxResults, SubmitPackageTxResultsError,
+        SubmitPackageTxResultssFees, SubmitPackageTxResultssFeesError,
     },
     wallet::{
         CreateWalletDescriptor, GetAddressInfo, GetAddressInfoEmbedded, GetHdKeys, GetHdKeysError,
@@ -341,7 +341,7 @@ pub use crate::{
         ControlBlocksError, DecodePsbt, DecodePsbtError, GetMempoolAncestors,
         GetMempoolAncestorsVerbose, GetMempoolDescendants, GetMempoolDescendantsVerbose,
         GetMempoolEntry, GetMempoolInfo, GetRawMempoolVerbose, GetTransactionDetail,
-        GetTxSpendingPrevout, GetTxSpendingPrevoutError, GetTxSpendingPrevoutItem, GlobalXpub,
+        GetTxSpendingPrevOut, GetTxSpendingPrevOutError, GetTxSpendingPrevOutItem, GlobalXpub,
         GlobalXpubError, ListUnspent, ListUnspentItem, MempoolEntry, MigrateWallet, Proprietary,
         PsbtInput, PsbtInputError, PsbtOutput, PsbtOutputError, SendAll, SendAllError,
         SimulateRawTransaction, TaprootBip32Deriv, TaprootBip32DerivsError, TaprootLeaf,

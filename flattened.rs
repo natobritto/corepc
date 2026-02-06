@@ -2585,12 +2585,12 @@ pub unclaimed_rewards: f64,
 /// > 1. outputs                 (json array, required) The transaction outputs that we want to check, and within each, the txid (string) vout (numeric).
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetTxSpendingPrevout(pub Vec<GetTxSpendingPrevoutItem>);
+pub struct GetTxSpendingPrevOut(pub Vec<GetTxSpendingPrevOutItem>);
 /// A transaction item. Part of `gettxspendingprevout`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 
-pub struct GetTxSpendingPrevoutItem {
+pub struct GetTxSpendingPrevOutItem {
 /// The transaction id of the checked output
 pub txid: String,
 /// The vout value of the checked output
@@ -4200,7 +4200,7 @@ pub struct SubmitPackage {
 pub package_msg: String,
 /// Transaction results keyed by wtxid.
 #[serde(rename = "tx-results")]
-pub tx_results: BTreeMap<String, SubmitPackageTxResult>,
+pub tx_results: BTreeMap<String, SubmitPackageTxResults>,
 /// List of txids of replaced transactions.
 #[serde(rename = "replaced-transactions")]
 pub replaced_transactions: Vec<String>,
@@ -4209,7 +4209,7 @@ pub replaced_transactions: Vec<String>,
 /// The per-transaction result. Part of `submitpackage`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct SubmitPackageTxResult {
+pub struct SubmitPackageTxResults {
 /// The transaction id.
 pub txid: String,
 /// The wtxid of a different transaction with the same txid but different witness found in the mempool.
@@ -4220,7 +4220,7 @@ pub other_wtxid: Option<String>,
 /// Sigops-adjusted virtual transaction size.
 pub vsize: Option<i64>,
 /// Transaction fees.
-pub fees: Option<SubmitPackageTxResultFees>,
+pub fees: Option<SubmitPackageTxResultssFees>,
 /// The transaction error string, if it was rejected by the mempool.
 pub error: Option<String>,
 }
@@ -4228,7 +4228,7 @@ pub error: Option<String>,
 /// The fees included in the per-transaction result. Part of `submitpackage`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct SubmitPackageTxResultFees {
+pub struct SubmitPackageTxResultssFees {
 /// Transaction fee.
 #[serde(rename = "base")]
 pub base_fee: f64,

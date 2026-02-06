@@ -39,7 +39,7 @@ pub const METHODS: &[Method] = &[
     Method::new_modelled("gettxout", "GetTxOut", "get_tx_out"),
     Method::new_string("gettxoutproof", "get_tx_out_proof"),
     Method::new_modelled("gettxoutsetinfo", "GetTxOutSetInfo", "get_tx_out_set_info"),
-    Method::new_modelled("gettxspendingprevout", "GetTxSpendingPrevout", "get_tx_spending_prevout"),
+    Method::new_modelled("gettxspendingprevout", "GetTxSpendingPrevOut", "get_tx_spending_prevout"),
     Method::new_nothing("importmempool", "import_mempool"),
     Method::new_modelled("loadtxoutset", "LoadTxOutSet", "load_tx_out_set"),
     Method::new_nothing("preciousblock", "precious_block"),

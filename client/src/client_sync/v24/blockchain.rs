@@ -17,7 +17,7 @@ macro_rules! impl_client_v24__get_tx_spending_prevout {
             pub fn get_tx_spending_prevout(
                 &self,
                 outputs: &[bitcoin::OutPoint],
-            ) -> Result<GetTxSpendingPrevout> {
+            ) -> Result<GetTxSpendingPrevOut> {
                 let json_outputs: Vec<_> = outputs.iter().map(|out| {
                     serde_json::json!({
                         "txid": out.txid.to_string(),

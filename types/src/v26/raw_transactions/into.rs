@@ -46,10 +46,10 @@ impl SubmitPackage {
     }
 }
 
-impl SubmitPackageTxResult {
+impl SubmitPackageTxResults {
     /// Converts version specific type to a version in-specific, more strongly typed type.
-    pub fn into_model(self) -> Result<model::SubmitPackageTxResult, SubmitPackageTxResultError> {
-        use SubmitPackageTxResultError as E;
+    pub fn into_model(self) -> Result<model::SubmitPackageTxResults, SubmitPackageTxResultsError> {
+        use SubmitPackageTxResultsError as E;
 
         let txid = self.txid.parse::<Txid>().map_err(E::Txid)?;
         let other_wtxid =
@@ -57,16 +57,16 @@ impl SubmitPackageTxResult {
         let vsize = self.vsize.map(|vsize| crate::to_u32(vsize, "vsize")).transpose()?;
         let fees = self.fees.map(|fees| fees.into_model().map_err(E::Fees)).transpose()?;
 
-        Ok(model::SubmitPackageTxResult { txid, other_wtxid, vsize, fees, error: self.error })
+        Ok(model::SubmitPackageTxResults { txid, other_wtxid, vsize, fees, error: self.error })
     }
 }
 
-impl SubmitPackageTxResultFees {
+impl SubmitPackageTxResultssFees {
     /// Converts version specific type to a version in-specific, more strongly typed type.
     pub fn into_model(
         self,
-    ) -> Result<model::SubmitPackageTxResultFees, SubmitPackageTxResultFeesError> {
-        use SubmitPackageTxResultFeesError as E;
+    ) -> Result<model::SubmitPackageTxResultssFees, SubmitPackageTxResultssFeesError> {
+        use SubmitPackageTxResultssFeesError as E;
 
         let base_fee = Amount::from_btc(self.base_fee).map_err(E::BaseFee)?;
         let effective_fee_rate = self
@@ -80,6 +80,6 @@ impl SubmitPackageTxResultFees {
             .map(|s| s.parse::<Wtxid>().map_err(E::EffectiveIncludes))
             .collect::<Result<Vec<_>, _>>()?;
 
-        Ok(model::SubmitPackageTxResultFees { base_fee, effective_fee_rate, effective_includes })
+        Ok(model::SubmitPackageTxResultssFees { base_fee, effective_fee_rate, effective_includes })
     }
 }

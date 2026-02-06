@@ -331,7 +331,7 @@ pub use crate::{
     v24::{
         GetMempoolAncestors, GetMempoolAncestorsVerbose, GetMempoolDescendants,
         GetMempoolDescendantsVerbose, GetMempoolEntry, GetRawMempoolVerbose, GetTransactionDetail,
-        GetTxSpendingPrevout, GetTxSpendingPrevoutError, GetTxSpendingPrevoutItem, ListUnspent,
+        GetTxSpendingPrevOut, GetTxSpendingPrevOutError, GetTxSpendingPrevOutItem, ListUnspent,
         ListUnspentItem, MempoolEntry, MigrateWallet, SendAll, SendAllError,
         SimulateRawTransaction,
     },
@@ -353,8 +353,8 @@ pub use crate::{
         CreateWalletDescriptor, GetAddressInfo, GetAddressInfoEmbedded, GetHdKeys, GetHdKeysError,
         GetNetworkInfo, GetRawAddrMan, GetTransaction, HdKey, HdKeyDescriptor, ListSinceBlock,
         ListSinceBlockError, ListTransactions, Logging, RawAddrManEntry, ScanTxOutSetStart,
-        ScanTxOutSetUnspent, SubmitPackage, SubmitPackageError, SubmitPackageTxResult,
-        SubmitPackageTxResultError, SubmitPackageTxResultFees, SubmitPackageTxResultFeesError,
+        ScanTxOutSetUnspent, SubmitPackage, SubmitPackageError, SubmitPackageTxResults,
+        SubmitPackageTxResultsError, SubmitPackageTxResultssFees, SubmitPackageTxResultssFeesError,
         TransactionItem, TransactionItemError,
     },
     v29::{

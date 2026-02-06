@@ -223,28 +223,79 @@ impl Method {
 fn method_name_to_pascal_case(name: &str) -> String {
     // Known word boundaries for Bitcoin Core RPC method names
     // Note: longer words should come before shorter ones with the same prefix
-    const KNOWN_WORDS: &[&str] = &[
-        "abandon", "abort", "add", "address", "addresses", "addrman", "all",
-        "analyze", "ancestors", "api", "backup", "balance", "balances", "banned",
-        "best", "bip125", "blockchain", "block", "blocks", "bump", "chain",
-        "change", "clear", "combine", "connection", "control", "convert", "count",
-        "create", "decode", "delete", "deployment", "derive", "descendants", "descriptor",
-        "descriptors", "difficulty", "dir", "disconnect", "display", "dump",
-        "echo", "encrypt", "entry", "enumerate", "estimate", "fee", "filter",
-        "finalize", "from", "fund", "funded", "generate", "get", "group",
-        "groupings", "hash", "hashps", "hd", "header", "height", "help", "hex",
-        "import", "index", "info", "ipc", "join", "json", "key", "keys", "label", "labels",
-        "list", "load", "loaded", "lock", "logging", "mempool", "memory", "message",
-        "mining", "multisig", "net", "network", "new", "node", "orphan", "outset",
-        "out", "package", "passphrase", "peer", "peers", "pool", "precious",
-        "prioritise", "prioritised", "priv", "process", "proof", "prune", "psbts",
-        "psbt", "raw", "received", "recipient", "rescan", "restore", "rpc",
-        "save", "scan", "script", "send", "set", "sign", "signer", "signers",
-        "simulate", "since", "smart", "spending", "spending", "stats", "status",
-        "stop", "submit", "test", "tips", "to", "totals", "transactions",
-        "transaction", "txout", "txs", "tx", "unload", "unlock", "unspent",
-        "update", "upgrade", "uptime", "utxo", "validate", "verify", "wait",
-        "wallet", "wallets", "zmq", "for", "activity", "descriptor",
+    // Use proper PascalCase for compound words to match existing codebase conventions:
+    // - TxOut (not Txout)
+    // - AddrMan (not Addrman)  
+    // - ChainStates (not Chainstates)
+    // - ChainTxStats (not ChainTxstats)
+    const KNOWN_WORDS: &[(&str, &str)] = &[
+        // (lowercase pattern, PascalCase output)
+        // Compound words with special casing - longer patterns first
+        ("txspendingprevout", "TxSpendingPrevOut"),
+        ("prevout", "PrevOut"),
+        ("uploadtarget", "Uploadtarget"),  // Match existing convention
+        ("txoutset", "TxOutSet"),
+        ("txoutproof", "TxOutProof"),
+        ("txout", "TxOut"),
+        ("txstats", "TxStats"),
+        ("addrman", "AddrMan"),
+        ("chainstates", "ChainStates"),
+        ("chaintxstats", "ChainTxStats"),
+        ("blockstats", "BlockStats"),
+        ("networkactive", "NetworkActive"),
+        ("mempoolaccept", "MempoolAccept"),
+        // Regular words (alphabetically sorted, longer forms before shorter)
+        ("abandon", "Abandon"), ("abort", "Abort"), ("accept", "Accept"),
+        ("activity", "Activity"), ("add", "Add"), ("address", "Address"),
+        ("addresses", "Addresses"), ("all", "All"), ("analyze", "Analyze"),
+        ("ancestors", "Ancestors"), ("api", "Api"), ("backup", "Backup"),
+        ("balance", "Balance"), ("balances", "Balances"), ("banned", "Banned"),
+        ("best", "Best"), ("bip125", "Bip125"), ("blockchain", "Blockchain"),
+        ("block", "Block"), ("blocks", "Blocks"), ("bump", "Bump"),
+        ("chain", "Chain"), ("change", "Change"), ("clear", "Clear"),
+        ("combine", "Combine"), ("connection", "Connection"), ("control", "Control"),
+        ("convert", "Convert"), ("count", "Count"), ("create", "Create"),
+        ("decode", "Decode"), ("delete", "Delete"), ("deployment", "Deployment"),
+        ("derive", "Derive"), ("descendants", "Descendants"), ("descriptor", "Descriptor"),
+        ("descriptors", "Descriptors"), ("difficulty", "Difficulty"), ("dir", "Dir"),
+        ("disconnect", "Disconnect"), ("display", "Display"), ("dump", "Dump"),
+        ("echo", "Echo"), ("encrypt", "Encrypt"), ("entry", "Entry"),
+        ("enumerate", "Enumerate"), ("estimate", "Estimate"), ("fee", "Fee"),
+        ("filter", "Filter"), ("finalize", "Finalize"), ("for", "For"),
+        ("from", "From"), ("fund", "Fund"), ("funded", "Funded"),
+        ("generate", "Generate"), ("get", "Get"), ("group", "Group"),
+        ("groupings", "Groupings"), ("hash", "Hash"), ("hashps", "Hashps"),
+        ("hd", "Hd"), ("header", "Header"), ("height", "Height"),
+        ("help", "Help"), ("hex", "Hex"), ("import", "Import"),
+        ("index", "Index"), ("info", "Info"), ("ipc", "Ipc"),
+        ("join", "Join"), ("json", "Json"), ("key", "Key"),
+        ("keys", "Keys"), ("label", "Label"), ("labels", "Labels"),
+        ("list", "List"), ("load", "Load"), ("loaded", "Loaded"),
+        ("lock", "Lock"), ("logging", "Logging"), ("mempool", "Mempool"),
+        ("memory", "Memory"), ("message", "Message"), ("mining", "Mining"),
+        ("msg", "Msg"), ("multisig", "Multisig"), ("net", "Net"),
+        ("network", "Network"), ("new", "New"), ("node", "Node"),
+        ("orphan", "Orphan"), ("out", "Out"), ("outset", "Outset"),
+        ("package", "Package"), ("passphrase", "Passphrase"), ("peer", "Peer"),
+        ("peers", "Peers"), ("pool", "Pool"), ("precious", "Precious"),
+        ("prioritise", "Prioritise"), ("prioritised", "Prioritised"), ("priv", "Priv"),
+        ("process", "Process"), ("proof", "Proof"), ("prune", "Prune"),
+        ("psbts", "Psbts"), ("psbt", "Psbt"), ("raw", "Raw"),
+        ("received", "Received"), ("recipient", "Recipient"), ("rescan", "Rescan"),
+        ("restore", "Restore"), ("rpc", "Rpc"), ("save", "Save"),
+        ("scan", "Scan"), ("script", "Script"), ("send", "Send"),
+        ("set", "Set"), ("sign", "Sign"), ("signer", "Signer"),
+        ("signers", "Signers"), ("simulate", "Simulate"), ("since", "Since"),
+        ("smart", "Smart"), ("spending", "Spending"), ("stats", "Stats"),
+        ("status", "Status"), ("stop", "Stop"), ("submit", "Submit"),
+        ("template", "Template"), ("test", "Test"), ("tips", "Tips"),
+        ("to", "To"), ("totals", "Totals"), ("transactions", "Transactions"),
+        ("transaction", "Transaction"), ("txs", "Txs"), ("tx", "Tx"),
+        ("unload", "Unload"), ("unlock", "Unlock"), ("unspent", "Unspent"),
+        ("update", "Update"), ("upgrade", "Upgrade"), ("uptime", "Uptime"),
+        ("utxo", "Utxo"), ("validate", "Validate"), ("verify", "Verify"),
+        ("wait", "Wait"), ("wallet", "Wallet"), ("wallets", "Wallets"),
+        ("with", "With"), ("zmq", "Zmq"),
     ];
 
     let mut result = String::new();
@@ -252,25 +303,23 @@ fn method_name_to_pascal_case(name: &str) -> String {
 
     while !remaining.is_empty() {
         // Find the longest matching word at the start
-        let mut best_match = None;
-        for word in KNOWN_WORDS {
-            if remaining.starts_with(word) {
+        let mut best_match: Option<(&str, &str)> = None;
+        for &(pattern, pascal) in KNOWN_WORDS {
+            if remaining.starts_with(pattern) {
                 match best_match {
-                    None => best_match = Some(*word),
-                    Some(current) if word.len() > current.len() => best_match = Some(*word),
+                    None => best_match = Some((pattern, pascal)),
+                    Some((current_pattern, _)) if pattern.len() > current_pattern.len() => {
+                        best_match = Some((pattern, pascal))
+                    }
                     _ => {}
                 }
             }
         }
 
-        if let Some(word) = best_match {
-            // Capitalize first letter of the word
-            let mut chars = word.chars();
-            if let Some(first) = chars.next() {
-                result.push(first.to_ascii_uppercase());
-                result.extend(chars);
-            }
-            remaining = remaining[word.len()..].to_string();
+        if let Some((pattern, pascal)) = best_match {
+            // Use the pre-defined PascalCase version
+            result.push_str(pascal);
+            remaining = remaining[pattern.len()..].to_string();
         } else {
             // No word match, take one character
             if let Some(c) = remaining.chars().next() {
@@ -300,9 +349,17 @@ mod tests {
         assert_eq!(method_name_to_pascal_case("getmempoolinfo"), "GetMempoolInfo");
         assert_eq!(method_name_to_pascal_case("createwallet"), "CreateWallet");
         assert_eq!(method_name_to_pascal_case("sendtoaddress"), "SendToAddress");
-        assert_eq!(method_name_to_pascal_case("dumptxoutset"), "DumpTxoutSet");
+        // Updated to match existing codebase conventions (TxOut, not Txout)
+        assert_eq!(method_name_to_pascal_case("dumptxoutset"), "DumpTxOutSet");
         assert_eq!(method_name_to_pascal_case("waitforblock"), "WaitForBlock");
-        assert_eq!(method_name_to_pascal_case("gettxout"), "GetTxout");
-        assert_eq!(method_name_to_pascal_case("scantxoutset"), "ScanTxoutSet");
+        assert_eq!(method_name_to_pascal_case("gettxout"), "GetTxOut");
+        assert_eq!(method_name_to_pascal_case("scantxoutset"), "ScanTxOutSet");
+        assert_eq!(method_name_to_pascal_case("getaddrmaninfo"), "GetAddrManInfo");
+        assert_eq!(method_name_to_pascal_case("getchainstates"), "GetChainStates");
+        assert_eq!(method_name_to_pascal_case("getchaintxstats"), "GetChainTxStats");
+        assert_eq!(method_name_to_pascal_case("getblockstats"), "GetBlockStats");
+        assert_eq!(method_name_to_pascal_case("testmempoolaccept"), "TestMempoolAccept");
+        assert_eq!(method_name_to_pascal_case("setnetworkactive"), "SetNetworkActive");
+        assert_eq!(method_name_to_pascal_case("gettxspendingprevout"), "GetTxSpendingPrevOut");
     }
 }

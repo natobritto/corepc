@@ -7,8 +7,8 @@ use bitcoin::{hex, OutPoint, Txid, Wtxid};
 use super::{
     GetMempoolAncestors, GetMempoolAncestorsVerbose, GetMempoolDescendants,
     GetMempoolDescendantsVerbose, GetMempoolEntry, GetMempoolInfo, GetMempoolInfoError,
-    GetRawMempoolVerbose, GetTxSpendingPrevout, GetTxSpendingPrevoutError,
-    GetTxSpendingPrevoutItem, MapMempoolEntryError, MempoolEntry, MempoolEntryError,
+    GetRawMempoolVerbose, GetTxSpendingPrevOut, GetTxSpendingPrevOutError,
+    GetTxSpendingPrevOutItem, MapMempoolEntryError, MempoolEntry, MempoolEntryError,
 };
 use crate::model;
 
@@ -159,25 +159,25 @@ impl GetMempoolInfo {
     }
 }
 
-impl GetTxSpendingPrevout {
+impl GetTxSpendingPrevOut {
     /// Converts version specific type to a version nonspecific, more strongly typed type.
-    pub fn into_model(self) -> Result<model::GetTxSpendingPrevout, GetTxSpendingPrevoutError> {
+    pub fn into_model(self) -> Result<model::GetTxSpendingPrevOut, GetTxSpendingPrevOutError> {
         let items =
             self.0.into_iter().map(|item| item.into_model()).collect::<Result<Vec<_>, _>>()?;
-        Ok(model::GetTxSpendingPrevout(items))
+        Ok(model::GetTxSpendingPrevOut(items))
     }
 }
 
-impl GetTxSpendingPrevoutItem {
+impl GetTxSpendingPrevOutItem {
     /// Converts version specific type to a version nonspecific, more strongly typed type.
-    pub fn into_model(self) -> Result<model::GetTxSpendingPrevoutItem, GetTxSpendingPrevoutError> {
-        use GetTxSpendingPrevoutError as E;
+    pub fn into_model(self) -> Result<model::GetTxSpendingPrevOutItem, GetTxSpendingPrevOutError> {
+        use GetTxSpendingPrevOutError as E;
 
         let txid = self.txid.parse::<Txid>().map_err(E::Txid)?;
         let outpoint = OutPoint { txid, vout: self.vout };
         let spending_txid =
             self.spending_txid.map(|id| id.parse::<Txid>().map_err(E::SpendingTxid)).transpose()?;
 
-        Ok(model::GetTxSpendingPrevoutItem { outpoint, spending_txid })
+        Ok(model::GetTxSpendingPrevOutItem { outpoint, spending_txid })
     }
 }

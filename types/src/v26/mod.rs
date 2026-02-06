@@ -269,8 +269,8 @@ pub use self::{
     network::{AddrManInfoNetwork, GetAddrManInfo, GetPeerInfo, PeerInfo},
     raw_transactions::{
         DescriptorProcessPsbt, DescriptorProcessPsbtError, SubmitPackage, SubmitPackageError,
-        SubmitPackageTxResult, SubmitPackageTxResultError, SubmitPackageTxResultFees,
-        SubmitPackageTxResultFeesError,
+        SubmitPackageTxResults, SubmitPackageTxResultsError, SubmitPackageTxResultssFees,
+        SubmitPackageTxResultssFeesError,
     },
     wallet::{
         CreateWallet, GetBalances, GetBalancesError, GetTransaction, GetTransactionError,
@@ -345,7 +345,7 @@ pub use crate::{
         ControlBlocksError, DecodePsbt, DecodePsbtError, GetMempoolAncestors,
         GetMempoolAncestorsVerbose, GetMempoolDescendants, GetMempoolDescendantsVerbose,
         GetMempoolEntry, GetMempoolInfo, GetRawMempoolVerbose, GetTransactionDetail,
-        GetTxSpendingPrevout, GetTxSpendingPrevoutError, GetTxSpendingPrevoutItem, GlobalXpub,
+        GetTxSpendingPrevOut, GetTxSpendingPrevOutError, GetTxSpendingPrevOutItem, GlobalXpub,
         GlobalXpubError, ListSinceBlock, ListSinceBlockError, ListTransactions, ListUnspent,
         ListUnspentItem, MempoolEntry, MigrateWallet, Proprietary, PsbtInput, PsbtInputError,
         PsbtOutput, PsbtOutputError, SendAll, SendAllError, SimulateRawTransaction,

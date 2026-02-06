@@ -1,5 +1,0 @@
-  in spec:
- pub struct DecodePsbt {   pub tx: DecodePsbtTx,
-
-but DecodePsbtTx{} is empty when RawTransaction in repo
-codegen has some weird "additionalProperties": true that ommits the thing?

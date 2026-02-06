@@ -868,11 +868,11 @@ pub struct GetTxOutSetInfoUnspendables {
 
 /// Models the result of JSON-RPC method `gettxspendingprevout`.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-pub struct GetTxSpendingPrevout(pub Vec<GetTxSpendingPrevoutItem>);
+pub struct GetTxSpendingPrevOut(pub Vec<GetTxSpendingPrevOutItem>);
 
 /// A transaction item. Part of `gettxspendingprevout`.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-pub struct GetTxSpendingPrevoutItem {
+pub struct GetTxSpendingPrevOutItem {
     /// The outpoint containing the transaction id and vout value of the checked output.
     pub outpoint: OutPoint,
     /// The transaction id of the mempool transaction spending this output (omitted if unspent).

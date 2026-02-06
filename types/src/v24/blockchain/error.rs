@@ -7,14 +7,14 @@ use bitcoin::hex;
 use crate::error::write_err;
 
 #[derive(Debug)]
-pub enum GetTxSpendingPrevoutError {
+pub enum GetTxSpendingPrevOutError {
     /// Conversion of the `outpoint` field failed.
     Txid(hex::HexToArrayError),
     /// Conversion of the `spending_txid` field failed.
     SpendingTxid(hex::HexToArrayError),
 }
 
-impl fmt::Display for GetTxSpendingPrevoutError {
+impl fmt::Display for GetTxSpendingPrevOutError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Self::Txid(ref e) => write_err!(f, "conversion of the `outpoint` field failed"; e),
@@ -25,7 +25,7 @@ impl fmt::Display for GetTxSpendingPrevoutError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for GetTxSpendingPrevoutError {
+impl std::error::Error for GetTxSpendingPrevOutError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match *self {
             Self::Txid(ref e) => Some(e),

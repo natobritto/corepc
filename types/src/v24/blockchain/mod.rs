@@ -11,7 +11,7 @@ use alloc::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
-pub use self::error::GetTxSpendingPrevoutError;
+pub use self::error::GetTxSpendingPrevOutError;
 pub use super::{GetMempoolInfoError, MapMempoolEntryError, MempoolEntryError, MempoolEntryFees};
 
 /// Result of JSON-RPC method `getmempoolancestors` with verbose set to `false`.
@@ -170,12 +170,12 @@ pub struct GetMempoolInfo {
 /// > 1. outputs                 (json array, required) The transaction outputs that we want to check, and within each, the txid (string) vout (numeric).
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetTxSpendingPrevout(pub Vec<GetTxSpendingPrevoutItem>);
+pub struct GetTxSpendingPrevOut(pub Vec<GetTxSpendingPrevOutItem>);
 
 /// A transaction item. Part of `gettxspendingprevout`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetTxSpendingPrevoutItem {
+pub struct GetTxSpendingPrevOutItem {
     /// The transaction id of the checked output
     pub txid: String,
     /// The vout value of the checked output

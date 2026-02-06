@@ -250,7 +250,7 @@ pub use self::{
     blockchain::{
         GetMempoolAncestors, GetMempoolAncestorsVerbose, GetMempoolDescendants,
         GetMempoolDescendantsVerbose, GetMempoolEntry, GetMempoolInfo, GetRawMempoolVerbose,
-        GetTxSpendingPrevout, GetTxSpendingPrevoutError, GetTxSpendingPrevoutItem, MempoolEntry,
+        GetTxSpendingPrevOut, GetTxSpendingPrevOutError, GetTxSpendingPrevOutItem, MempoolEntry,
     },
     network::{GetPeerInfo, PeerInfo},
     raw_transactions::{

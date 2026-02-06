@@ -14,7 +14,7 @@ pub enum SubmitPackageError {
     /// Conversion of key from `tx_results` map failed.
     TxResultKey(HexToArrayError),
     /// Conversion of value from `tx_results` map failed.
-    TxResultValue(SubmitPackageTxResultError),
+    TxResultValue(SubmitPackageTxResultsError),
     /// Conversion of a list item from `replaced_transactions` field failed.
     ReplaceTransactions(HexToArrayError),
 }
@@ -43,9 +43,9 @@ impl std::error::Error for SubmitPackageError {
     }
 }
 
-/// Error when converting a `SubmitPackageTxResult` type into the model type.
+/// Error when converting a `SubmitPackageTxResults` type into the model type.
 #[derive(Debug)]
-pub enum SubmitPackageTxResultError {
+pub enum SubmitPackageTxResultsError {
     /// Conversion of numeric type to expected type failed.
     Numeric(NumericError),
     /// Conversion of the `txid` field failed.
@@ -53,10 +53,10 @@ pub enum SubmitPackageTxResultError {
     /// Conversion of the `other_wtxid` field failed.
     OtherWtxid(HexToArrayError),
     /// Conversion of the `fees` field failed.
-    Fees(SubmitPackageTxResultFeesError),
+    Fees(SubmitPackageTxResultssFeesError),
 }
 
-impl fmt::Display for SubmitPackageTxResultError {
+impl fmt::Display for SubmitPackageTxResultsError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Self::Numeric(ref e) => write_err!(f, "numeric"; e),
@@ -69,7 +69,7 @@ impl fmt::Display for SubmitPackageTxResultError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for SubmitPackageTxResultError {
+impl std::error::Error for SubmitPackageTxResultsError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match *self {
             Self::Numeric(ref e) => Some(e),
@@ -80,13 +80,13 @@ impl std::error::Error for SubmitPackageTxResultError {
     }
 }
 
-impl From<NumericError> for SubmitPackageTxResultError {
+impl From<NumericError> for SubmitPackageTxResultsError {
     fn from(e: NumericError) -> Self { Self::Numeric(e) }
 }
 
-/// Error when converting a `SubmitPackageTxResultFees` type into the model type.
+/// Error when converting a `SubmitPackageTxResultssFees` type into the model type.
 #[derive(Debug)]
-pub enum SubmitPackageTxResultFeesError {
+pub enum SubmitPackageTxResultssFeesError {
     /// Conversion of the `base_fee` field failed.
     BaseFee(ParseAmountError),
     /// Conversion of the `effective_fee_rate` field failed.
@@ -95,7 +95,7 @@ pub enum SubmitPackageTxResultFeesError {
     EffectiveIncludes(HexToArrayError),
 }
 
-impl fmt::Display for SubmitPackageTxResultFeesError {
+impl fmt::Display for SubmitPackageTxResultssFeesError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Self::BaseFee(ref e) => write_err!(f, "conversion of the `base_fee` field failed"; e),
@@ -107,7 +107,7 @@ impl fmt::Display for SubmitPackageTxResultFeesError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for SubmitPackageTxResultFeesError {
+impl std::error::Error for SubmitPackageTxResultssFeesError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match *self {
             Self::BaseFee(ref e) => Some(e),

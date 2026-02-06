@@ -210,14 +210,14 @@ pub struct SubmitPackage {
     /// The transaction package result message. "success" indicates all transactions were accepted into or are already in the mempool.
     pub package_msg: String,
     /// Transaction results keyed by [`Wtxid`].
-    pub tx_results: BTreeMap<Wtxid, SubmitPackageTxResult>,
+    pub tx_results: BTreeMap<Wtxid, SubmitPackageTxResults>,
     /// List of txids of replaced transactions.
     pub replaced_transactions: Vec<Txid>,
 }
 
 /// Models the per-transaction result included in the JSON-RPC method `submitpackage`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-pub struct SubmitPackageTxResult {
+pub struct SubmitPackageTxResults {
     /// The transaction id.
     pub txid: Txid,
     /// The [`Wtxid`] of a different transaction with the same [`Txid`] but different witness found in the mempool.
@@ -227,14 +227,14 @@ pub struct SubmitPackageTxResult {
     /// Sigops-adjusted virtual transaction size.
     pub vsize: Option<u32>,
     /// Transaction fees.
-    pub fees: Option<SubmitPackageTxResultFees>,
+    pub fees: Option<SubmitPackageTxResultssFees>,
     /// The transaction error string, if it was rejected by the mempool
     pub error: Option<String>,
 }
 
 /// Models the fees included in the per-transaction result of the JSON-RPC method `submitpackage`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-pub struct SubmitPackageTxResultFees {
+pub struct SubmitPackageTxResultssFees {
     /// Transaction fee.
     pub base_fee: Amount,
     /// The effective feerate.

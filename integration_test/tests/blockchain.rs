@@ -474,9 +474,9 @@ fn blockchain__get_tx_spending_prevout__modelled() {
         bitcoin::OutPoint { txid: txid_2, vout: 0 },
     ];
 
-    let json: GetTxSpendingPrevout =
+    let json: GetTxSpendingPrevOut =
         node.client.get_tx_spending_prevout(&inputs).expect("gettxspendingprevout");
-    let model: Result<mtype::GetTxSpendingPrevout, GetTxSpendingPrevoutError> = json.into_model();
+    let model: Result<mtype::GetTxSpendingPrevOut, GetTxSpendingPrevOutError> = json.into_model();
     let spending_prevout = model.unwrap();
 
     assert_eq!(spending_prevout.0.len(), 2);
