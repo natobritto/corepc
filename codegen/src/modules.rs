@@ -85,7 +85,11 @@ pub fn generate_modules(methods: &[Method], config: GeneratorConfig) -> Vec<Gene
 }
 
 /// Generate a single module.
-fn generate_module(category: &str, methods: &[&Method], generator: &mut Generator) -> GeneratedModule {
+fn generate_module(
+    category: &str,
+    methods: &[&Method],
+    generator: &mut Generator,
+) -> GeneratedModule {
     let module_name = category_to_module(category).to_string();
 
     let mut all_types: Vec<GeneratedType> = Vec::new();
@@ -100,6 +104,10 @@ fn generate_module(category: &str, methods: &[&Method], generator: &mut Generato
         } else {
             Some(method.struct_name())
         };
+
+        // if struct_name.contains("decode") {
+        //     println!("Debug");
+        // }
 
         let notes = if method.returns_null() {
             "returns nothing".to_string()
@@ -156,12 +164,7 @@ use serde::{{Deserialize, Serialize}};
         code.push('\n');
     }
 
-    GeneratedModule {
-        name: module_name,
-        code,
-        exports,
-        methods: method_infos,
-    }
+    GeneratedModule { name: module_name, code, exports, methods: method_infos }
 }
 
 /// Generate the mod.rs file that re-exports all types.
@@ -212,12 +215,7 @@ pub fn generate_mod_rs(modules: &[GeneratedModule], version: &str) -> String {
             } else {
                 method.notes.clone()
             };
-            code.push_str(&format!(
-                "//! | {:<36} | {:<15} | {:<38} |\n",
-                method.name,
-                returns,
-                ""
-            ));
+            code.push_str(&format!("//! | {:<36} | {:<15} | {:<38} |\n", method.name, returns, ""));
         }
         code.push_str("//!\n//! </details>\n//!\n");
     }
@@ -237,10 +235,7 @@ pub fn generate_mod_rs(modules: &[GeneratedModule], version: &str) -> String {
     for module in modules {
         if !module.exports.is_empty() {
             let exports = module.exports.join(", ");
-            code.push_str(&format!(
-                "pub use self::{}::{{{}}};\n",
-                module.name, exports
-            ));
+            code.push_str(&format!("pub use self::{}::{{{}}};\n", module.name, exports));
         }
     }
 

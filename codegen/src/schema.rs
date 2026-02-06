@@ -83,7 +83,7 @@ pub struct Schema {
     /// Description of this field.
     pub description: Option<String>,
     /// For objects: the properties.
-    pub properties: Option<HashMap<String, Schema>>,
+    pub properties: Option<HashMap<String, PropertySchema>>,
     /// For objects: required properties.
     pub required: Option<Vec<String>>,
     /// For objects: whether additional properties are allowed.
@@ -151,6 +151,16 @@ pub enum SchemaOrArray {
     Array(Vec<Schema>),
 }
 
+/// A property value in a schema can be a nested schema or a commentary string.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(untagged)]
+pub enum PropertySchema {
+    /// A nested schema definition.
+    Schema(Schema),
+    /// A commentary string (non-schema metadata).
+    Commentary(String),
+}
+
 impl Schema {
     /// Returns true if this field should be optional in the Rust type.
     pub fn is_optional(&self) -> bool {
@@ -171,6 +181,14 @@ impl Schema {
     pub fn is_dynamic_object(&self) -> bool {
         self.object_dynamic.unwrap_or(false)
     }
+
+    /// Returns true if there is at least one real schema property.
+    pub fn has_schema_properties(&self) -> bool {
+        self.properties
+            .as_ref()
+            .map(|props| props.values().any(|p| matches!(p, PropertySchema::Schema(_))))
+            .unwrap_or(false)
+    }
 }
 
 impl Method {
@@ -189,7 +207,7 @@ impl Method {
         matches!(
             self.result.schema.type_.as_deref(),
             Some("string") | Some("boolean") | Some("number") | Some("integer")
-        ) && self.result.schema.properties.is_none()
+        ) && !self.result.schema.has_schema_properties()
     }
 
     /// Converts the method name to a Rust struct name (PascalCase).

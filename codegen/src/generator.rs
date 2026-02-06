@@ -8,7 +8,7 @@ use std::collections::{BTreeMap, HashSet};
 
 use heck::ToPascalCase;
 
-use crate::schema::{AdditionalProperties, Method, Schema, SchemaOrArray};
+use crate::schema::{AdditionalProperties, Method, PropertySchema, Schema, SchemaOrArray};
 
 /// Configuration for the code generator.
 #[derive(Debug, Clone)]
@@ -347,8 +347,26 @@ pub struct {struct_name}(
         let mut fields = Vec::new();
         let mut nested_types = Vec::new();
 
+        let mut commentary = Vec::new();
+        let mut commentary_raw = Vec::new();
+
         // Sort properties for consistent output
-        let sorted_props: BTreeMap<_, _> = properties.iter().collect();
+        let mut sorted_props: BTreeMap<&String, &Schema> = BTreeMap::new();
+        for (prop_name, prop_value) in properties.iter() {
+            match prop_value {
+                PropertySchema::Schema(prop_schema) => {
+                    sorted_props.insert(prop_name, prop_schema);
+                }
+                PropertySchema::Commentary(text) => {
+                    commentary_raw.push(text.clone());
+                    commentary.push(format!(
+                        "{}: {}",
+                        prop_name,
+                        escape_doc(text)
+                    ));
+                }
+            }
+        }
 
         for (prop_name, prop_schema) in sorted_props {
             let is_required = required
@@ -385,9 +403,16 @@ pub struct {struct_name}(
             ));
         }
 
-        let doc_str = doc
+        let mut doc_str = doc
             .map(|d| format!("/// {}\n", escape_doc(d)))
             .unwrap_or_default();
+
+        if !commentary.is_empty() {
+            doc_str.push_str("/// [TODO] this is a commentary from documentation explaining what this field is supposed be: \n");
+            for line in commentary {
+                doc_str.push_str(&format!("/// {}\n", line));
+            }
+        }
 
         let deny_unknown = if self.config.deny_unknown_fields {
             "\n#[cfg_attr(feature = \"serde-deny-unknown-fields\", serde(deny_unknown_fields))]"
@@ -395,17 +420,36 @@ pub struct {struct_name}(
             ""
         };
 
-        let definition = format!(
-            r#"{doc_str}#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]{deny_unknown}
+        let alias_target = commentary_raw.iter().find_map(|text| {
+            let lower = text.to_lowercase();
+            if lower.contains("decoderawtransaction") {
+                Some("DecodeRawTransaction")
+            } else {
+                None
+            }
+        });
+
+        let definition = if fields.is_empty() && alias_target.is_some() {
+            format!(
+                r#"{doc_str}pub type {name} = {target};
+"#,
+                doc_str = doc_str,
+                name = name,
+                target = alias_target.unwrap(),
+            )
+        } else {
+            format!(
+                r#"{doc_str}#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]{deny_unknown}
 pub struct {name} {{
 {fields}
 }}
 "#,
-            doc_str = doc_str,
-            deny_unknown = deny_unknown,
-            name = name,
-            fields = fields.join("\n"),
-        );
+                doc_str = doc_str,
+                deny_unknown = deny_unknown,
+                name = name,
+                fields = fields.join("\n"),
+            )
+        };
 
         Some(GeneratedType {
             definition,
@@ -535,7 +579,7 @@ pub struct {name} {{
 
                 // Check for additionalProperties with schema (also a map)
                 if let Some(AdditionalProperties::Schema(inner)) = &schema.additional_properties {
-                    if schema.properties.is_none() {
+                    if !schema.has_schema_properties() {
                         let (value_type, nested) = if inner.type_.as_deref() == Some("object") && inner.properties.is_some() {
                             let inner_name = format!(
                                 "{}{}",
