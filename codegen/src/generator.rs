@@ -10,43 +10,6 @@ use heck::ToPascalCase;
 
 use crate::schema::{AdditionalProperties, Method, PropertySchema, Schema, SchemaOrArray};
 
-/// Known short names for nested types to match existing repo conventions.
-/// Maps (parent_name, field_name) -> short_name
-fn get_short_nested_name(parent_name: &str, field_name: &str) -> Option<&'static str> {
-    // Match existing repo naming conventions for nested types
-    match (parent_name, field_name) {
-        ("GetRpcInfo", "active_commands") => Some("ActiveCommand"),
-        ("AnalyzePsbt", "inputs") => Some("AnalyzePsbtInput"),
-        ("GetDeploymentInfo", "deployments") => Some("DeploymentInfo"),
-        // DeploymentInfo nested types
-        ("DeploymentInfo", "bip9") => Some("Bip9Info"),
-        ("Bip9Info", "statistics") => Some("Bip9Statistics"),
-        ("GetChainStates", "chainstates") => Some("ChainState"),
-        ("GetNetworkInfo", "networks") => Some("GetNetworkInfoNetwork"),
-        ("GetNetworkInfo", "localaddresses") => Some("GetNetworkInfoAddress"),
-        ("DecodePsbt", "global_xpubs") => Some("GlobalXpub"),
-        ("DecodePsbt", "inputs") => Some("PsbtInput"),
-        ("DecodePsbt", "outputs") => Some("PsbtOutput"),
-        // PsbtInput nested types
-        ("PsbtInput", "taproot_script_path_sigs") => Some("TaprootScriptPathSig"),
-        ("PsbtInput", "taproot_scripts") => Some("TaprootScript"),
-        ("PsbtInput", "taproot_bip32_derivs") => Some("TaprootBip32Deriv"),
-        ("PsbtInput", "musig2_participant_pubkeys") => Some("Musig2ParticipantPubkeys"),
-        ("PsbtInput", "musig2_pubnonces") => Some("Musig2Pubnonce"),
-        ("PsbtInput", "musig2_partial_sigs") => Some("Musig2PartialSig"),
-        // PsbtOutput nested types
-        ("PsbtOutput", "taproot_tree") => Some("TaprootLeaf"),
-        ("PsbtOutput", "taproot_bip32_derivs") => Some("TaprootBip32Deriv"),
-        ("PsbtOutput", "musig2_participant_pubkeys") => Some("Musig2ParticipantPubkeys"),
-        ("GetMempoolEntry", "fees") => Some("MempoolEntryFees"),
-        ("GetNetTotals", "uploadtarget") => Some("UploadTarget"),
-        // GetPrioritisedTransactions map entry type
-        ("GetPrioritisedTransactions", _) => Some("PrioritisedTransaction"),
-        ("EnumerateSigners", "signers") => Some("Signers"),
-        _ => None,
-    }
-}
-
 /// Configuration for the code generator.
 #[derive(Debug, Clone)]
 pub struct GeneratorConfig {
@@ -319,17 +282,12 @@ pub struct {name}(pub {inner_type});
         let value_type = match &schema.additional_properties {
             Some(AdditionalProperties::Schema(inner_schema)) => {
                 // Generate the inner type
-                // First check for short name mapping
-                let inner_name = get_short_nested_name(&struct_name, "")
-                    .map(|s| s.to_string())
-                    .unwrap_or_else(|| {
-                        // Avoid double Entry suffix (e.g., GetRawAddrmanEntryEntry)
-                        if struct_name.ends_with("Entry") {
-                            format!("{}Item", struct_name)
-                        } else {
-                            format!("{}Entry", struct_name)
-                        }
-                    });
+                // Avoid double Entry suffix (e.g., GetRawAddrmanEntryEntry)
+                let inner_name = if struct_name.ends_with("Entry") {
+                    format!("{}Item", struct_name)
+                } else {
+                    format!("{}Entry", struct_name)
+                };
                 self.generate_inner_type(&inner_name, inner_schema)
             }
             _ => ("serde_json::Value".to_string(), vec![]),
@@ -568,16 +526,11 @@ pub struct {name} {{
                             if item_schema.type_.as_deref() == Some("object")
                                 && item_schema.properties.is_some()
                             {
-                                // Check for short name mapping first
-                                let inner_name = get_short_nested_name(parent_name, field_name)
-                                    .map(|s| s.to_string())
-                                    .unwrap_or_else(|| {
-                                        format!(
-                                            "{}{}Item",
-                                            parent_name,
-                                            field_name.to_pascal_case()
-                                        )
-                                    });
+                                let inner_name = format!(
+                                    "{}{}Item",
+                                    parent_name,
+                                    field_name.to_pascal_case()
+                                );
                                 let (type_name, nested) =
                                     self.generate_inner_type(&inner_name, item_schema);
                                 (type_name, nested)
@@ -606,16 +559,11 @@ pub struct {name} {{
                         Some(AdditionalProperties::Schema(inner)) => {
                             // If the inner schema is an object, generate a nested struct
                             if inner.type_.as_deref() == Some("object") && inner.properties.is_some() {
-                                // Check for short name mapping first
-                                let inner_name = get_short_nested_name(parent_name, field_name)
-                                    .map(|s| s.to_string())
-                                    .unwrap_or_else(|| {
-                                        format!(
-                                            "{}{}",
-                                            parent_name,
-                                            field_name.to_pascal_case()
-                                        )
-                                    });
+                                let inner_name = format!(
+                                    "{}{}",
+                                    parent_name,
+                                    field_name.to_pascal_case()
+                                );
                                 self.generate_inner_type(&inner_name, inner)
                             } else {
                                 self.schema_to_rust_type(inner, parent_name, field_name)
@@ -633,16 +581,11 @@ pub struct {name} {{
                 if let Some(AdditionalProperties::Schema(inner)) = &schema.additional_properties {
                     if !schema.has_schema_properties() {
                         let (value_type, nested) = if inner.type_.as_deref() == Some("object") && inner.properties.is_some() {
-                            // Check for short name mapping first
-                            let inner_name = get_short_nested_name(parent_name, field_name)
-                                .map(|s| s.to_string())
-                                .unwrap_or_else(|| {
-                                    format!(
-                                        "{}{}",
-                                        parent_name,
-                                        field_name.to_pascal_case()
-                                    )
-                                });
+                            let inner_name = format!(
+                                "{}{}",
+                                parent_name,
+                                field_name.to_pascal_case()
+                            );
                             self.generate_inner_type(&inner_name, inner)
                         } else {
                             self.schema_to_rust_type(inner, parent_name, field_name)
@@ -656,16 +599,11 @@ pub struct {name} {{
 
                 // Named nested object - generate a struct
                 if schema.properties.is_some() {
-                    // Check for short name mapping first
-                    let nested_name = get_short_nested_name(parent_name, field_name)
-                        .map(|s| s.to_string())
-                        .unwrap_or_else(|| {
-                            format!(
-                                "{}{}",
-                                parent_name,
-                                field_name.to_pascal_case()
-                            )
-                        });
+                    let nested_name = format!(
+                        "{}{}",
+                        parent_name,
+                        field_name.to_pascal_case()
+                    );
                     if let Some(generated) = self.generate_struct_type(
                         &nested_name,
                         schema,

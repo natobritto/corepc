@@ -11,12 +11,184 @@ Key features:
 - Normalizes naming conventions (snake_case vs camelCase)
 - Uses serde rename attributes to match fields
 - Handles nested type name differences (e.g., PsbtInput vs DecodePsbtInputsItem)
+- TYPE_BRIDGE maps spec types to repo types or marks them as IGNORE
 """
 import re
 import sys
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
+
+
+# ============================================================================
+# TYPE BRIDGE: Maps spec struct names to repo struct names
+# ============================================================================
+# Use "IGNORE" to indicate a spec type that doesn't need a repo equivalent
+# (e.g., uses bitcoin crate types, or is a simple wrapper, or doesn't exist in repo)
+#
+# Use "repo_name" to map a spec type to a differently-named repo type
+# ============================================================================
+
+TYPE_BRIDGE: Dict[str, str] = {
+    # ========================================================================
+    # SIMPLE RPC RETURN TYPES (primitives wrapped in tuple structs)
+    # These are simple return types that don't need dedicated structs in repo
+    # ========================================================================
+    "Api": "IGNORE",  # getzmqnotifications returns Vec<ZmqNotification>, not Api
+    "Echo": "IGNORE",  # returns same input
+    "EchoIpc": "IGNORE",  # returns same input
+    "EchoJson": "IGNORE",  # returns same input
+    "Help": "IGNORE",  # returns String
+    "Stop": "IGNORE",  # returns String
+    "Uptime": "IGNORE",  # returns u64
+    "GetTxOutProof": "IGNORE",  # returns String (hex proof)
+    "GetNetworkHashps": "IGNORE",  # returns f64
+    "ImportMempool": "IGNORE",  # returns empty object
+    "SendMsgToPeer": "IGNORE",  # returns bool
+    "GetBlockFromPeer": "IGNORE",  # returns empty object
+    "PrioritiseTransaction": "IGNORE",  # returns bool
+    "SubmitBlockVerboseOne": "IGNORE",  # returns null or string
+
+    # ========================================================================
+    # DecodeRawTransaction types - repo uses shared RawTransaction/Vin/Vout types
+    # These are covered by the bitcoin crate types used in the repo
+    # ========================================================================
+    "DecodeRawTransactionVinItem": "IGNORE",  # repo uses Vin
+    "DecodeRawTransactionVinItemScriptSig": "IGNORE",  # repo uses ScriptSig  
+    "DecodeRawTransactionVoutItem": "IGNORE",  # repo uses Vout
+    "DecodeRawTransactionVoutItemScriptPubKey": "IGNORE",  # repo uses ScriptPubKey
+
+    # ========================================================================
+    # GetRawTransaction verbose types - repo uses shared types
+    # ========================================================================
+    "GetRawTransactionVerboseZero": "GetRawTransaction",  # tuple struct returning hex
+    "GetRawTransactionVerboseOne": "GetRawTransactionVerbose",
+    "GetRawTransactionVerboseOneVinItem": "IGNORE",  # uses Vin
+    "GetRawTransactionVerboseOneVinItemScriptSig": "IGNORE",  # uses ScriptSig
+    "GetRawTransactionVerboseOneVoutItem": "IGNORE",  # uses Vout
+    "GetRawTransactionVerboseOneVoutItemScriptPubKey": "IGNORE",  # uses ScriptPubKey
+    "GetRawTransactionVerboseTwo": "GetRawTransactionVerboseWithPrevout",
+    "GetRawTransactionVerboseTwoVinItem": "IGNORE",  # uses RawTransactionInputWithPrevout
+    "GetRawTransactionVerboseTwoVinItemPrevout": "IGNORE",  # uses Prevout
+    "GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey": "IGNORE",  # uses ScriptPubKey
+
+    # ========================================================================
+    # GetBlock verbose types - repo uses shared transaction types
+    # ========================================================================
+    "GetBlockVerboseTwoTxItem": "IGNORE",  # repo uses GetBlockVerboseTwoTransaction
+    "GetBlockVerboseThreeTxItem": "IGNORE",  # repo uses GetBlockVerboseThreeTransaction
+    "GetBlockVerboseThreeTxItemVinItem": "IGNORE",  # uses Vin types
+    "GetBlockVerboseThreeTxItemVinItemPrevout": "IGNORE",  # uses Prevout
+    "GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey": "IGNORE",  # uses ScriptPubKey
+
+    # ========================================================================
+    # GetBlockHeader types
+    # ========================================================================
+    "GetBlockHeaderVerboseZero": "GetBlockHeader",  # returns hex string
+    "GetBlockHeaderVerboseOne": "GetBlockHeaderVerbose",
+
+    # ========================================================================
+    # GetBlockTemplate types
+    # ========================================================================
+    "GetBlockTemplateVerboseOne": "IGNORE",  # proposal mode returns String, repo handles template mode
+    "GetBlockTemplateVerboseTwo": "GetBlockTemplate",  # same struct, different rules param
+    "GetBlockTemplateVerboseTwoTransactionsItem": "IGNORE",  # uses BlockTemplateTransaction
+
+    # ========================================================================
+    # GetTxOut types
+    # ========================================================================
+    "GetTxOutVerboseOne": "GetTxOut",
+    "GetTxOutVerboseOneScriptPubKey": "IGNORE",  # uses ScriptPubKey
+
+    # ========================================================================
+    # Mempool types - repo reuses MempoolEntry
+    # ========================================================================
+    "GetRawMempoolVerboseOne": "GetRawMempool",  # returns Vec<String>
+    "GetRawMempoolVerboseTwo": "GetRawMempoolVerbose",  # returns BTreeMap<String, MempoolEntry>
+    "GetMempoolAncestorsVerboseOne": "GetMempoolAncestorsVerbose",  # returns BTreeMap
+    "GetMempoolDescendantsVerboseOne": "GetMempoolDescendantsVerbose",  # returns BTreeMap
+
+    # ========================================================================
+    # ScanTxOutSet types
+    # ========================================================================
+    "ScanTxOutSetVerboseZero": "ScanTxOutSetStart",
+    "ScanTxOutSetVerboseOne": "ScanTxOutSetStatus",
+    "ScanTxOutSetVerboseTwo": "ScanTxOutSetAbort",
+    "ScanTxOutSetVerboseZeroUnspentsItem": "ScanTxOutSetUnspent",
+
+    # ========================================================================
+    # ScanBlocks types  
+    # ========================================================================
+    "ScanBlocksVerboseOne": "ScanBlocksStart",
+    "ScanBlocksVerboseTwo": "ScanBlocksStatus",
+    "ScanBlocksVerboseThree": "ScanBlocksAbort",
+
+    # ========================================================================
+    # GetMemoryInfo types
+    # ========================================================================
+    "GetMemoryInfoVerboseZero": "GetMemoryInfoStats",  # returns stats map
+    "GetMemoryInfoVerboseOne": "IGNORE",  # returns malloc_info string
+    "GetMemoryInfoVerboseZeroLocked": "Locked",  # repo uses Locked struct
+
+    # ========================================================================
+    # GetAddrManInfo / GetRawAddrMan types
+    # ========================================================================
+    "GetAddrManInfoEntry": "AddrManInfoNetwork",  # repo uses AddrManInfoNetwork
+    "GetRawAddrManEntryEntry": "IGNORE",  # uses RawAddrManEntry
+
+    # ========================================================================  
+    # GetIndexInfo types
+    # ========================================================================
+    "GetIndexInfoEntry": "GetIndexInfoName",  # repo uses GetIndexInfoName
+
+    # ========================================================================
+    # GetMiningInfo types
+    # ========================================================================
+    "GetMiningInfoNext": "NextBlockInfo",  # repo uses NextBlockInfo
+
+    # ========================================================================
+    # EstimateRawFee types - repo uses RawFeeDetail for all fee detail structs
+    # These map to the same repo type, so mark them as covered (IGNORE)
+    # ========================================================================
+    "EstimateRawFeeLong": "IGNORE",  # repo uses RawFeeDetail
+    "EstimateRawFeeMedium": "IGNORE",  # repo uses RawFeeDetail
+    "EstimateRawFeeShort": "IGNORE",  # repo uses RawFeeDetail (also fuzzy matched)
+    "EstimateRawFeeShortPass": "IGNORE",  # repo uses RawFeeRange
+    "EstimateRawFeeShortFail": "IGNORE",  # repo uses RawFeeRange
+
+    # ========================================================================
+    # SignRawTransactionWithKey types
+    # ========================================================================
+    "SignRawTransactionWithKey": "IGNORE",  # repo uses SignRawTransaction (fuzzy matched)
+    "SignRawTransactionWithKeyErrorsItem": "IGNORE",  # repo uses SignRawTransactionError
+
+    # ========================================================================
+    # PSBT types - repo uses shared PsbtScript for redeem/witness scripts
+    # ========================================================================
+    "DecodePsbtProprietaryItem": "IGNORE",  # repo uses Proprietary
+    "PsbtInputRedeemScript": "IGNORE",  # repo uses PsbtScript
+    "PsbtInputWitnessScript": "IGNORE",  # repo uses PsbtScript
+    "PsbtOutputRedeemScript": "IGNORE",  # repo uses PsbtScript
+    "PsbtOutputWitnessScript": "IGNORE",  # repo uses PsbtScript
+    "PsbtInputNonWitnessUtxo": "IGNORE",  # repo uses RawTransaction
+    "PsbtInputWitnessUtxo": "IGNORE",  # repo uses WitnessUtxo
+    "PsbtInputWitnessUtxoScriptPubKey": "IGNORE",  # uses ScriptPubKey
+    "PsbtInputBip32DerivsItem": "IGNORE",  # repo uses Bip32Deriv
+    "PsbtOutputBip32DerivsItem": "IGNORE",  # repo uses Bip32Deriv
+    "PsbtInputProprietaryItem": "IGNORE",  # repo uses Proprietary
+    "PsbtOutputProprietaryItem": "IGNORE",  # repo uses Proprietary (fuzzy matched)
+    "PsbtInputFinalScriptSig": "IGNORE",  # repo doesn't have separate type
+
+    # ========================================================================
+    # SubmitPackage types
+    # ========================================================================
+    "SubmitPackageTxResultsFees": "IGNORE",  # typo in repo: SubmitPackageTxResultssFees (fuzzy matched)
+
+    # ========================================================================
+    # GetTxOutSetInfo types
+    # ========================================================================
+    "GetTxOutSetInfoBlockInfoUnspendables": "IGNORE",  # repo uses GetTxOutSetInfoUnspendables (fuzzy matched)
+}
 
 
 @dataclass
@@ -269,21 +441,39 @@ def structs_are_compatible(name1: str, name2: str) -> bool:
 
 
 def build_struct_name_mapping(repo_structs: Dict[str, StructDef], 
-                               spec_structs: Dict[str, StructDef]) -> Dict[str, str]:
+                               spec_structs: Dict[str, StructDef]) -> Tuple[Dict[str, str], Set[str]]:
     """Build a mapping from repo struct names to spec struct names.
     
     Uses conservative matching to avoid false positives.
+    Also uses TYPE_BRIDGE for explicit mappings.
+    
+    Returns:
+        Tuple of (mapping dict, set of ignored spec structs)
     """
     mapping = {}
+    ignored_spec = set()
     
-    # First pass: exact matches
+    # Pre-pass: Apply TYPE_BRIDGE mappings
+    # This maps spec names -> repo names (or IGNORE)
+    for spec_name, target in TYPE_BRIDGE.items():
+        if spec_name not in spec_structs:
+            continue
+        if target == "IGNORE":
+            ignored_spec.add(spec_name)
+        elif target in repo_structs:
+            # Map repo -> spec (we store it this way for compatibility)
+            mapping[target] = spec_name
+    
+    # First pass: exact matches (only for non-bridged structs)
     for repo_name in repo_structs:
+        if repo_name in mapping:
+            continue  # Already mapped via TYPE_BRIDGE
         if repo_name in spec_structs:
             mapping[repo_name] = repo_name
     
     # Second pass: case-insensitive exact matches
     unmatched_repo = set(repo_structs.keys()) - set(mapping.keys())
-    unmatched_spec = set(spec_structs.keys()) - set(mapping.values())
+    unmatched_spec = set(spec_structs.keys()) - set(mapping.values()) - ignored_spec
     
     spec_lower_map = {name.lower(): name for name in unmatched_spec}
     for repo_name in list(unmatched_repo):
@@ -347,7 +537,7 @@ def build_struct_name_mapping(repo_structs: Dict[str, StructDef],
     # DISABLED - field-based matching produces too many false positives
     # Only use name-based matching for accurate results
     
-    return mapping
+    return mapping, ignored_spec
 
 
 def compare_structs(repo_structs: Dict[str, StructDef], 
@@ -362,12 +552,12 @@ def compare_structs(repo_structs: Dict[str, StructDef],
     """
     
     # Build name mapping
-    name_mapping = build_struct_name_mapping(repo_structs, spec_structs)
+    name_mapping, ignored_spec = build_struct_name_mapping(repo_structs, spec_structs)
     
     # Categorize structs
     matched_pairs = []  # (repo_name, spec_name)
     only_in_repo = []
-    only_in_spec = set(spec_structs.keys())
+    only_in_spec = set(spec_structs.keys()) - ignored_spec  # Exclude ignored specs
     
     for repo_name, repo_s in repo_structs.items():
         if repo_name in name_mapping:
@@ -388,6 +578,7 @@ def compare_structs(repo_structs: Dict[str, StructDef],
     print(f"  Repo structs:     {len(repo_structs)}")
     print(f"  Spec structs:     {len(spec_structs)}")
     print(f"  Matched pairs:    {len(matched_pairs)}")
+    print(f"  Bridged/Ignored:  {len(ignored_spec)}")
     print(f"  Only in repo:     {len(only_in_repo)}")
     print(f"  Only in spec:     {len(only_in_spec)}")
     

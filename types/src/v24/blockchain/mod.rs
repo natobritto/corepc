@@ -79,6 +79,7 @@ pub struct MempoolEntry {
     ///
     /// This is different from actual serialized size for witness transactions as witness data is
     /// discounted. v0.19 and later only.
+    pub heyhey: i64,
     pub vsize: i64,
     /// Transaction weight as defined in BIP 141.
     pub weight: i64,

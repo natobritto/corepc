@@ -78,4 +78,4 @@ Examples to fix:
 - EstimateRawFee's RawFeeDetail to match codegen EstimateRawFeeLong, EstimateRawFeeMedium, EstimateRawFeeShort 
 - DecodeRawTransactionVinItem of DecodeRawTransaction should be, in fact, `bitcoin::blockdata::transaction` as per repo implementation imported with `use bitcoin::{Transaction, Txid, ...};` (so we dont need to fix it, it should be ignored, and all structs that depend on it should simply disappear).
 
-What we could do is like an import file 
+Think, read code, implement an idea, test, refine. Keep on running ./cmd.sh and checking progress on compare.txt until you cut Structs only in SPEC down to 0. 
