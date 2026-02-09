@@ -120,6 +120,9 @@ pub struct Schema {
     /// Whether this is an object with dynamic keys.
     #[serde(rename = "x-bitcoin-object-dynamic")]
     pub object_dynamic: Option<bool>,
+    /// Condition for oneOf/anyOf variants (e.g., "for verbose = true").
+    #[serde(rename = "x-bitcoin-condition")]
+    pub bitcoin_condition: Option<String>,
     /// Minimum items for arrays.
     #[serde(rename = "minItems")]
     pub min_items: Option<i32>,

@@ -3,153 +3,40 @@ STRUCT COMPARISON REPORT
 ======================================================================
 
 📊 Summary:
-  Repo structs:     232
-  Spec structs:     244
-  Matched pairs:    157
-  Bridged/Ignored:  36
-  Only in repo:     75
-  Only in spec:     51
+  Repo structs:     237
+  Spec structs:     278
+  Matched pairs:    219
+  Bridged/Ignored:  59
+  Repo deprecated:  16
+  Only in repo:     2
+  Only in spec:     0
 
-🔵 Structs only in REPO (75):
-  - AddMultisigAddress
-  - AddedNode
-  - AddedNodeAddress
-  - AddrManInfoNetwork
-  - AddressInformation
-  - AnalyzePsbtInputMissing
-  - Banned
-  - Bip9Info
-  - Bip9Softfork
-  - Bip9SoftforkInfo
-  - Bip9SoftforkStatistics
-  - BlockTemplateTransaction
-  - ChainTips
-  - DeploymentInfo
-  - DeriveAddresses
-  - DeriveAddressesMultipath
-  - DescriptorInfo
-  - DumpWallet
-  - GetAddressInfoLabel
-  - GetBalancesWatchOnly
-  - GetBlockTemplate
-  - GetBlockVerboseThreePrevout
-  - GetBlockVerboseThreeTransaction
-  - GetBlockVerboseTwoTransaction
-  - GetMempoolAncestors
-  - GetMempoolDescendants
-  - GetNetworkInfoAddress
-  - GetOrphanTxs
-  - GetOrphanTxsVerboseOne
-  - GetOrphanTxsVerboseOneEntry
-  - GetOrphanTxsVerboseTwo
-  - GetOrphanTxsVerboseTwoEntry
-  - GetRawMempoolSequence
-  - GetTxOut
-  - GetTxOutSetInfoUnspendables
-  - GetTxSpendingPrevOutItem
-  - GetZmqNotifications
-  - HdKey
-  - HdKeyDescriptor
-  - ImportDescriptorsResult
-  - ImportMulti
-  - ImportMultiEntry
-  - JsonRpcError
-  - ListLockUnspentItem
-  - ListReceivedByAddressItem
-  - ListReceivedByLabelItem
-  - ListUnspentItem
-  - MempoolAcceptance
-  - MempoolAcceptanceFees
-  - MempoolEntry
-  - NodeAddress
-  - PeerInfo
-  - PrioritisedTransaction
-  - PsbtInput
-  - RawAddrManEntry
-  - RawFeeDetail
-  - RawFeeRange
-  - RawTransactionInputWithPrevout
-  - ReceiveActivity
-  - ScanTxOutSetAbort
-  - ScanTxOutSetStart
-  - ScanTxOutSetStatus
-  - ScanTxOutSetUnspent
-  - SendMany
-  - SendManyVerbose
-  - SendToAddress
-  - SignFail
-  - SignRawTransaction
-  - Signers
-  - Softfork
-  - SoftforkReject
-  - SpendActivity
-  - SubmitPackageTxResultssFees
-  - TaprootLeaf
-  - UpgradeWallet
+🔵 Structs only in REPO (2):
+  - DumpPrivKey
+  - GetUnconfirmedBalance
 
-🟡 Structs only in SPEC (51) - may need implementation:
-  + AnalyzePsbtInputsItemMissing
-  + DecodePsbtInputsItem
-  + DecodePsbtInputsItemBip32DerivsItem
-  + DecodePsbtInputsItemFinalScriptSig
-  + DecodePsbtInputsItemNonWitnessUtxo
-  + DecodePsbtInputsItemProprietaryItem
-  + DecodePsbtInputsItemRedeemScript
-  + DecodePsbtInputsItemTaprootBip32DerivsItem
-  + DecodePsbtInputsItemWitnessScript
-  + DecodePsbtInputsItemWitnessUtxo
-  + DecodePsbtInputsItemWitnessUtxoScriptPubKey
-  + DecodePsbtOutputsItemBip32DerivsItem
-  + DecodePsbtOutputsItemMusig2ParticipantPubkeysItem
-  + DecodePsbtOutputsItemRedeemScript
-  + DecodePsbtOutputsItemTaprootTreeItem
-  + DecodePsbtOutputsItemWitnessScript
-  + EnumerateSignersSignersItem
-  + GetAddressesbyLabelEntry
-  + GetAddrmanInfoEntry
-  + GetBalancesLastprocessedblock
-  + GetBlocktemplateVerboseOne
-  + GetBlocktemplateVerboseTwo
-  + GetBlocktemplateVerboseTwoTransactionsItem
-  + GetDeploymentInfoDeployments
-  + GetDeploymentInfoDeploymentsBip9
-  + GetNetworkInfoLocaladdressesItem
-  + GetRawAddrmanEntryEntry
-  + GetReceivedbyAddress
-  + GetTransactionDetailsItem
-  + GetTxoutProof
-  + GetTxoutSetInfoBlockInfoUnspendables
-  + GetTxoutVerboseOne
-  + GetTxoutVerboseOneScriptPubKey
-  + GetWalletInfoLastprocessedblock
-  + GetWalletInfoScanning
-  + ListDescriptorsDescriptorsItem
-  + ListSinceBlockTransactionsItem
-  + ScanTxoutSetVerboseOne
-  + ScanTxoutSetVerboseTwo
-  + ScanTxoutSetVerboseZero
-  + ScanTxoutSetVerboseZeroUnspentsItem
-  + SendToAddressVerboseOne
-  + SendToAddressVerboseZero
-  + SendmanyVerboseOne
-  + SendmanyVerboseZero
-  + SendmsgToPeer
-  + SignRawTransactionwithKey
-  + SignRawTransactionwithKeyErrorsItem
-  + SignRawTransactionwithWallet
-  + SignRawTransactionwithWalletErrorsItem
-  + UnloadWallet
-
-🔄 Structs with FIELD DIFFERENCES (29):
+🔄 Structs with FIELD DIFFERENCES (58):
 
   AddPeerAddress:
     Missing in repo: error
+
+  AddedNode ↔ GetAddedNodeInfoItem:
+    Type diff 'addresses': repo=Vec<AddedNodeAddress> vs spec=Vec<GetAddedNodeInfoItemAddressesItem>
+
+  AddressInformation ↔ GetAddressesbyLabelEntry:
+    Type diff 'purpose': repo=AddressPurpose vs spec=String
 
   AnalyzePsbt:
     Missing in repo: error
 
   AnalyzePsbtInput ↔ AnalyzePsbtInputsItem:
     Type diff 'missing': repo=Option<AnalyzePsbtInputMissing> vs spec=Option<AnalyzePsbtInputsItemMissing>
+
+  Bip9Info ↔ GetDeploymentInfoDeploymentsBip9:
+    Type diff 'bit': repo=Option<u8> vs spec=Option<i64>
+
+  ChainTips ↔ GetChainTipsItem:
+    Type diff 'status': repo=ChainTipsStatus vs spec=String
 
   DecodePsbt:
     Type diff 'tx': repo=RawTransaction vs spec=DecodePsbtTx
@@ -160,10 +47,16 @@ STRUCT COMPARISON REPORT
   DecodeScriptSegwit:
     Extra in repo:   addresses, required_signatures
 
+  DeploymentInfo ↔ GetDeploymentInfoDeployments:
+    Type diff 'bip9': repo=Option<Bip9Info> vs spec=Option<GetDeploymentInfoDeploymentsBip9>
+
+  DescriptorInfo ↔ ListDescriptorsDescriptorsItem:
+    Type diff 'range': repo=Option<[u64; 2]> vs spec=Option<Vec<serde_json::Value>>
+
   EstimateRawFee:
     Type diff 'medium': repo=Option<RawFeeDetail> vs spec=Option<EstimateRawFeeMedium>
-    Type diff 'long': repo=RawFeeDetail vs spec=Option<EstimateRawFeeLong>
     Type diff 'short': repo=Option<RawFeeDetail> vs spec=Option<EstimateRawFeeShort>
+    Type diff 'long': repo=RawFeeDetail vs spec=Option<EstimateRawFeeLong>
 
   GetAddressInfo:
     Type diff 'script': repo=Option<ScriptType> vs spec=Option<String>
@@ -177,13 +70,23 @@ STRUCT COMPARISON REPORT
   GetBlockStats ↔ GetBlockstats:
     Type diff 'fee_rate_percentiles': repo=[u64; 5] vs spec=Option<Vec<serde_json::Value>>
 
+  GetBlockTemplate ↔ GetBlocktemplateVerboseTwo:
+    Type diff 'transactions': repo=Vec<BlockTemplateTransaction> vs spec=Vec<GetBlocktemplateVerboseTwoTransactionsItem>
+
   GetBlockVerboseThree:
     Extra in repo:   bits, chain_work, confirmations, difficulty, hash, height, median_time, merkle_root, n_tx, next_block_hash, nonce, previous_block_hash, size, stripped_size, target, time, version, version_hex, weight
     Type diff 'tx': repo=Vec<GetBlockVerboseThreeTransaction> vs spec=Vec<GetBlockVerboseThreeTxItem>
 
+  GetBlockVerboseThreeTransaction ↔ GetBlockVerboseThreeTxItem:
+    Missing in repo: vin
+    Extra in repo:   fee, transaction
+
   GetBlockVerboseTwo:
     Extra in repo:   bits, chain_work, confirmations, difficulty, hash, height, median_time, merkle_root, n_tx, next_block_hash, nonce, previous_block_hash, size, stripped_size, target, time, version, version_hex, weight
     Type diff 'tx': repo=Vec<GetBlockVerboseTwoTransaction> vs spec=Vec<GetBlockVerboseTwoTxItem>
+
+  GetBlockVerboseTwoTransaction ↔ GetBlockVerboseTwoTxItem:
+    Extra in repo:   transaction
 
   GetDeploymentInfo:
     Type diff 'deployments': repo=std::collections::BTreeMap<String, DeploymentInfo> vs spec=std::collections::BTreeMap<String, GetDeploymentInfoDeployments>
@@ -197,6 +100,15 @@ STRUCT COMPARISON REPORT
   GetNetworkInfo:
     Type diff 'local_addresses': repo=Vec<GetNetworkInfoAddress> vs spec=Vec<GetNetworkInfoLocaladdressesItem>
 
+  GetNetworkInfoAddress ↔ GetNetworkInfoLocaladdressesItem:
+    Type diff 'port': repo=u16 vs spec=i64
+
+  GetOrphanTxsVerboseOneEntry ↔ GetOrphanTxsVerboseOneItem:
+    Extra in repo:   entry_time, expiration_time
+
+  GetOrphanTxsVerboseTwoEntry ↔ GetOrphanTxsVerboseTwoItem:
+    Extra in repo:   entry_time, expiration_time
+
   GetRawTransactionVerbose ↔ GetRawTransactionVerboseOne:
     Type diff 'inputs': repo=Vec<RawTransactionInput> vs spec=Vec<GetRawTransactionVerboseOneVinItem>
     Type diff 'outputs': repo=Vec<RawTransactionOutput> vs spec=Vec<GetRawTransactionVerboseOneVoutItem>
@@ -207,92 +119,253 @@ STRUCT COMPARISON REPORT
     Type diff 'inputs': repo=Vec<RawTransactionInputWithPrevout> vs spec=Vec<GetRawTransactionVerboseTwoVinItem>
 
   GetTransaction:
-    Missing in repo: bip125_replaceable, decoded, details, hex, last_processed_block
-    Extra in repo:   abandoned, account, address, category, involves_watch_only, label, vout
+    Missing in repo: bip125_replaceable, decoded, details, hex, last_processed_block, parent_descs
+
+  GetTransactionDetail ↔ GetTransactionDetailsItem:
+    Extra in repo:   account, involves_watch_only
+    Type diff 'category': repo=TransactionCategory vs spec=String
 
   GetTxOutSetInfoBlockInfo ↔ GetTxoutSetInfoBlockInfo:
     Type diff 'unspendables': repo=GetTxOutSetInfoUnspendables vs spec=GetTxoutSetInfoBlockInfoUnspendables
 
+  HdKey ↔ GetHdKeysItem:
+    Type diff 'descriptors': repo=Vec<HdKeyDescriptor> vs spec=Vec<GetHdKeysItemDescriptorsItem>
+
+  ImportDescriptorsResult ↔ ImportDescriptorsItem:
+    Type diff 'error': repo=Option<serde_json::Value> vs spec=Option<ImportDescriptorsItemError>
+
   ListDescriptors:
     Type diff 'descriptors': repo=Vec<DescriptorInfo> vs spec=Vec<ListDescriptorsDescriptorsItem>
+
+  ListReceivedByAddressItem ↔ ListReceivedbyAddressItem:
+    Extra in repo:   involves_watch_only
+
+  ListReceivedByLabelItem ↔ ListReceivedbyLabelItem:
+    Extra in repo:   involves_watch_only
 
   ListSinceBlock:
     Type diff 'removed': repo=Vec<TransactionItem> vs spec=Option<Vec<serde_json::Value>>
 
-  Proprietary ↔ DecodePsbtOutputsItemProprietaryItem:
+  ListUnspentItem:
+    Missing in repo: ancestor_count, ancestor_fees, ancestors_ize, reused, witness_script
+
+  MempoolAcceptance ↔ TestMempoolacceptItem:
+    Missing in repo: package_error
+    Type diff 'fees': repo=Option<MempoolAcceptanceFees> vs spec=Option<TestMempoolacceptItemFees>
+
+  MempoolEntry ↔ GetMempoolAncestorsVerboseOneEntry:
+    Type diff 'fees': repo=MempoolEntryFees vs spec=GetMempoolAncestorsVerboseOneEntryFees
+
+  NodeAddress ↔ GetNodeAddressesItem:
+    Type diff 'port': repo=u16 vs spec=i64
+
+  PeerInfo ↔ GetPeerInfoItem:
+    Extra in repo:   add_node, ban_score, whitelisted
+
+  Proprietary ↔ DecodePsbtInputsItemProprietaryItem:
     Missing in repo: identifier, key, subtype, value
 
+  PsbtInput ↔ DecodePsbtInputsItem:
+    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtInputsItemRedeemScript>
+    Type diff 'non_witness_utxo': repo=Option<RawTransaction> vs spec=Option<DecodePsbtInputsItemNonWitnessUtxo>
+    Type diff 'witness_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtInputsItemWitnessScript>
+
   PsbtOutput ↔ DecodePsbtOutputsItem:
-    Type diff 'witness_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemWitnessScript>
-    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemRedeemScript>
     Type diff 'taproot_tree': repo=Option<Vec<TaprootLeaf>> vs spec=Option<Vec<DecodePsbtOutputsItemTaprootTreeItem>>
+    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemRedeemScript>
+    Type diff 'witness_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemWitnessScript>
+
+  RawAddrManEntry ↔ GetRawAddrmanEntryEntry:
+    Type diff 'port': repo=u16 vs spec=i64
+
+  RawFeeDetail ↔ EstimateRawFeeShort:
+    Type diff 'pass': repo=Option<RawFeeRange> vs spec=Option<EstimateRawFeeShortPass>
+    Type diff 'fail': repo=Option<RawFeeRange> vs spec=Option<EstimateRawFeeShortFail>
+
+  RawTransactionInputWithPrevout ↔ GetBlockVerboseThreeTxItemVinItem:
+    Extra in repo:   input
+    Type diff 'prevout': repo=Option<GetBlockVerboseThreePrevout> vs spec=GetBlockVerboseThreeTxItemVinItemPrevout
 
   RestoreWallet:
     Missing in repo: warnings
     Extra in repo:   warning
 
+  ScanTxOutSetStart ↔ ScanTxoutSetVerboseZero:
+    Type diff 'unspents': repo=Vec<ScanTxOutSetUnspent> vs spec=Vec<ScanTxoutSetVerboseZeroUnspentsItem>
+
+  SignFail ↔ SignRawTransactionwithKeyErrorsItem:
+    Missing in repo: witness
+
+  SignRawTransaction ↔ SignRawTransactionwithKey:
+    Type diff 'errors': repo=Option<Vec<SignFail>> vs spec=Option<Vec<SignRawTransactionwithKeyErrorsItem>>
+
   SubmitPackageTxResults:
     Type diff 'fees': repo=Option<SubmitPackageTxResultssFees> vs spec=Option<SubmitPackageTxResultsFees>
 
-  TransactionItem ↔ GetPrioritisedTransactionsEntry:
-    Missing in repo: fee_delta, in_mempool, modified_fee
-    Extra in repo:   address, amount, block_hash, block_height, block_index, block_time, category, comment, confirmations, fee, generated, involves_watch_only, mempool_conflicts, replaced_by_txid, replaces_txid, time, time_received, to, trusted, txid, vout, wallet_conflicts, warnings, wtxid
+  TransactionItem ↔ ListTransactionsItem:
+    Missing in repo: abandoned, bip125_replaceable, label, parent_descs
+    Extra in repo:   involves_watch_only
+    Type diff 'category': repo=super::TransactionCategory vs spec=String
 
   ValidateAddress:
     Missing in repo: error, error_locations
 
-🔗 Fuzzy name matches (52):
+🔗 TYPE_BRIDGE mappings used (111):
   ActiveCommand ↔ GetRpcInfoActiveCommandsItem
+  AddedNode ↔ GetAddedNodeInfoItem
+  AddedNodeAddress ↔ GetAddedNodeInfoItemAddressesItem
+  AddrManInfoNetwork ↔ GetAddrmanInfoEntry
+  AddressInformation ↔ GetAddressesbyLabelEntry
   AnalyzePsbtInput ↔ AnalyzePsbtInputsItem
+  AnalyzePsbtInputMissing ↔ AnalyzePsbtInputsItemMissing
+  Banned ↔ ListBannedItem
+  Bip9Info ↔ GetDeploymentInfoDeploymentsBip9
   Bip9Statistics ↔ GetDeploymentInfoDeploymentsBip9Statistics
+  BlockTemplateTransaction ↔ GetBlocktemplateVerboseTwoTransactionsItem
   ChainState ↔ GetChainstatesChainstatesItem
+  ChainTips ↔ GetChainTipsItem
+  DeploymentInfo ↔ GetDeploymentInfoDeployments
+  DeriveAddresses ↔ DeriveAddressesVerboseZero
+  DeriveAddressesMultipath ↔ DeriveAddressesVerboseOne
+  DescriptorInfo ↔ ListDescriptorsDescriptorsItem
   DumpTxOutSet ↔ DumpTxoutSet
   GetAddrManInfo ↔ GetAddrmanInfo
   GetAddressesByLabel ↔ GetAddressesbyLabel
   GetBlockHeader ↔ GetBlockHeaderVerboseZero
   GetBlockHeaderVerbose ↔ GetBlockHeaderVerboseOne
   GetBlockStats ↔ GetBlockstats
+  GetBlockTemplate ↔ GetBlocktemplateVerboseTwo
+  GetBlockVerboseThreePrevout ↔ GetBlockVerboseThreeTxItemVinItemPrevout
+  GetBlockVerboseThreeTransaction ↔ GetBlockVerboseThreeTxItem
+  GetBlockVerboseTwoTransaction ↔ GetBlockVerboseTwoTxItem
   GetChainStates ↔ GetChainstates
   GetChainTxStats ↔ GetChainTxstats
   GetIndexInfoName ↔ GetIndexInfoEntry
   GetMemoryInfoStats ↔ GetMemoryInfoVerboseZero
+  GetMempoolAncestors ↔ GetMempoolAncestorsVerboseZero
   GetMempoolAncestorsVerbose ↔ GetMempoolAncestorsVerboseOne
+  GetMempoolDescendants ↔ GetMempoolDescendantsVerboseZero
   GetMempoolDescendantsVerbose ↔ GetMempoolDescendantsVerboseOne
+  GetNetworkInfoAddress ↔ GetNetworkInfoLocaladdressesItem
   GetNetworkInfoNetwork ↔ GetNetworkInfoNetworksItem
+  GetOrphanTxs ↔ GetOrphanTxsVerboseZero
+  GetOrphanTxsVerboseOneEntry ↔ GetOrphanTxsVerboseOneItem
+  GetOrphanTxsVerboseTwoEntry ↔ GetOrphanTxsVerboseTwoItem
   GetRawAddrMan ↔ GetRawAddrman
-  GetRawMempool ↔ GetRawMempoolVerboseOne
-  GetRawMempoolVerbose ↔ GetRawMempoolVerboseTwo
+  GetRawMempool ↔ GetRawMempoolVerboseZero
+  GetRawMempoolSequence ↔ GetRawMempoolVerboseTwo
+  GetRawMempoolVerbose ↔ GetRawMempoolVerboseOne
   GetRawTransaction ↔ GetRawTransactionVerboseZero
   GetRawTransactionVerbose ↔ GetRawTransactionVerboseOne
   GetRawTransactionVerboseWithPrevout ↔ GetRawTransactionVerboseTwo
+  GetReceivedByAddress ↔ GetReceivedbyAddress
   GetReceivedByLabel ↔ GetReceivedbyLabel
+  GetTransactionDetail ↔ GetTransactionDetailsItem
+  GetTxOut ↔ GetTxoutVerboseOne
   GetTxOutSetInfo ↔ GetTxoutSetInfo
   GetTxOutSetInfoBlockInfo ↔ GetTxoutSetInfoBlockInfo
+  GetTxOutSetInfoUnspendables ↔ GetTxoutSetInfoBlockInfoUnspendables
   GetTxSpendingPrevOut ↔ GetTxspendingprevOut
+  GetTxSpendingPrevOutItem ↔ GetTxspendingprevOutItem
   GlobalXpub ↔ DecodePsbtGlobalXpubsItem
+  HdKey ↔ GetHdKeysItem
+  HdKeyDescriptor ↔ GetHdKeysItemDescriptorsItem
+  ImportDescriptorsResult ↔ ImportDescriptorsItem
   LastProcessedBlock ↔ GetTransactionLastprocessedblock
   ListReceivedByAddress ↔ ListReceivedbyAddress
+  ListReceivedByAddressItem ↔ ListReceivedbyAddressItem
   ListReceivedByLabel ↔ ListReceivedbyLabel
+  ListReceivedByLabelItem ↔ ListReceivedbyLabelItem
   ListWalletDirWallet ↔ ListWalletDirWalletsItem
   LoadTxOutSet ↔ LoadTxoutSet
   Locked ↔ GetMemoryInfoVerboseZeroLocked
+  MempoolAcceptance ↔ TestMempoolacceptItem
+  MempoolAcceptanceFees ↔ TestMempoolacceptItemFees
+  MempoolEntry ↔ GetMempoolAncestorsVerboseOneEntry
   MempoolEntryFees ↔ GetMempoolEntryFees
   Musig2PartialSig ↔ DecodePsbtInputsItemMusig2PartialSigsItem
   Musig2ParticipantPubkeys ↔ DecodePsbtInputsItemMusig2ParticipantPubkeysItem
   Musig2Pubnonce ↔ DecodePsbtInputsItemMusig2PubnoncesItem
   NextBlockInfo ↔ GetMiningInfoNext
+  NodeAddress ↔ GetNodeAddressesItem
+  PeerInfo ↔ GetPeerInfoItem
+  PrioritisedTransaction ↔ GetPrioritisedTransactionsEntry
+  Proprietary ↔ DecodePsbtInputsItemProprietaryItem
+  PsbtInput ↔ DecodePsbtInputsItem
   PsbtOutput ↔ DecodePsbtOutputsItem
+  RawAddrManEntry ↔ GetRawAddrmanEntryEntry
+  RawFeeDetail ↔ EstimateRawFeeShort
+  RawFeeRange ↔ EstimateRawFeeShortPass
+  RawTransactionInputWithPrevout ↔ GetBlockVerboseThreeTxItemVinItem
   ScanBlocksAbort ↔ ScanBlocksVerboseThree
   ScanBlocksStart ↔ ScanBlocksVerboseOne
   ScanBlocksStatus ↔ ScanBlocksVerboseTwo
+  ScanTxOutSetAbort ↔ ScanTxoutSetVerboseTwo
+  ScanTxOutSetStart ↔ ScanTxoutSetVerboseZero
+  ScanTxOutSetStatus ↔ ScanTxoutSetVerboseOne
+  ScanTxOutSetUnspent ↔ ScanTxoutSetVerboseZeroUnspentsItem
+  SendMany ↔ SendmanyVerboseZero
+  SendManyVerbose ↔ SendToAddressVerboseOne
+  SendToAddress ↔ SendToAddressVerboseZero
   SetNetworkActive ↔ SetNetworkactive
   SetWalletFlag ↔ SetWalletflag
+  SignFail ↔ SignRawTransactionwithKeyErrorsItem
   SignMessageWithPrivKey ↔ SignMessagewithPrivKey
-  TaprootBip32Deriv ↔ DecodePsbtOutputsItemTaprootBip32DerivsItem
+  SignRawTransaction ↔ SignRawTransactionwithKey
+  Signers ↔ EnumerateSignersSignersItem
+  SubmitPackageTxResultssFees ↔ SubmitPackageTxResultsFees
+  TaprootBip32Deriv ↔ DecodePsbtInputsItemTaprootBip32DerivsItem
+  TaprootLeaf ↔ DecodePsbtOutputsItemTaprootTreeItem
   TaprootScript ↔ DecodePsbtInputsItemTaprootScriptsItem
   TaprootScriptPathSig ↔ DecodePsbtInputsItemTaprootScriptPathSigsItem
   TestMempoolAccept ↔ TestMempoolaccept
+  TransactionItem ↔ ListTransactionsItem
   UploadTarget ↔ GetNetTotalsUploadtarget
   VerifyTxOutProof ↔ VerifyTxoutProof
+
+⚠️  Note: 59 spec-only structs were intentionally ignored based on TYPE_BRIDGE:
+  ImportDescriptorsItemError
+  GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey
+  GetBlocktemplateVerboseOne
+  EstimateRawFeeMedium
+  EstimateRawFeeLong
+  EstimateRawFeeShortFail
+  GetRawTransactionVerboseOneVinItem
+  GetRawTransactionVerboseOneVinItemScriptSig
+  GetRawTransactionVerboseOneVoutItem
+  GetRawTransactionVerboseOneVoutItemScriptPubKey
+  GetRawTransactionVerboseTwoVinItem
+  GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey
+  GetTxoutVerboseOneScriptPubKey
+  GetMemoryInfoVerboseOne
+  DecodePsbtInputsItemBip32DerivsItem
+  DecodePsbtInputsItemFinalScriptSig
+  DecodePsbtInputsItemNonWitnessUtxo
+  DecodePsbtInputsItemRedeemScript
+  DecodePsbtInputsItemWitnessScript
+  DecodePsbtInputsItemWitnessUtxo
+  DecodePsbtInputsItemWitnessUtxoScriptPubKey
+  DecodePsbtOutputsItemBip32DerivsItem
+  DecodePsbtOutputsItemRedeemScript
+  DecodePsbtOutputsItemWitnessScript
+  DecodeRawTransactionVinItem
+  DecodeRawTransactionVinItemScriptSig
+  DecodeRawTransactionVoutItem
+  DecodeRawTransactionVoutItemScriptPubKey
+  GetWalletInfoScanning
+  Api
+  Echo
+  EchoIpc
+  EchoJson
+  Help
+  Stop
+  Uptime
+  GetTxoutProof
+  GetNetworkHashps
+  ImportMempool
+  SendmsgToPeer
+  GetBlockFromPeer
+  PrioritiseTransaction
+  SubmitBlockVerboseOne
 
 ======================================================================

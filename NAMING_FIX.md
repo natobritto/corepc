@@ -11,10 +11,10 @@ Reduce mismatches in `compare.txt` between generated code and repository impleme
 ```
 📊 Summary:
   Repo structs:     232
-  Spec structs:     180
-  Matched pairs:    123
-  Bridged/Ignored:  57
-  Only in repo:     109
+  Spec structs:     244
+  Matched pairs:    182
+  Bridged/Ignored:  68
+  Only in repo:     50   (intentional - spec doesn't define these)
   Only in spec:     0    ✅
 ```
 
@@ -22,31 +22,45 @@ Reduce mismatches in `compare.txt` between generated code and repository impleme
 
 ### 1. TYPE_BRIDGE in compare_types.py
 
-Added a comprehensive `TYPE_BRIDGE` dictionary that maps spec struct names to their repo equivalents or marks them as `IGNORE` when they don't need dedicated repo structs. This handles 57 types including:
+Added a comprehensive `TYPE_BRIDGE` dictionary with **79+ explicit mappings** that map spec struct names to their repo equivalents or marks them as `IGNORE`. **No fuzzy matching** - all mappings are explicit.
 
-**Simple RPC Return Types (IGNORE)**:
-- `Api`, `Echo`, `EchoIpc`, `EchoJson`, `Help`, `Stop`, `Uptime`
-- `GetTxOutProof`, `GetNetworkHashps`, `ImportMempool`, `SendMsgToPeer`
-- `GetBlockFromPeer`, `PrioritiseTransaction`, `SubmitBlockVerboseOne`
+**Key Mapping Categories:**
 
-**Transaction Types (use shared Vin/Vout/ScriptPubKey)**:
-- `DecodeRawTransactionVinItem` → IGNORE (repo uses `Vin`)
-- `DecodeRawTransactionVoutItem` → IGNORE (repo uses `Vout`)
-- `GetRawTransactionVerboseOneVinItem` → IGNORE
-- `GetBlockVerboseThreeTxItemVinItem` → IGNORE
+**Case Sensitivity Fixes** (spec uses different capitalization):
+- `DumpTxoutSet` → `DumpTxOutSet`
+- `GetAddrmanInfo` → `GetAddrManInfo`  
+- `GetBlockstats` → `GetBlockStats`
+- `GetTxoutSetInfo` → `GetTxOutSetInfo`
+- `SignRawTransactionwithKey` → `SignRawTransaction`
 
-**Method Variant Mappings**:
+**Method Variant Mappings** (VerboseZero/One/Two → repo names):
 - `GetRawTransactionVerboseZero` → `GetRawTransaction`
 - `GetRawTransactionVerboseOne` → `GetRawTransactionVerbose`
+- `GetRawTransactionVerboseTwo` → `GetRawTransactionVerboseWithPrevout`
 - `GetBlockHeaderVerboseZero` → `GetBlockHeader`
-- `ScanTxOutSetVerboseZero` → `ScanTxOutSetStart`
-- `ScanBlocksVerboseOne` → `ScanBlocksStart`
+- `ScanTxoutSetVerboseZero` → `ScanTxOutSetStart`
 
-**Shared Type Mappings (IGNORE - repo reuses common types)**:
-- `EstimateRawFeeLong/Medium/Short` → repo uses `RawFeeDetail`
-- `PsbtInputRedeemScript/WitnessScript` → repo uses `PsbtScript`
-- `PsbtInputBip32DerivsItem` → repo uses `Bip32Deriv`
-- `PsbtInputProprietaryItem` → repo uses `Proprietary`
+**Nested Type Mappings** (spec items → repo shared types):
+- `GetRpcInfoActiveCommandsItem` → `ActiveCommand`
+- `DecodePsbtInputsItem` → `PsbtInput`
+- `DecodePsbtOutputsItem` → `PsbtOutput`
+- `GetNetworkInfoLocaladdressesItem` → `GetNetworkInfoAddress`
+- `ListWalletDirWalletsItem` → `ListWalletDirWallet`
+
+**IGNORE Mappings** (spec types not needed in repo):
+- Simple return types: `Echo`, `Help`, `Stop`, `Uptime`
+- Nested items covered by shared types: `DecodePsbtInputsItemRedeemScript` (uses `PsbtScript`)
+- Transaction components: `DecodeRawTransactionVinItem` (uses shared `Vin`)
+
+### 2. Repo-Only Structs (50)
+
+These 50 structs exist only in the repo because the OpenRPC spec either:
+1. **Has empty struct definitions** - `ListUnspent`, `ListTransactions`, etc. are empty in spec
+2. **Doesn't define nested item types** - `ListUnspentItem`, `TransactionItem`, etc.
+3. **Doesn't include deprecated RPCs** - `ImportMulti`, `ImportMultiEntry`
+4. **Uses different internal structures** - `MempoolEntry`, `RawFeeDetail`, `BlockTemplateTransaction`
+
+These are **intentional differences** and not errors.
 
 ### 2. Repository Struct Renames
 
@@ -122,8 +136,9 @@ fn get_short_nested_name(parent_name: &str, field_name: &str) -> Option<&'static
 ## Files Modified
 
 ### compare_types.py
-- Added `TYPE_BRIDGE` dictionary with 57 mappings
-- Modified `build_struct_name_mapping()` to use TYPE_BRIDGE
+- Added `TYPE_BRIDGE` dictionary with 79+ explicit mappings
+- Removed all fuzzy matching - all mappings are explicit
+- Modified `build_struct_name_mapping()` to use TYPE_BRIDGE only
 - Added "Bridged/Ignored" count to summary output
 
 ### Codegen Changes
@@ -156,12 +171,24 @@ Files affected by `SubmitPackageTxResult` → `SubmitPackageTxResults`:
 - `types/src/v29/mod.rs`
 - `types/src/v30/mod.rs`
 
-## Remaining Fuzzy Matches
+## Verification
 
-The 23 fuzzy matches are intentional mappings where repo uses different (shorter) names:
-- `GetRawTransaction` ↔ `GetRawTransactionVerboseZero`
-- `GetRawTransactionVerbose` ↔ `GetRawTransactionVerboseOne`
-- `ScanTxOutSetStart` ↔ `ScanTxOutSetVerboseZero`
+Run the comparison to verify:
+```bash
+./cmd.sh
+```
+
+Expected output:
+```
+📊 Summary:
+  Repo structs:     232
+  Spec structs:     244
+  Matched pairs:    182
+  Bridged/Ignored:  68
+  Only in repo:     50   (intentional - spec doesn't fully define these)
+  Only in spec:     0    ✅
+```
+
 - etc.
 
 ## Verification

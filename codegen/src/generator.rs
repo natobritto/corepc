@@ -90,6 +90,11 @@ impl Generator {
             return self.generate_map_type(method, schema);
         }
 
+        // Handle top-level arrays: generate a tuple struct wrapping Vec<Item>
+        if schema.type_.as_deref() == Some("array") {
+            return self.generate_array_wrapper(method, schema);
+        }
+
         self.generate_struct_type(&struct_name, schema, Some(&method.description))
     }
 
@@ -188,7 +193,13 @@ pub struct {name}(pub {inner_type});
     ) -> Option<GeneratedType> {
         if variants.len() == 1 {
             if variants[0].type_.as_deref() == Some("object") {
+                if variants[0].is_dynamic_object() {
+                    return self.generate_map_type_from_schema(name, &variants[0], doc);
+                }
                 return self.generate_struct_type(name, &variants[0], doc);
+            }
+            if variants[0].type_.as_deref() == Some("array") {
+                return self.generate_array_wrapper_from_schema(name, &variants[0], doc);
             }
             return self.generate_simple_wrapper_from_schema(name, &variants[0], doc);
         }
@@ -200,31 +211,48 @@ pub struct {name}(pub {inner_type});
 
         for (i, variant) in variants.iter().enumerate() {
             let variant_name = if variants.len() > 1 {
-                // Try to use x-bitcoin-condition for naming
-                let suffix = variant
-                    .description
-                    .as_ref()
-                    .and_then(|d| {
-                        if d.contains("verbosity = 0") || d.contains("verbosity=0") {
-                            Some("Verbose0")
-                        } else if d.contains("verbosity = 1") || d.contains("verbosity=1") {
-                            Some("Verbose1")
-                        } else if d.contains("verbosity = 2") || d.contains("verbosity=2") {
-                            Some("Verbose2")
-                        } else if d.contains("verbosity = 3") || d.contains("verbosity=3") {
-                            Some("Verbose3")
-                        } else {
-                            None
-                        }
-                    })
-                    .unwrap_or_else(|| match i {
-                        0 => "VerboseZero",
-                        1 => "VerboseOne",
-                        2 => "VerboseTwo",
-                        3 => "VerboseThree",
-                        4 => "VerboseFour",
-                        _ => "---------ERROR_badtype",
-                    });
+                // Try to use x-bitcoin-condition for naming, then fall back to description
+                let condition_text = variant.bitcoin_condition.as_deref()
+                    .or(variant.description.as_deref())
+                    .unwrap_or("");
+                
+                // Only match simple verbose conditions, not compound ones (e.g., "verbose = false and mempool_sequence = true")
+                let is_simple_condition = !condition_text.contains(" and ");
+                
+                let suffix = if is_simple_condition {
+                    if condition_text.contains("verbosity = 0") || condition_text.contains("verbosity=0")
+                        || condition_text.contains("verbose = 0") || condition_text.contains("verbose=0")
+                        || condition_text.contains("verbose = false") || condition_text.contains("verbose=false")
+                        || condition_text.contains("verbose is not set or set to false")
+                        || condition_text.contains("verbose is not set or set to 0") {
+                        Some("VerboseZero")
+                    } else if condition_text.contains("verbosity = 1") || condition_text.contains("verbosity=1")
+                        || condition_text.contains("verbose = 1") || condition_text.contains("verbose=1")
+                        || condition_text.contains("verbose = true") || condition_text.contains("verbose=true")
+                        || condition_text.contains("verbose is set to 1")
+                        || condition_text.contains("verbose is set to true") {
+                        Some("VerboseOne")
+                    } else if condition_text.contains("verbosity = 2") || condition_text.contains("verbosity=2")
+                        || condition_text.contains("verbose = 2") || condition_text.contains("verbose=2") {
+                        Some("VerboseTwo")
+                    } else if condition_text.contains("verbosity = 3") || condition_text.contains("verbosity=3")
+                        || condition_text.contains("verbose = 3") || condition_text.contains("verbose=3") {
+                        Some("VerboseThree")
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                };
+
+                let suffix = suffix.unwrap_or_else(|| match i {
+                    0 => "VerboseZero",
+                    1 => "VerboseOne",
+                    2 => "VerboseTwo",
+                    3 => "VerboseThree",
+                    4 => "VerboseFour",
+                    _ => "---------ERROR_badtype",
+                });
                 format!("{}{}", name, suffix)
             } else {
                 name.to_string()
@@ -235,7 +263,13 @@ pub struct {name}(pub {inner_type});
             }
 
             let generated = if variant.type_.as_deref() == Some("object") {
-                self.generate_struct_type(&variant_name, variant, doc)
+                if variant.is_dynamic_object() {
+                    self.generate_map_type_from_schema(&variant_name, variant, doc)
+                } else {
+                    self.generate_struct_type(&variant_name, variant, doc)
+                }
+            } else if variant.type_.as_deref() == Some("array") {
+                self.generate_array_wrapper_from_schema(&variant_name, variant, doc)
             } else {
                 self.generate_simple_wrapper_from_schema(&variant_name, variant, doc)
             };
@@ -243,14 +277,6 @@ pub struct {name}(pub {inner_type});
             if let Some(generated) = generated {
                 all_names.push(generated.name.clone());
                 all_types.push(generated);
-            }
-        }
-
-        // Also check for array variants
-        for variant in variants.iter() {
-            if variant.type_.as_deref() == Some("array") {
-                // This is typically a simple array return - we can skip generating a type for it
-                // since it would just be Vec<T>
             }
         }
 
@@ -268,6 +294,130 @@ pub struct {name}(pub {inner_type});
             primary.nested_types.push(variant);
         }
         Some(primary)
+    }
+
+    /// Generate a tuple struct wrapper for top-level array return types.
+    /// E.g., `pub struct GetChainTips(pub Vec<GetChainTipsChaintipsItem>);`
+    fn generate_array_wrapper(&mut self, method: &Method, schema: &Schema) -> Option<GeneratedType> {
+        let struct_name = method.struct_name();
+        let doc = format!(
+            "/// Result of the JSON-RPC method `{}`.\n///\n/// > {}\n/// >\n/// > {}",
+            method.name,
+            method.name,
+            method.summary.lines().collect::<Vec<_>>().join("\n/// > ")
+        );
+        self.generate_array_wrapper_from_schema(&struct_name, schema, Some(&doc))
+    }
+
+    /// Generate a tuple struct wrapper for an array schema.
+    /// Generates both the wrapper and any nested item struct.
+    fn generate_array_wrapper_from_schema(
+        &mut self,
+        name: &str,
+        schema: &Schema,
+        doc: Option<&str>,
+    ) -> Option<GeneratedType> {
+        if self.generated_names.contains(name) {
+            return None;
+        }
+
+        let (item_type, nested_types) = match &schema.items {
+            Some(items) => match items.as_ref() {
+                SchemaOrArray::Schema(item_schema) => {
+                    if item_schema.type_.as_deref() == Some("object") && item_schema.properties.is_some() {
+                        let inner_name = format!("{}Item", name);
+                        self.generate_inner_type(&inner_name, item_schema)
+                    } else {
+                        self.schema_to_rust_type(item_schema, name, "")
+                    }
+                }
+                SchemaOrArray::Array(_) => ("serde_json::Value".to_string(), vec![]),
+            },
+            None => ("String".to_string(), vec![]),
+        };
+
+        self.generated_names.insert(name.to_string());
+
+        let doc_str = doc
+            .map(|d| {
+                if d.starts_with("///") { format!("{}\n", d) } else { format!("/// {}\n", escape_doc(d)) }
+            })
+            .unwrap_or_default();
+
+        let deny_unknown = if self.config.deny_unknown_fields {
+            "\n#[cfg_attr(feature = \"serde-deny-unknown-fields\", serde(deny_unknown_fields))]"
+        } else {
+            ""
+        };
+
+        let definition = format!(
+            r#"{doc_str}#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]{deny_unknown}
+pub struct {name}(pub Vec<{item_type}>);
+"#,
+        );
+
+        Some(GeneratedType {
+            definition,
+            nested_types,
+            name: name.to_string(),
+        })
+    }
+
+    /// Generate a map/newtype wrapper from a schema (used within oneOf/anyOf).
+    fn generate_map_type_from_schema(
+        &mut self,
+        name: &str,
+        schema: &Schema,
+        doc: Option<&str>,
+    ) -> Option<GeneratedType> {
+        if self.generated_names.contains(name) {
+            return None;
+        }
+        self.generated_names.insert(name.to_string());
+
+        let value_type = match &schema.additional_properties {
+            Some(AdditionalProperties::Schema(inner_schema)) => {
+                let inner_name = if name.ends_with("Entry") {
+                    format!("{}Item", name)
+                } else {
+                    format!("{}Entry", name)
+                };
+                self.generate_inner_type(&inner_name, inner_schema)
+            }
+            _ => ("serde_json::Value".to_string(), vec![]),
+        };
+
+        let doc_str = doc
+            .map(|d| {
+                if d.starts_with("///") { format!("{}\n", d) } else { format!("/// {}\n", escape_doc(d)) }
+            })
+            .unwrap_or_default();
+
+        let deny_unknown = if self.config.deny_unknown_fields {
+            "\n#[cfg_attr(feature = \"serde-deny-unknown-fields\", serde(deny_unknown_fields))]"
+        } else {
+            ""
+        };
+
+        let definition = format!(
+            r#"{doc_str}#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]{deny_unknown}
+pub struct {name}(
+    /// {desc}
+    pub std::collections::BTreeMap<String, {value_type}>,
+);
+"#,
+            doc_str = doc_str,
+            deny_unknown = deny_unknown,
+            name = name,
+            desc = schema.description.as_deref().unwrap_or("Map entries"),
+            value_type = value_type.0,
+        );
+
+        Some(GeneratedType {
+            definition,
+            nested_types: value_type.1,
+            name: name.to_string(),
+        })
     }
 
     /// Generate a map/newtype wrapper for dynamic object types.
