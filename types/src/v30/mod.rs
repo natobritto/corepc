@@ -266,7 +266,7 @@ pub use self::{
     },
     wallet::{
         GetWalletInfo, GetWalletInfoError, GetWalletInfoScanning, LastProcessedBlock,
-        LastProcessedBlockError, ListWalletDir, ListWalletDirWallet,
+        LastProcessedBlockError, ListWalletDir, ListWalletDirWallet, RestoreWallet,
     },
 };
 #[doc(inline)]
@@ -326,7 +326,7 @@ pub use crate::{
     v23::{
         Bip9Info, Bip9Statistics, CreateMultisig, DecodeScript, DecodeScriptError,
         DecodeScriptSegwit, DeploymentInfo, GetDeploymentInfo, GetDeploymentInfoError,
-        RestoreWallet, SaveMempool,
+        SaveMempool,
     },
     v24::{
         GetMempoolAncestors, GetMempoolAncestorsVerbose, GetMempoolDescendants,

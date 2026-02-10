@@ -209,6 +209,14 @@ impl GetTransaction {
             .transpose()?;
         let replaces_txid =
             self.replaces_txid.map(|s| s.parse::<Txid>().map_err(E::ReplacesTxid)).transpose()?;
+        let mempool_conflicts = self
+            .mempool_conflicts
+            .map(|v| {
+                v.into_iter()
+                    .map(|s| s.parse::<Txid>().map_err(E::MempoolConflicts))
+                    .collect::<Result<Vec<_>, _>>()
+            })
+            .transpose()?;
         let tx = encode::deserialize_hex::<Transaction>(&self.hex).map_err(E::Tx)?;
         let details = self
             .details
@@ -236,7 +244,7 @@ impl GetTransaction {
             wallet_conflicts,
             replaced_by_txid,
             replaces_txid,
-            mempool_conflicts: None, // v28 and later only.
+            mempool_conflicts,
             to: self.to,
             time: self.time,
             time_received: self.time_received,

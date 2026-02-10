@@ -4,6 +4,8 @@
 //!
 //! We ignore option arguments unless they effect the shape of the returned JSON data.
 
+mod wallet;
+
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -153,7 +155,7 @@ crate::impl_client_v17__abandon_transaction!();
 crate::impl_client_v17__abort_rescan!();
 crate::impl_client_v17__backup_wallet!();
 crate::impl_client_v17__bump_fee!();
-crate::impl_client_v23__create_wallet!();
+crate::impl_client_v30__create_wallet!();
 crate::impl_client_v28__create_wallet_descriptor!();
 crate::impl_client_v17__encrypt_wallet!();
 crate::impl_client_v17__get_addresses_by_label!();
@@ -187,7 +189,7 @@ crate::impl_client_v24__migrate_wallet!();
 crate::impl_client_v21__psbt_bump_fee!();
 crate::impl_client_v17__remove_pruned_funds!();
 crate::impl_client_v17__rescan_blockchain!();
-crate::impl_client_v23__restore_wallet!();
+crate::impl_client_v30__restore_wallet!();
 crate::impl_client_v21__send!();
 crate::impl_client_v24__send_all!();
 crate::impl_client_v17__send_many!();

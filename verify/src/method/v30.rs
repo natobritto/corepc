@@ -198,7 +198,7 @@ pub const METHODS: &[Method] = &[
         "SimulateRawTransaction",
         "simulate_raw_transaction",
     ),
-    Method::new_nothing("unloadwallet", "unload_wallet"),
+    Method::new_no_model("unloadwallet", "UnloadWallet", "unload_wallet"),
     Method::new_modelled(
         "walletcreatefundedpsbt",
         "WalletCreateFundedPsbt",

@@ -97,8 +97,8 @@ pub struct GetTransactionDetail {
     pub involves_watch_only: Option<bool>,
     /// DEPRECATED. The account name involved in the transaction, can be "" for the default account.
     pub account: Option<String>, // Docs are wrong, this is not documented as optional.
-    /// The bitcoin address involved in the transaction.
-    pub address: String,
+    /// The bitcoin address involved in the transaction. Optional in v30+ (e.g., for OP_RETURN).
+    pub address: Option<String>,
     /// The category, either 'send' or 'receive'.
     pub category: TransactionCategory,
     ///  The amount in BTC.
@@ -247,8 +247,8 @@ pub struct ListUnspentItem {
     pub txid: String,
     /// The vout value.
     pub vout: i64,
-    /// The bitcoin address of the transaction.
-    pub address: String,
+    /// The bitcoin address of the transaction. Optional in v30+ for outputs without addresses.
+    pub address: Option<String>,
     /// The associated label, or "" for the default label.
     pub label: Option<String>,
     /// The script key.
@@ -261,10 +261,15 @@ pub struct ListUnspentItem {
     /// The redeemScript if scriptPubKey is P2SH.
     #[serde(rename = "redeemScript")]
     pub redeem_script: Option<String>,
+    /// The witnessScript if scriptPubKey is P2WSH. v30 and later only.
+    #[serde(rename = "witnessScript")]
+    pub witness_script: Option<String>,
     /// Whether we have the private keys to spend this output.
     pub spendable: bool,
     /// Whether we know how to spend this output, ignoring the lack of keys.
     pub solvable: bool,
+    /// Whether this output is reused/dirty. v30 and later only.
+    pub reused: Option<bool>,
     /// A descriptor for spending this output (only when solvable)
     #[serde(rename = "desc")]
     pub descriptor: Option<String>,
@@ -275,6 +280,12 @@ pub struct ListUnspentItem {
     /// List of parent descriptors for the scriptPubKey of this coin. v24 and later only.
     #[serde(rename = "parent_descs")]
     pub parent_descriptors: Option<Vec<String>>,
+    /// The number of in-mempool ancestor transactions. v30 and later only.
+    pub ancestorcount: Option<i64>,
+    /// The virtual transaction size of in-mempool ancestors. v30 and later only.
+    pub ancestorsize: Option<i64>,
+    /// The total fees of in-mempool ancestors in satoshis. v30 and later only.
+    pub ancestorfees: Option<i64>,
 }
 
 /// Result of JSON-RPC method `migratewallet`.

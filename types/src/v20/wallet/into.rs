@@ -234,7 +234,7 @@ impl GetTransactionDetail {
     pub fn into_model(self) -> Result<model::GetTransactionDetail, GetTransactionDetailError> {
         use GetTransactionDetailError as E;
 
-        let address = self.address.parse::<Address<_>>().map_err(E::Address)?;
+        let address = Some(self.address.parse::<Address<_>>().map_err(E::Address)?);
         let amount = SignedAmount::from_btc(self.amount).map_err(E::Amount)?;
         let fee = self.fee.map(|fee| SignedAmount::from_btc(fee).map_err(E::Fee)).transpose()?;
 
