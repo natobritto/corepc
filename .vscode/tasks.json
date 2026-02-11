@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build corepc-codegen",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["build", "--bin", "corepc-codegen"],
+            "options": {
+                "cwd": "${workspaceFolder}/codegen"
+            },
+            "problemMatcher": ["$rustc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

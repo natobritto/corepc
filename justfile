@@ -60,3 +60,4 @@ docsrs *flags:
 # Update the recent and minimal lock files.
 update-lock-files:
   contrib/update-lock-files.sh
+

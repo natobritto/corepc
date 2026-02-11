@@ -1,0 +1,1348 @@
+5c5
+<     "version": "v29.3.0"
+---
+>     "version": "v30.2.0"
+37,38c37,38
+<       "summary": "Stops current wallet rescan triggered by an RPC call, e.g. by an importprivkey call.",
+<       "description": "Stops current wallet rescan triggered by an RPC call, e.g. by an importprivkey call.\nNote: Use \"getwalletinfo\" to query the scanning progress.",
+---
+>       "summary": "Stops current wallet rescan triggered by an RPC call, e.g. by a rescanblockchain call.",
+>       "description": "Stops current wallet rescan triggered by an RPC call, e.g. by a rescanblockchain call.\nNote: Use \"getwalletinfo\" to query the scanning progress.",
+50c50
+<       "x-bitcoin-examples": "\nImport a private key\n> bitcoin-cli importprivkey \"mykey\"\n\nAbort the running wallet rescan\n> bitcoin-cli abortrescan \n\nAs a JSON-RPC call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"abortrescan\", \"params\": []}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+---
+>       "x-bitcoin-examples": "\nImport a private key\n> bitcoin-cli rescanblockchain \n\nAbort the running wallet rescan\n> bitcoin-cli abortrescan \n\nAs a JSON-RPC call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"abortrescan\", \"params\": []}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+111,197d110
+<       "name": "addmultisigaddress",
+<       "summary": "Add an nrequired-to-sign multisignature address to the wallet. Requires a new wallet backup.",
+<       "description": "Add an nrequired-to-sign multisignature address to the wallet. Requires a new wallet backup.\nEach key is a Bitcoin address or hex-encoded public key.\nThis functionality is only intended for use with non-watchonly addresses.\nSee `importaddress` for watchonly p2sh address support.\nIf 'label' is specified, assign address to that label.\nNote: This command is only compatible with legacy wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "nrequired",
+<           "schema": {
+<             "type": "number",
+<             "description": "The number of required signatures out of the n keys or addresses."
+<           },
+<           "required": true,
+<           "description": "The number of required signatures out of the n keys or addresses."
+<         },
+<         {
+<           "name": "keys",
+<           "schema": {
+<             "type": "array",
+<             "items": {
+<               "type": "string",
+<               "description": "bitcoin address or hex-encoded public key"
+<             },
+<             "description": "The bitcoin addresses or hex-encoded public keys"
+<           },
+<           "required": true,
+<           "description": "The bitcoin addresses or hex-encoded public keys"
+<         },
+<         {
+<           "name": "label",
+<           "schema": {
+<             "type": "string",
+<             "description": "A label to assign the addresses to."
+<           },
+<           "required": false,
+<           "description": "A label to assign the addresses to."
+<         },
+<         {
+<           "name": "address_type",
+<           "schema": {
+<             "type": "string",
+<             "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", and \"bech32\".",
+<             "x-bitcoin-default-hint": "set by -addresstype"
+<           },
+<           "required": false,
+<           "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", and \"bech32\"."
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "object",
+<           "properties": {
+<             "address": {
+<               "type": "string",
+<               "description": "The value of the new multisig address"
+<             },
+<             "redeemScript": {
+<               "type": "string",
+<               "pattern": "^[0-9a-fA-F]*$",
+<               "x-bitcoin-type": "hex",
+<               "description": "The string value of the hex-encoded redemption script"
+<             },
+<             "descriptor": {
+<               "type": "string",
+<               "description": "The descriptor for this multisig"
+<             },
+<             "warnings": {
+<               "type": "array",
+<               "items": {
+<                 "type": "string"
+<               },
+<               "description": "Any warnings resulting from the creation of this multisig",
+<               "x-bitcoin-optional": true
+<             }
+<           },
+<           "required": [
+<             "address",
+<             "redeemScript",
+<             "descriptor"
+<           ],
+<           "additionalProperties": false
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "\nAdd a multisig address from 2 addresses\n> bitcoin-cli addmultisigaddress 2 \"[\\\"bc1q09vm5lfy0j5reeulh4x5752q25uqqvz34hufdl\\\",\\\"bc1q02ad21edsxd23d32dfgqqsz4vv4nmtfzuklhy3\\\"]\"\n\nAs a JSON-RPC call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"addmultisigaddress\", \"params\": [2, \"[\\\"bc1q09vm5lfy0j5reeulh4x5752q25uqqvz34hufdl\\\",\\\"bc1q02ad21edsxd23d32dfgqqsz4vv4nmtfzuklhy3\\\"]\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+472,473c385,386
+<       "summary": "Bumps the fee of an opt-in-RBF transaction T, replacing it with a new transaction B.",
+<       "description": "Bumps the fee of an opt-in-RBF transaction T, replacing it with a new transaction B.\nAn opt-in RBF transaction with the given txid must be in the wallet.\nThe command will pay the additional fee by reducing change outputs or adding inputs when necessary.\nIt may add a new change output if one does not already exist.\nAll inputs in the original transaction will be included in the replacement transaction.\nThe command will fail if the wallet or mempool contains a transaction that spends one of T's outputs.\nBy default, the new fee will be calculated automatically using the estimatesmartfee RPC.\nThe user can specify a confirmation target for estimatesmartfee.\nAlternatively, the user can specify a fee rate in sat/vB for the new transaction.\nAt a minimum, the new fee rate must be high enough to pay an additional new relay fee (incrementalfee\nreturned by getnetworkinfo) to enter the node's mempool.\n* WARNING: before version 0.21, fee_rate was in BTC/kvB. As of 0.21, fee_rate is in sat/vB. *",
+---
+>       "summary": "Bumps the fee of a transaction T, replacing it with a new transaction B.",
+>       "description": "Bumps the fee of a transaction T, replacing it with a new transaction B.\nA transaction with the given txid must be in the wallet.\nThe command will pay the additional fee by reducing change outputs or adding inputs when necessary.\nIt may add a new change output if one does not already exist.\nAll inputs in the original transaction will be included in the replacement transaction.\nThe command will fail if the wallet or mempool contains a transaction that spends one of T's outputs.\nBy default, the new fee will be calculated automatically using the estimatesmartfee RPC.\nThe user can specify a confirmation target for estimatesmartfee.\nAlternatively, the user can specify a fee rate in sat/vB for the new transaction.\nAt a minimum, the new fee rate must be high enough to pay an additional new relay fee (incrementalfee\nreturned by getnetworkinfo) to enter the node's mempool.\n* WARNING: before version 0.21, fee_rate was in BTC/kvB. As of 0.21, fee_rate is in sat/vB. *",
+512c425
+<                 "description": "Whether the new transaction should still be\nmarked bip-125 replaceable. If true, the sequence numbers in the transaction will\nbe left unchanged from the original. If false, any input sequence numbers in the\noriginal transaction that were less than 0xfffffffe will be increased to 0xfffffffe\nso the new transaction will not be explicitly bip-125 replaceable (though it may\nstill be replaceable in practice, for example if it has unconfirmed ancestors which\nare replaceable).\n",
+---
+>                 "description": "Whether the new transaction should be\nmarked bip-125 replaceable. If true, the sequence numbers in the transaction will\nbe set to 0xfffffffd. If false, any input sequence numbers in the\ntransaction will be set to 0xfffffffe\nso the new transaction will not be explicitly bip-125 replaceable (though it may\nstill be replaceable in practice, for example if it has unconfirmed ancestors which\nare replaceable).\n",
+546c459
+<                         "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data"
+---
+>                         "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data that becomes a part of an OP_RETURN output"
+743,744c656,657
+<       "summary": "Creates a multi-signature address with n signature of m keys required.",
+<       "description": "Creates a multi-signature address with n signature of m keys required.\nIt returns a json object with the address and redeemScript.",
+---
+>       "summary": "Creates a multi-signature address with n signatures of m keys required.",
+>       "description": "Creates a multi-signature address with n signatures of m keys required.\nIt returns a json object with the address and redeemScript.",
+751c664
+<             "description": "The number of required signatures out of the n keys."
+---
+>             "description": "The number of required signatures out of the m keys."
+754c667
+<           "description": "The number of required signatures out of the n keys."
+---
+>           "description": "The number of required signatures out of the m keys."
+824c737
+<       "description": "Creates a transaction in the Partially Signed Transaction format.\nImplements the Creator role.",
+---
+>       "description": "Creates a transaction in the Partially Signed Transaction format.\nImplements the Creator role.\nNote that the transaction's inputs are not signed, and\nit is not stored in the wallet or transmitted to the network.",
+889c802
+<                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data"
+---
+>                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data that becomes a part of an OP_RETURN output"
+923a837,846
+>         },
+>         {
+>           "name": "version",
+>           "schema": {
+>             "type": "number",
+>             "description": "Transaction version",
+>             "default": 2
+>           },
+>           "required": false,
+>           "description": "Transaction version"
+934c857
+<       "x-bitcoin-examples": "> bitcoin-cli createpsbt \"[{\\\"txid\\\":\\\"myid\\\",\\\"vout\\\":0}]\" \"[{\\\"data\\\":\\\"00010203\\\"}]\"\n"
+---
+>       "x-bitcoin-examples": "> bitcoin-cli createpsbt \"[{\\\"txid\\\":\\\"myid\\\",\\\"vout\\\":0}]\" \"[{\\\"address\\\":0.01}]\"\n"
+1004c927
+<                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data"
+---
+>                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data that becomes a part of an OP_RETURN output"
+1038a962,971
+>         },
+>         {
+>           "name": "version",
+>           "schema": {
+>             "type": "number",
+>             "description": "Transaction version",
+>             "default": 2
+>           },
+>           "required": false,
+>           "description": "Transaction version"
+1082c1015
+<             "description": "Create a blank wallet. A blank wallet has no keys or HD seed. One can be set using sethdseed.",
+---
+>             "description": "Create a blank wallet. A blank wallet has no keys.",
+1086c1019
+<           "description": "Create a blank wallet. A blank wallet has no keys or HD seed. One can be set using sethdseed."
+---
+>           "description": "Create a blank wallet. A blank wallet has no keys."
+1111c1044
+<             "description": "Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation. Setting to \"false\" will create a legacy wallet; This is only possible with the -deprecatedrpc=create_bdb setting because, the legacy wallet type is being deprecated and support for creating and opening legacy wallets will be removed in the future.",
+---
+>             "description": "If set, must be \"true\"",
+1115c1048
+<           "description": "Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation. Setting to \"false\" will create a legacy wallet; This is only possible with the -deprecatedrpc=create_bdb setting because, the legacy wallet type is being deprecated and support for creating and opening legacy wallets will be removed in the future."
+---
+>           "description": "If set, must be \"true\""
+1162c1095
+<       "x-bitcoin-examples": "> bitcoin-cli createwallet \"testwallet\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"createwallet\", \"params\": [\"testwallet\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n> bitcoin-cli -named createwallet wallet_name=descriptors avoid_reuse=true descriptors=true load_on_startup=true\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"createwallet\", \"params\": {\"wallet_name\":\"descriptors\",\"avoid_reuse\":true,\"descriptors\":true,\"load_on_startup\":true}}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+---
+>       "x-bitcoin-examples": "> bitcoin-cli createwallet \"testwallet\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"createwallet\", \"params\": [\"testwallet\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n> bitcoin-cli -named createwallet wallet_name=descriptors avoid_reuse=true load_on_startup=true\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"createwallet\", \"params\": {\"wallet_name\":\"descriptors\",\"avoid_reuse\":true,\"load_on_startup\":true}}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+1174c1107
+<             "description": "The address type the descriptor will produce. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\"."
+---
+>             "description": "The address type the descriptor will produce. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\"."
+1177c1110
+<           "description": "The address type the descriptor will produce. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\"."
+---
+>           "description": "The address type the descriptor will produce. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\"."
+1246a1180
+>                 "x-documentation-commentary": "The layout is the same as the output of decoderawtransaction."
+1339a1274
+>                       "x-documentation-commentary": ""
+1678a1614,1722
+>                   "musig2_participant_pubkeys": {
+>                     "type": "array",
+>                     "items": {
+>                       "type": "object",
+>                       "properties": {
+>                         "aggregate_pubkey": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The compressed aggregate public key for which the participants create."
+>                         },
+>                         "participant_pubkeys": {
+>                           "type": "array",
+>                           "items": {
+>                             "type": "string",
+>                             "pattern": "^[0-9a-fA-F]*$",
+>                             "x-bitcoin-type": "hex",
+>                             "description": "The compressed public keys that are aggregated for aggregate_pubkey."
+>                           }
+>                         }
+>                       },
+>                       "required": [
+>                         "aggregate_pubkey",
+>                         "participant_pubkeys"
+>                       ],
+>                       "additionalProperties": false
+>                     },
+>                     "x-bitcoin-optional": true
+>                   },
+>                   "musig2_pubnonces": {
+>                     "type": "array",
+>                     "items": {
+>                       "type": "object",
+>                       "properties": {
+>                         "participant_pubkey": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The compressed public key of the participant that created this pubnonce."
+>                         },
+>                         "aggregate_pubkey": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The compressed aggregate public key for which this pubnonce is for."
+>                         },
+>                         "leaf_hash": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The hash of the leaf script that contains the aggregate pubkey being signed for. Omitted when signing for the internal key.",
+>                           "x-bitcoin-optional": true
+>                         },
+>                         "pubnonce": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The public nonce itself."
+>                         }
+>                       },
+>                       "required": [
+>                         "participant_pubkey",
+>                         "aggregate_pubkey",
+>                         "pubnonce"
+>                       ],
+>                       "additionalProperties": false
+>                     },
+>                     "x-bitcoin-optional": true
+>                   },
+>                   "musig2_partial_sigs": {
+>                     "type": "array",
+>                     "items": {
+>                       "type": "object",
+>                       "properties": {
+>                         "participant_pubkey": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The compressed public key of the participant that created this partial signature."
+>                         },
+>                         "aggregate_pubkey": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The compressed aggregate public key for which this partial signature is for."
+>                         },
+>                         "leaf_hash": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The hash of the leaf script that contains the aggregate pubkey being signed for. Omitted when signing for the internal key.",
+>                           "x-bitcoin-optional": true
+>                         },
+>                         "partial_sig": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The partial signature itself."
+>                         }
+>                       },
+>                       "required": [
+>                         "participant_pubkey",
+>                         "aggregate_pubkey",
+>                         "partial_sig"
+>                       ],
+>                       "additionalProperties": false
+>                     },
+>                     "x-bitcoin-optional": true
+>                   },
+1892a1937,1965
+>                   "musig2_participant_pubkeys": {
+>                     "type": "array",
+>                     "items": {
+>                       "type": "object",
+>                       "properties": {
+>                         "aggregate_pubkey": {
+>                           "type": "string",
+>                           "pattern": "^[0-9a-fA-F]*$",
+>                           "x-bitcoin-type": "hex",
+>                           "description": "The compressed aggregate public key for which the participants create."
+>                         },
+>                         "participant_pubkeys": {
+>                           "type": "array",
+>                           "items": {
+>                             "type": "string",
+>                             "pattern": "^[0-9a-fA-F]*$",
+>                             "x-bitcoin-type": "hex",
+>                             "description": "The compressed public keys that are aggregated for aggregate_pubkey."
+>                           }
+>                         }
+>                       },
+>                       "required": [
+>                         "aggregate_pubkey",
+>                         "participant_pubkeys"
+>                       ],
+>                       "additionalProperties": false
+>                     },
+>                     "x-bitcoin-optional": true
+>                   },
+2509,2534d2581
+<       "name": "dumpprivkey",
+<       "summary": "Reveals the private key corresponding to 'address'.",
+<       "description": "Reveals the private key corresponding to 'address'.\nThen the importprivkey can be used with this output\nNote: This command is only compatible with legacy wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "address",
+<           "schema": {
+<             "type": "string",
+<             "description": "The bitcoin address for the private key"
+<           },
+<           "required": true,
+<           "description": "The bitcoin address for the private key"
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "string",
+<           "description": "The private key"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "> bitcoin-cli dumpprivkey \"myaddress\"\n> bitcoin-cli importprivkey \"mykey\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"dumpprivkey\", \"params\": [\"myaddress\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+2629,2663d2675
+<       "name": "dumpwallet",
+<       "summary": "Dumps all wallet keys in a human-readable format to a server-side file. This does not allow overwriting existing files.",
+<       "description": "Dumps all wallet keys in a human-readable format to a server-side file. This does not allow overwriting existing files.\nImported scripts are included in the dumpfile, but corresponding BIP173 addresses, etc. may not be added automatically by importwallet.\nNote that if your wallet contains keys which are not derived from your HD seed (e.g. imported keys), these are not covered by\nonly backing up the seed itself, and must be backed up too (e.g. ensure you back up the whole dumpfile).\nNote: This command is only compatible with legacy wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "filename",
+<           "schema": {
+<             "type": "string",
+<             "description": "The filename with path (absolute path recommended)"
+<           },
+<           "required": true,
+<           "description": "The filename with path (absolute path recommended)"
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "object",
+<           "properties": {
+<             "filename": {
+<               "type": "string",
+<               "description": "The filename with full absolute path"
+<             }
+<           },
+<           "required": [
+<             "filename"
+<           ],
+<           "additionalProperties": false
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "> bitcoin-cli dumpwallet \"test\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"dumpwallet\", \"params\": [\"test\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+2880c2892
+<       "description": "Encrypts the wallet with 'passphrase'. This is for first time encryption.\nAfter this, any calls that interact with private keys such as sending or signing \nwill require the passphrase to be set prior the making these calls.\nUse the walletpassphrase call for this, and then walletlock call.\nIf the wallet is already encrypted, use the walletpassphrasechange call.\n** IMPORTANT **\nFor security reasons, the encryption process will generate a new HD seed, resulting\nin the creation of a fresh set of active descriptors. Therefore, it is crucial to\nsecurely back up the newly generated wallet file using the backupwallet RPC.",
+---
+>       "description": "Encrypts the wallet with 'passphrase'. This is for first time encryption.\nAfter this, any calls that interact with private keys such as sending or signing \nwill require the passphrase to be set prior to making these calls.\nUse the walletpassphrase call for this, and then walletlock call.\nIf the wallet is already encrypted, use the walletpassphrasechange call.\n** IMPORTANT **\nFor security reasons, the encryption process will generate a new HD seed, resulting\nin the creation of a fresh set of active descriptors. Therefore, it is crucial to\nsecurely back up the newly generated wallet file using the backupwallet RPC.",
+3037a3050
+>                     "x-documentation-commentary": ""
+3062a3076
+>                 "x-documentation-commentary": ""
+3070a3085
+>                 "x-documentation-commentary": ""
+3203c3218
+<       "description": "If the transaction has no inputs, they will be automatically selected to meet its out value.\nIt will add at most one change output to the outputs.\nNo existing outputs will be modified unless \"subtractFeeFromOutputs\" is specified.\nNote that inputs which were signed may need to be resigned after completion since in/outputs have been added.\nThe inputs added will not be signed, use signrawtransactionwithkey\nor signrawtransactionwithwallet for that.\nAll existing inputs must either have their previous output transaction be in the wallet\nor be in the UTXO set. Solving data must be provided for non-wallet inputs.\nNote that all inputs selected must be of standard form and P2SH scripts must be\nin the wallet using importaddress or addmultisigaddress (to calculate fees).\nYou can see whether this is the case by checking the \"solvable\" field in the listunspent output.\nOnly pay-to-pubkey, multisig, and P2SH versions thereof are currently supported for watch-only.\nNote that if specifying an exact fee rate, the resulting transaction may have a higher fee rate\nif the transaction has unconfirmed inputs. This is because the wallet will attempt to make the\nentire package have the given fee rate, not the resulting transaction.",
+---
+>       "description": "If the transaction has no inputs, they will be automatically selected to meet its out value.\nIt will add at most one change output to the outputs.\nNo existing outputs will be modified unless \"subtractFeeFromOutputs\" is specified.\nNote that inputs which were signed may need to be resigned after completion since in/outputs have been added.\nThe inputs added will not be signed, use signrawtransactionwithkey\nor signrawtransactionwithwallet for that.\nAll existing inputs must either have their previous output transaction be in the wallet\nor be in the UTXO set. Solving data must be provided for non-wallet inputs.\nNote that all inputs selected must be of standard form and P2SH scripts must be\nin the wallet using importdescriptors (to calculate fees).\nYou can see whether this is the case by checking the \"solvable\" field in the listunspent output.\nNote that if specifying an exact fee rate, the resulting transaction may have a higher fee rate\nif the transaction has unconfirmed inputs. This is because the wallet will attempt to make the\nentire package have the given fee rate, not the resulting transaction.",
+3253c3268
+<                 "description": "The output type to use. Only valid if changeAddress is not specified. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\".",
+---
+>                 "description": "The output type to use. Only valid if changeAddress is not specified. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\".",
+3258,3259c3273,3274
+<                 "description": "Also select inputs which are watch only.\nOnly solvable inputs can be used. Watch-only destinations are solvable if the public key and/or output script was imported,\ne.g. with 'importpubkey' or 'importmulti' with the 'pubkeys' or 'desc' field.",
+<                 "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>                 "description": "(DEPRECATED) No longer used",
+>                 "default": false
+3397d3411
+<             "description": "For backward compatibility: passing in a true instead of an object will result in {\"includeWatching\":true}",
+3401,3402c3415
+<           "required": false,
+<           "description": "For backward compatibility: passing in a true instead of an object will result in {\"includeWatching\":true}"
+---
+>           "required": false
+3776c3789
+<               "description": "If the address is watchonly."
+---
+>               "description": "(DEPRECATED) Always false."
+3851a3865
+>                 "x-documentation-commentary": "Includes all getaddressinfo output fields for the embedded address, excluding metadata (timestamp, hdkeypath, hdseedid)\nand relation to the wallet (ismine)."
+3983,3984c3997,3998
+<             "description": "Also include balance in watch-only addresses (see 'importaddress')",
+<             "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>             "description": "No longer used",
+>             "default": false
+3987c4001
+<           "description": "Also include balance in watch-only addresses (see 'importaddress')"
+---
+>           "description": "No longer used"
+4056,4083d4069
+<             "watchonly": {
+<               "type": "object",
+<               "properties": {
+<                 "trusted": {
+<                   "type": "string",
+<                   "x-bitcoin-type": "amount",
+<                   "description": "trusted balance (outputs created by the wallet or confirmed outputs)"
+<                 },
+<                 "untrusted_pending": {
+<                   "type": "string",
+<                   "x-bitcoin-type": "amount",
+<                   "description": "untrusted pending balance (outputs created by others that are in the mempool)"
+<                 },
+<                 "immature": {
+<                   "type": "string",
+<                   "x-bitcoin-type": "amount",
+<                   "description": "balance from immature coinbase outputs"
+<                 }
+<               },
+<               "required": [
+<                 "trusted",
+<                 "untrusted_pending",
+<                 "immature"
+<               ],
+<               "additionalProperties": false,
+<               "description": "watchonly balances (not present if wallet does not watch anything)",
+<               "x-bitcoin-optional": true
+<             },
+4313a4300
+>                 "x-documentation-commentary": "Same output as verbosity = 1",
+4318a4306
+>                       "x-documentation-commentary": "The transactions in the format of the getrawtransaction RPC. Different from verbosity = 1 \"tx\" result",
+4339a4328
+>                 "x-documentation-commentary": "Same output as verbosity = 2",
+4349a4339
+>                             "x-documentation-commentary": "The same output as verbosity = 2",
+5800c5790
+<           "required": false,
+---
+>           "required": true,
+5846c5836
+<             "description": "Array of scan objects. Required for \"start\" action\nEvery scan object is either a string descriptor or an object:",
+---
+>             "description": "The list of descriptors (scan objects) to examine for activity. Every scan object is either a string descriptor or an object:",
+5849,5850c5839,5840
+<           "required": false,
+<           "description": "Array of scan objects. Required for \"start\" action\nEvery scan object is either a string descriptor or an object:"
+---
+>           "required": true,
+>           "description": "The list of descriptors (scan objects) to examine for activity. Every scan object is either a string descriptor or an object:"
+6895a6886,6893
+>             },
+>             "permitbaremultisig": {
+>               "type": "boolean",
+>               "description": "True if the mempool accepts transactions with bare multisig outputs"
+>             },
+>             "maxdatacarriersize": {
+>               "type": "number",
+>               "description": "Maximum number of bytes that can be used by OP_RETURN outputs in the mempool"
+6909c6907,6909
+<             "fullrbf"
+---
+>             "fullrbf",
+>             "permitbaremultisig",
+>             "maxdatacarriersize"
+6966a6967,6971
+>             "blockmintxfee": {
+>               "type": "string",
+>               "x-bitcoin-type": "amount",
+>               "description": "Minimum feerate of packages selected for block inclusion in BTC/kvB"
+>             },
+7026a7032
+>             "blockmintxfee",
+7337c7343
+<             "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\".",
+---
+>             "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\".",
+7341c7347
+<           "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\"."
+---
+>           "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\"."
+7485,7494d7490
+<                   "entry": {
+<                     "type": "number",
+<                     "x-bitcoin-format": "unix-time",
+<                     "description": "The entry time into the orphanage expressed in UNIX epoch time"
+<                   },
+<                   "expiration": {
+<                     "type": "number",
+<                     "x-bitcoin-format": "unix-time",
+<                     "description": "The orphan expiration time expressed in UNIX epoch time"
+<                   },
+7509,7510d7504
+<                   "entry",
+<                   "expiration",
+7546,7555d7539
+<                   "entry": {
+<                     "type": "number",
+<                     "x-bitcoin-format": "unix-time",
+<                     "description": "The entry time into the orphanage expressed in UNIX epoch time"
+<                   },
+<                   "expiration": {
+<                     "type": "number",
+<                     "x-bitcoin-format": "unix-time",
+<                     "description": "The orphan expiration time expressed in UNIX epoch time"
+<                   },
+7576,7577d7559
+<                   "entry",
+<                   "expiration",
+7969c7951
+<             "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\".",
+---
+>             "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\".",
+7973c7955
+<           "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\"."
+---
+>           "description": "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\"."
+8448a8431
+>                 "x-documentation-commentary": "Same output as verbosity = 1",
+8458a8442
+>                       "x-documentation-commentary": "Same output as verbosity = 1",
+8702,8703c8686,8687
+<             "description": "Whether to include watch-only addresses in balance calculation and details[]",
+<             "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>             "description": "(DEPRECATED) No longer used",
+>             "default": false
+8706c8690
+<           "description": "Whether to include watch-only addresses in balance calculation and details[]"
+---
+>           "description": "(DEPRECATED) No longer used"
+8856,8860d8839
+<                   "involvesWatchonly": {
+<                     "type": "boolean",
+<                     "description": "Only returns true if imported addresses were involved in transaction.",
+<                     "x-bitcoin-optional": true
+<                   },
+8921a8901
+>                 "x-documentation-commentary": "Equivalent to the RPC decoderawtransaction method, or the RPC getrawtransaction method when `verbose` is passed."
+9383,9398d9362
+<       "name": "getunconfirmedbalance",
+<       "summary": "DEPRECATED",
+<       "description": "DEPRECATED\nIdentical to getbalances().mine.untrusted_pending",
+<       "paramStructure": "by-position",
+<       "params": [
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "number",
+<           "description": "The balance"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet"
+<     },
+<     {
+9416c9380
+<               "description": "the wallet version"
+---
+>               "description": "(DEPRECATED) only related to unsupported legacy wallet, returns the latest version 169900 for backwards compatibility"
+9420,9435c9384
+<               "description": "the database format (bdb or sqlite)"
+<             },
+<             "balance": {
+<               "type": "string",
+<               "x-bitcoin-type": "amount",
+<               "description": "DEPRECATED. Identical to getbalances().mine.trusted"
+<             },
+<             "unconfirmed_balance": {
+<               "type": "string",
+<               "x-bitcoin-type": "amount",
+<               "description": "DEPRECATED. Identical to getbalances().mine.untrusted_pending"
+<             },
+<             "immature_balance": {
+<               "type": "string",
+<               "x-bitcoin-type": "amount",
+<               "description": "DEPRECATED. Identical to getbalances().mine.immature"
+---
+>               "description": "the database format (only sqlite)"
+9441,9446d9389
+<             "keypoololdest": {
+<               "type": "number",
+<               "x-bitcoin-format": "unix-time",
+<               "description": "the UNIX epoch time of the oldest pre-generated key in the key pool. Legacy wallets only.",
+<               "x-bitcoin-optional": true
+<             },
+9467,9473d9409
+<             "hdseedid": {
+<               "type": "string",
+<               "pattern": "^[0-9a-fA-F]*$",
+<               "x-bitcoin-type": "hex",
+<               "description": "the Hash160 of the HD seed (only present when HD is enabled)",
+<               "x-bitcoin-optional": true
+<             },
+9519a9456,9463
+>             "flags": {
+>               "type": "array",
+>               "items": {
+>                 "type": "string",
+>                 "description": "The name of the flag"
+>               },
+>               "description": "The flags currently set on the wallet"
+>             },
+9546,9548d9489
+<             "balance",
+<             "unconfirmed_balance",
+<             "immature_balance",
+9557a9499
+>             "flags",
+9593,9647d9534
+<       "name": "importaddress",
+<       "summary": "Adds an address or script (in hex) that can be watched as if it were in your wallet but cannot be used to spend. Requires a new wallet backup.",
+<       "description": "Adds an address or script (in hex) that can be watched as if it were in your wallet but cannot be used to spend. Requires a new wallet backup.\n\nNote: This call can take over an hour to complete if rescan is true, during that time, other rpc calls\nmay report that the imported address exists but related transactions are still missing, leading to temporarily incorrect/bogus balances and unspent outputs until rescan completes.\nThe rescan parameter can be set to false if the key was never used to create transactions. If it is set to false,\nbut the key was used to create transactions, rescanblockchain needs to be called with the appropriate block range.\nIf you have the full public key, you should call importpubkey instead of this.\nHint: use importmulti to import more than one address.\n\nNote: If you import a non-standard raw script in hex form, outputs sending to it will be treated\nas change, and not show up in many RPCs.\nNote: Use \"getwalletinfo\" to query the scanning progress.\nNote: This command is only compatible with legacy wallets. Use \"importdescriptors\" for descriptor wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "address",
+<           "schema": {
+<             "type": "string",
+<             "description": "The Bitcoin address (or hex-encoded script)"
+<           },
+<           "required": true,
+<           "description": "The Bitcoin address (or hex-encoded script)"
+<         },
+<         {
+<           "name": "label",
+<           "schema": {
+<             "type": "string",
+<             "description": "An optional label",
+<             "default": ""
+<           },
+<           "required": false,
+<           "description": "An optional label"
+<         },
+<         {
+<           "name": "rescan",
+<           "schema": {
+<             "type": "boolean",
+<             "description": "Scan the chain and mempool for wallet transactions.",
+<             "default": true
+<           },
+<           "required": false,
+<           "description": "Scan the chain and mempool for wallet transactions."
+<         },
+<         {
+<           "name": "p2sh",
+<           "schema": {
+<             "type": "boolean",
+<             "description": "Add the P2SH version of the script as well",
+<             "default": false
+<           },
+<           "required": false,
+<           "description": "Add the P2SH version of the script as well"
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "null"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "\nImport an address with rescan\n> bitcoin-cli importaddress \"myaddress\"\n\nImport using a label without rescan\n> bitcoin-cli importaddress \"myaddress\" \"testing\" false\n\nAs a JSON-RPC call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"importaddress\", \"params\": [\"myaddress\", \"testing\", false]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+9650c9537
+<       "description": "Import descriptors. This will trigger a rescan of the blockchain based on the earliest timestamp of all descriptors being imported. Requires a new wallet backup.\nWhen importing descriptors with multipath key expressions, if the multipath specifier contains exactly two elements, the descriptor produced from the second elements will be imported as an internal descriptor.\n\nNote: This call can take over an hour to complete if using an early timestamp; during that time, other rpc calls\nmay report that the imported keys, addresses or scripts exist but related transactions are still missing.\nThe rescan is significantly faster if block filters are available (using startup option \"-blockfilterindex=1\").",
+---
+>       "description": "Import descriptors. This will trigger a rescan of the blockchain based on the earliest timestamp of all descriptors being imported. Requires a new wallet backup.\nWhen importing descriptors with multipath key expressions, if the multipath specifier contains exactly two elements, the descriptor produced from the second element will be imported as an internal descriptor.\n\nNote: This call can take over an hour to complete if using an early timestamp; during that time, other rpc calls\nmay report that the imported keys, addresses or scripts exist but related transactions are still missing.\nThe rescan is significantly faster if block filters are available (using startup option \"-blockfilterindex=1\").",
+9741a9629
+>                   "x-documentation-commentary": "JSONRPC error"
+9814,10021d9701
+<       "name": "importmulti",
+<       "summary": "Import addresses/scripts (with private or public keys, redeem script (P2SH)), optionally rescanning the blockchain from the earliest creation time of the imported scripts. Requires a new wallet backup.",
+<       "description": "Import addresses/scripts (with private or public keys, redeem script (P2SH)), optionally rescanning the blockchain from the earliest creation time of the imported scripts. Requires a new wallet backup.\nIf an address/script is imported without all of the private keys required to spend from that address, it will be watchonly. The 'watchonly' option must be set to true in this case or a warning will be returned.\nConversely, if all the private keys are provided and the address/script is spendable, the watchonly option must be set to false, or a warning will be returned.\n\nNote: This call can take over an hour to complete if rescan is true, during that time, other rpc calls\nmay report that the imported keys, addresses or scripts exist but related transactions are still missing.\nThe rescan parameter can be set to false if the key was never used to create transactions. If it is set to false,\nbut the key was used to create transactions, rescanblockchain needs to be called with the appropriate block range.\nNote: Use \"getwalletinfo\" to query the scanning progress.\nNote: This command is only compatible with legacy wallets. Use \"importdescriptors\" for descriptor wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "requests",
+<           "schema": {
+<             "type": "array",
+<             "items": {
+<               "type": "object",
+<               "properties": {
+<                 "desc": {
+<                   "type": "string",
+<                   "description": "Descriptor to import. If using descriptor, do not also provide address/scriptPubKey, scripts, or pubkeys"
+<                 },
+<                 "scriptPubKey": {
+<                   "type": "string",
+<                   "description": "Type of scriptPubKey (string for script, json for address). Should not be provided if using a descriptor",
+<                   "x-bitcoin-type-string": [
+<                     "\"<script>\" | { \"address\":\"<address>\" }",
+<                     "string / json"
+<                   ]
+<                 },
+<                 "timestamp": {
+<                   "type": "number",
+<                   "description": "Creation time of the key expressed in UNIX epoch time,\nor the string \"now\" to substitute the current synced blockchain time. The timestamp of the oldest\nkey will determine how far back blockchain rescans need to begin for missing wallet transactions.\n\"now\" can be specified to bypass scanning, for keys which are known to never have been used, and\n0 can be specified to scan the entire blockchain. Blocks up to 2 hours before the earliest key\ncreation time of all keys being imported by the importmulti call will be scanned.",
+<                   "x-bitcoin-type-string": [
+<                     "timestamp | \"now\"",
+<                     "integer / string"
+<                   ]
+<                 },
+<                 "redeemscript": {
+<                   "type": "string",
+<                   "description": "Allowed only if the scriptPubKey is a P2SH or P2SH-P2WSH address/scriptPubKey"
+<                 },
+<                 "witnessscript": {
+<                   "type": "string",
+<                   "description": "Allowed only if the scriptPubKey is a P2SH-P2WSH or P2WSH address/scriptPubKey"
+<                 },
+<                 "pubkeys": {
+<                   "type": "array",
+<                   "items": {
+<                     "type": "string"
+<                   },
+<                   "description": "Array of strings giving pubkeys to import. They must occur in P2PKH or P2WPKH scripts. They are not required when the private key is also provided (see the \"keys\" argument).",
+<                   "default": [
+<                   ]
+<                 },
+<                 "keys": {
+<                   "type": "array",
+<                   "items": {
+<                     "type": "string"
+<                   },
+<                   "description": "Array of strings giving private keys to import. The corresponding public keys must occur in the output or redeemscript.",
+<                   "default": [
+<                   ]
+<                 },
+<                 "range": {
+<                   "oneOf": [
+<                     {
+<                       "type": "number"
+<                     },
+<                     {
+<                       "type": "array",
+<                       "items": {
+<                         "type": "number"
+<                       },
+<                       "minItems": 2,
+<                       "maxItems": 2
+<                     }
+<                   ],
+<                   "x-bitcoin-type": "range",
+<                   "description": "If a ranged descriptor is used, this specifies the end or the range (in the form [begin,end]) to import"
+<                 },
+<                 "internal": {
+<                   "type": "boolean",
+<                   "description": "Stating whether matching outputs should be treated as not incoming payments (also known as change)",
+<                   "default": false
+<                 },
+<                 "watchonly": {
+<                   "type": "boolean",
+<                   "description": "Stating whether matching outputs should be considered watchonly.",
+<                   "default": false
+<                 },
+<                 "label": {
+<                   "type": "string",
+<                   "description": "Label to assign to the address, only allowed with internal=false",
+<                   "default": ""
+<                 },
+<                 "keypool": {
+<                   "type": "boolean",
+<                   "description": "Stating whether imported public keys should be added to the keypool for when users request new addresses. Only allowed when wallet private keys are disabled",
+<                   "default": false
+<                 }
+<               },
+<               "required": [
+<                 "scriptPubKey",
+<                 "timestamp"
+<               ],
+<               "additionalProperties": false
+<             },
+<             "description": "Data to be imported",
+<             "x-bitcoin-oneline-description": "requests"
+<           },
+<           "required": true,
+<           "description": "Data to be imported"
+<         },
+<         {
+<           "name": "options",
+<           "schema": {
+<             "type": "object",
+<             "properties": {
+<               "rescan": {
+<                 "type": "boolean",
+<                 "description": "Scan the chain and mempool for wallet transactions after all imports.",
+<                 "default": true
+<               }
+<             },
+<             "additionalProperties": false,
+<             "x-bitcoin-obj-named-params": true,
+<             "x-bitcoin-oneline-description": "options"
+<           },
+<           "required": false
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "array",
+<           "items": {
+<             "type": "object",
+<             "properties": {
+<               "success": {
+<                 "type": "boolean"
+<               },
+<               "warnings": {
+<                 "type": "array",
+<                 "items": {
+<                   "type": "string"
+<                 },
+<                 "x-bitcoin-optional": true
+<               },
+<               "error": {
+<                 "type": "object",
+<                 "properties": {
+<                 },
+<                 "additionalProperties": true,
+<                 "x-bitcoin-optional": true
+<               }
+<             },
+<             "required": [
+<               "success"
+<             ],
+<             "additionalProperties": false
+<           },
+<           "description": "Response is an array with the same size as the input that has the execution result"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "> bitcoin-cli importmulti '[{ \"scriptPubKey\": { \"address\": \"<my address>\" }, \"timestamp\":1455191478 }, { \"scriptPubKey\": { \"address\": \"<my 2nd address>\" }, \"label\": \"example 2\", \"timestamp\": 1455191480 }]'\n> bitcoin-cli importmulti '[{ \"scriptPubKey\": { \"address\": \"<my address>\" }, \"timestamp\":1455191478 }]' '{ \"rescan\": false}'\n"
+<     },
+<     {
+<       "name": "importprivkey",
+<       "summary": "Adds a private key (as returned by dumpprivkey) to your wallet. Requires a new wallet backup.",
+<       "description": "Adds a private key (as returned by dumpprivkey) to your wallet. Requires a new wallet backup.\nHint: use importmulti to import more than one private key.\n\nNote: This call can take over an hour to complete if rescan is true, during that time, other rpc calls\nmay report that the imported key exists but related transactions are still missing, leading to temporarily incorrect/bogus balances and unspent outputs until rescan completes.\nThe rescan parameter can be set to false if the key was never used to create transactions. If it is set to false,\nbut the key was used to create transactions, rescanblockchain needs to be called with the appropriate block range.\nNote: Use \"getwalletinfo\" to query the scanning progress.\nNote: This command is only compatible with legacy wallets. Use \"importdescriptors\" with \"combo(X)\" for descriptor wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "privkey",
+<           "schema": {
+<             "type": "string",
+<             "description": "The private key (see dumpprivkey)"
+<           },
+<           "required": true,
+<           "description": "The private key (see dumpprivkey)"
+<         },
+<         {
+<           "name": "label",
+<           "schema": {
+<             "type": "string",
+<             "description": "An optional label",
+<             "x-bitcoin-default-hint": "current label if address exists, otherwise \"\""
+<           },
+<           "required": false,
+<           "description": "An optional label"
+<         },
+<         {
+<           "name": "rescan",
+<           "schema": {
+<             "type": "boolean",
+<             "description": "Scan the chain and mempool for wallet transactions.",
+<             "default": true
+<           },
+<           "required": false,
+<           "description": "Scan the chain and mempool for wallet transactions."
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "null"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "\nDump a private key\n> bitcoin-cli dumpprivkey \"myaddress\"\n\nImport the private key with rescan\n> bitcoin-cli importprivkey \"mykey\"\n\nImport using a label and without rescan\n> bitcoin-cli importprivkey \"mykey\" \"testing\" false\n\nImport using default blank label and without rescan\n> bitcoin-cli importprivkey \"mykey\" \"\" false\n\nAs a JSON-RPC call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"importprivkey\", \"params\": [\"mykey\", \"testing\", false]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+10059,10128d9738
+<       "name": "importpubkey",
+<       "summary": "Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend. Requires a new wallet backup.",
+<       "description": "Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend. Requires a new wallet backup.\nHint: use importmulti to import more than one public key.\n\nNote: This call can take over an hour to complete if rescan is true, during that time, other rpc calls\nmay report that the imported pubkey exists but related transactions are still missing, leading to temporarily incorrect/bogus balances and unspent outputs until rescan completes.\nThe rescan parameter can be set to false if the key was never used to create transactions. If it is set to false,\nbut the key was used to create transactions, rescanblockchain needs to be called with the appropriate block range.\nNote: Use \"getwalletinfo\" to query the scanning progress.\nNote: This command is only compatible with legacy wallets. Use \"importdescriptors\" with \"combo(X)\" for descriptor wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "pubkey",
+<           "schema": {
+<             "type": "string",
+<             "description": "The hex-encoded public key"
+<           },
+<           "required": true,
+<           "description": "The hex-encoded public key"
+<         },
+<         {
+<           "name": "label",
+<           "schema": {
+<             "type": "string",
+<             "description": "An optional label",
+<             "default": ""
+<           },
+<           "required": false,
+<           "description": "An optional label"
+<         },
+<         {
+<           "name": "rescan",
+<           "schema": {
+<             "type": "boolean",
+<             "description": "Scan the chain and mempool for wallet transactions.",
+<             "default": true
+<           },
+<           "required": false,
+<           "description": "Scan the chain and mempool for wallet transactions."
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "null"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "\nImport a public key with rescan\n> bitcoin-cli importpubkey \"mypubkey\"\n\nImport using a label without rescan\n> bitcoin-cli importpubkey \"mypubkey\" \"testing\" false\n\nAs a JSON-RPC call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"importpubkey\", \"params\": [\"mypubkey\", \"testing\", false]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+<       "name": "importwallet",
+<       "summary": "Imports keys from a wallet dump file (see dumpwallet). Requires a new wallet backup to include imported keys.",
+<       "description": "Imports keys from a wallet dump file (see dumpwallet). Requires a new wallet backup to include imported keys.\nNote: Blockchain and Mempool will be rescanned after a successful import. Use \"getwalletinfo\" to query the scanning progress.\nNote: This command is only compatible with legacy wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "filename",
+<           "schema": {
+<             "type": "string",
+<             "description": "The wallet file"
+<           },
+<           "required": true,
+<           "description": "The wallet file"
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "null"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "\nDump the wallet\n> bitcoin-cli dumpwallet \"test\"\n\nImport the wallet\n> bitcoin-cli importwallet \"test\"\n\nImport using the json rpc call\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"importwallet\", \"params\": [\"test\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+10187,10188c9797,9798
+<       "summary": "Fills the keypool.",
+<       "description": "Fills the keypool.\nRequires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.",
+---
+>       "summary": "Refills each descriptor keypool in the wallet up to the specified number of new keys.",
+>       "description": "Refills each descriptor keypool in the wallet up to the specified number of new keys.\nBy default, descriptor wallets have 4 active ranged descriptors (\"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\"), each with 1000 entries.\n\nRequires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.",
+10306,10307c9916,9917
+<       "summary": "List all descriptors present in a descriptor-enabled wallet.",
+<       "description": "List all descriptors present in a descriptor-enabled wallet.",
+---
+>       "summary": "List all descriptors present in a wallet.",
+>       "description": "List all descriptors present in a wallet.",
+10495,10496c10105,10106
+<             "description": "Whether to include watch-only addresses (see 'importaddress')",
+<             "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>             "description": "(DEPRECATED) No longer used",
+>             "default": false
+10499c10109
+<           "description": "Whether to include watch-only addresses (see 'importaddress')"
+---
+>           "description": "(DEPRECATED) No longer used"
+10528,10532d10137
+<               "involvesWatchonly": {
+<                 "type": "boolean",
+<                 "description": "Only returns true if imported addresses were involved in transaction",
+<                 "x-bitcoin-optional": true
+<               },
+10604,10605c10209,10210
+<             "description": "Whether to include watch-only addresses (see 'importaddress')",
+<             "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>             "description": "(DEPRECATED) No longer used",
+>             "default": false
+10608c10213
+<           "description": "Whether to include watch-only addresses (see 'importaddress')"
+---
+>           "description": "(DEPRECATED) No longer used"
+10628,10632d10232
+<               "involvesWatchonly": {
+<                 "type": "boolean",
+<                 "description": "Only returns true if imported addresses were involved in transaction",
+<                 "x-bitcoin-optional": true
+<               },
+10688,10689c10288,10289
+<             "description": "Include transactions to watch-only addresses (see 'importaddress')",
+<             "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>             "description": "(DEPRECATED) No longer used",
+>             "default": false
+10692c10292
+<           "description": "Include transactions to watch-only addresses (see 'importaddress')"
+---
+>           "description": "(DEPRECATED) No longer used"
+10734,10738d10333
+<                   "involvesWatchonly": {
+<                     "type": "boolean",
+<                     "description": "Only returns true if imported addresses were involved in transaction.",
+<                     "x-bitcoin-optional": true
+<                   },
+10970,10971c10565,10566
+<             "description": "Include transactions to watch-only addresses (see 'importaddress')",
+<             "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>             "description": "(DEPRECATED) No longer used",
+>             "default": false
+10974c10569
+<           "description": "Include transactions to watch-only addresses (see 'importaddress')"
+---
+>           "description": "(DEPRECATED) No longer used"
+10984,10988d10578
+<               "involvesWatchonly": {
+<                 "type": "boolean",
+<                 "description": "Only returns true if imported addresses were involved in transaction.",
+<                 "x-bitcoin-optional": true
+<               },
+11343c10933
+<                 "description": "Whether we have the private keys to spend this output"
+---
+>                 "description": "(DEPRECATED) Always true"
+11409a11000,11007
+>                   },
+>                   "warnings": {
+>                     "type": "array",
+>                     "items": {
+>                       "type": "string"
+>                     },
+>                     "description": "Warning messages, if any, related to loading the wallet.",
+>                     "x-bitcoin-optional": true
+11752,11767d11349
+<       "name": "newkeypool",
+<       "summary": "Entirely clears and refills the keypool.",
+<       "description": "Entirely clears and refills the keypool.\nWARNING: On non-HD wallets, this will require a new backup immediately, to include the new keys.\nWhen restoring a backup of an HD wallet created before the newkeypool command is run, funds received to\nnew addresses may not appear automatically. They have not been lost, but the wallet may not find them.\nThis can be fixed by running the newkeypool command on the backup and then rescanning, so the wallet\nre-generates the required keys.\nRequires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.",
+<       "paramStructure": "by-position",
+<       "params": [
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "null"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "> bitcoin-cli newkeypool \n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"newkeypool\", \"params\": []}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+11884,11885c11466,11467
+<       "summary": "Bumps the fee of an opt-in-RBF transaction T, replacing it with a new transaction B.",
+<       "description": "Bumps the fee of an opt-in-RBF transaction T, replacing it with a new transaction B.\nReturns a PSBT instead of creating and signing a new transaction.\nAn opt-in RBF transaction with the given txid must be in the wallet.\nThe command will pay the additional fee by reducing change outputs or adding inputs when necessary.\nIt may add a new change output if one does not already exist.\nAll inputs in the original transaction will be included in the replacement transaction.\nThe command will fail if the wallet or mempool contains a transaction that spends one of T's outputs.\nBy default, the new fee will be calculated automatically using the estimatesmartfee RPC.\nThe user can specify a confirmation target for estimatesmartfee.\nAlternatively, the user can specify a fee rate in sat/vB for the new transaction.\nAt a minimum, the new fee rate must be high enough to pay an additional new relay fee (incrementalfee\nreturned by getnetworkinfo) to enter the node's mempool.\n* WARNING: before version 0.21, fee_rate was in BTC/kvB. As of 0.21, fee_rate is in sat/vB. *",
+---
+>       "summary": "Bumps the fee of a transaction T, replacing it with a new transaction B.",
+>       "description": "Bumps the fee of a transaction T, replacing it with a new transaction B.\nReturns a PSBT instead of creating and signing a new transaction.\nA transaction with the given txid must be in the wallet.\nThe command will pay the additional fee by reducing change outputs or adding inputs when necessary.\nIt may add a new change output if one does not already exist.\nAll inputs in the original transaction will be included in the replacement transaction.\nThe command will fail if the wallet or mempool contains a transaction that spends one of T's outputs.\nBy default, the new fee will be calculated automatically using the estimatesmartfee RPC.\nThe user can specify a confirmation target for estimatesmartfee.\nAlternatively, the user can specify a fee rate in sat/vB for the new transaction.\nAt a minimum, the new fee rate must be high enough to pay an additional new relay fee (incrementalfee\nreturned by getnetworkinfo) to enter the node's mempool.\n* WARNING: before version 0.21, fee_rate was in BTC/kvB. As of 0.21, fee_rate is in sat/vB. *",
+11924c11506
+<                 "description": "Whether the new transaction should still be\nmarked bip-125 replaceable. If true, the sequence numbers in the transaction will\nbe left unchanged from the original. If false, any input sequence numbers in the\noriginal transaction that were less than 0xfffffffe will be increased to 0xfffffffe\nso the new transaction will not be explicitly bip-125 replaceable (though it may\nstill be replaceable in practice, for example if it has unconfirmed ancestors which\nare replaceable).\n",
+---
+>                 "description": "Whether the new transaction should be\nmarked bip-125 replaceable. If true, the sequence numbers in the transaction will\nbe set to 0xfffffffd. If false, any input sequence numbers in the\ntransaction will be set to 0xfffffffe\nso the new transaction will not be explicitly bip-125 replaceable (though it may\nstill be replaceable in practice, for example if it has unconfirmed ancestors which\nare replaceable).\n",
+11958c11540
+<                         "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data"
+---
+>                         "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data that becomes a part of an OP_RETURN output"
+12082c11664
+<       "description": "Rescan the local blockchain for wallet related transactions.\nNote: Use \"getwalletinfo\" to query the scanning progress.\nThe rescan is significantly faster when used on a descriptor wallet\nand block filters are available (using startup option \"-blockfilterindex=1\").",
+---
+>       "description": "Rescan the local blockchain for wallet related transactions.\nNote: Use \"getwalletinfo\" to query the scanning progress.\nThe rescan is significantly faster if block filters are available\n(using startup option \"-blockfilterindex=1\").",
+12132c11714
+<       "description": "Restores and loads a wallet from backup.\n\nThe rescan is significantly faster if a descriptor wallet is restored\nand block filters are available (using startup option \"-blockfilterindex=1\").",
+---
+>       "description": "Restores and loads a wallet from backup.\n\nThe rescan is significantly faster if block filters are available\n(using startup option \"-blockfilterindex=1\").",
+12634c12216
+<                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data"
+---
+>                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data that becomes a part of an OP_RETURN output"
+12729c12311
+<                 "description": "The output type to use. Only valid if change_address is not specified. Options are \"legacy\", \"p2sh-segwit\", \"bech32\" and \"bech32m\".",
+---
+>                 "description": "The output type to use. Only valid if change_address is not specified. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\".",
+12748,12749c12330,12331
+<                 "description": "Also select inputs which are watch only.\nOnly solvable inputs can be used. Watch-only destinations are solvable if the public key and/or output script was imported,\ne.g. with 'importpubkey' or 'importmulti' with the 'pubkeys' or 'desc' field.",
+<                 "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>                 "description": "(DEPRECATED) No longer used",
+>                 "default": "false"
+12790c12372
+<                 "default": 0
+---
+>                 "x-bitcoin-default-hint": "locktime close to block height to prevent fee sniping"
+12880a12463,12472
+>         },
+>         {
+>           "name": "version",
+>           "schema": {
+>             "type": "number",
+>             "description": "Transaction version",
+>             "default": 2
+>           },
+>           "required": false,
+>           "description": "Transaction version"
+13023,13024c12615,12616
+<                 "description": "Also select inputs which are watch-only.\nOnly solvable inputs can be used. Watch-only destinations are solvable if the public key and/or output script was imported,\ne.g. with 'importpubkey' or 'importmulti' with the 'pubkeys' or 'desc' field.",
+<                 "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>                 "description": "(DEPRECATED) No longer used",
+>                 "default": false
+13060c12652
+<                 "default": 0
+---
+>                 "x-bitcoin-default-hint": "locktime close to block height to prevent fee sniping"
+13085a12678,12682
+>               "version": {
+>                 "type": "number",
+>                 "description": "Transaction version",
+>                 "default": 2
+>               },
+13693,13728d13289
+<       "name": "sethdseed",
+<       "summary": "Set or generate a new HD wallet seed. Non-HD wallets will not be upgraded to being a HD wallet. Wallets that are already",
+<       "description": "Set or generate a new HD wallet seed. Non-HD wallets will not be upgraded to being a HD wallet. Wallets that are already\nHD will have a new HD seed set so that new keys added to the keypool will be derived from this new seed.\n\nNote that you will need to MAKE A NEW BACKUP of your wallet after setting the HD wallet seed.\nRequires wallet passphrase to be set with walletpassphrase call if wallet is encrypted.\nNote: This command is only compatible with legacy wallets.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "newkeypool",
+<           "schema": {
+<             "type": "boolean",
+<             "description": "Whether to flush old unused addresses, including change addresses, from the keypool and regenerate it.\nIf true, the next address from getnewaddress and change address from getrawchangeaddress will be from this new seed.\nIf false, addresses (including change addresses if the wallet already had HD Chain Split enabled) from the existing\nkeypool will be used until it has been depleted.",
+<             "default": true
+<           },
+<           "required": false,
+<           "description": "Whether to flush old unused addresses, including change addresses, from the keypool and regenerate it.\nIf true, the next address from getnewaddress and change address from getrawchangeaddress will be from this new seed.\nIf false, addresses (including change addresses if the wallet already had HD Chain Split enabled) from the existing\nkeypool will be used until it has been depleted."
+<         },
+<         {
+<           "name": "seed",
+<           "schema": {
+<             "type": "string",
+<             "description": "The WIF private key to use as the new HD seed.\nThe seed value can be retrieved using the dumpwallet command. It is the private key marked hdseed=1",
+<             "x-bitcoin-default-hint": "random seed"
+<           },
+<           "required": false,
+<           "description": "The WIF private key to use as the new HD seed.\nThe seed value can be retrieved using the dumpwallet command. It is the private key marked hdseed=1"
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "null"
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "> bitcoin-cli sethdseed \n> bitcoin-cli sethdseed false\n> bitcoin-cli sethdseed true \"wifkey\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"sethdseed\", \"params\": [true, \"wifkey\"]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+13813,13814c13374,13375
+<       "summary": "Set the transaction fee rate in BTC/kvB for this wallet. Overrides the global -paytxfee command line parameter.",
+<       "description": "Set the transaction fee rate in BTC/kvB for this wallet. Overrides the global -paytxfee command line parameter.\nCan be deactivated by passing 0 as the fee. In that case automatic fee selection will be used by default.",
+---
+>       "summary": "(DEPRECATED) Set the transaction fee rate in BTC/kvB for this wallet. Overrides the global -paytxfee command line parameter.",
+>       "description": "(DEPRECATED) Set the transaction fee rate in BTC/kvB for this wallet. Overrides the global -paytxfee command line parameter.\nCan be deactivated by passing 0 as the fee. In that case automatic fee selection will be used by default.",
+14338,14339c13899,13900
+<                 "description": "Whether to include watch-only addresses (see RPC importaddress)",
+<                 "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>                 "description": "(DEPRECATED) No longer used",
+>                 "default": false
+14484c14045
+<             "description": "An array of raw transactions.\nThe package must solely consist of a child transaction and all of its unconfirmed parents, if any. None of the parents may depend on each other.\nThe package must be topologically sorted, with the child being the last element in the array."
+---
+>             "description": "An array of raw transactions.\nThe package must consist of a transaction with (some, all, or none of) its unconfirmed parents. A single transaction is permitted.\nNone of the parents may depend on each other. Parents that are already in mempool do not need to be present in the package.\nThe package must be topologically sorted, with the child being the last element in the array if there are multiple elements."
+14487c14048
+<           "description": "An array of raw transactions.\nThe package must solely consist of a child transaction and all of its unconfirmed parents, if any. None of the parents may depend on each other.\nThe package must be topologically sorted, with the child being the last element in the array."
+---
+>           "description": "An array of raw transactions.\nThe package must consist of a transaction with (some, all, or none of) its unconfirmed parents. A single transaction is permitted.\nNone of the parents may depend on each other. Parents that are already in mempool do not need to be present in the package.\nThe package must be topologically sorted, with the child being the last element in the array if there are multiple elements."
+14775,14776c14336,14337
+<       "summary": "Unloads the wallet referenced by the request endpoint, otherwise unloads the wallet specified in the argument.",
+<       "description": "Unloads the wallet referenced by the request endpoint, otherwise unloads the wallet specified in the argument.\nSpecifying the wallet name on a wallet endpoint is invalid.",
+---
+>       "summary": "Unloads the wallet referenced by the request endpoint or the wallet_name argument.",
+>       "description": "Unloads the wallet referenced by the request endpoint or the wallet_name argument.\nIf both are specified, they must be identical.",
+14820,14875d14380
+<       "name": "upgradewallet",
+<       "summary": "Upgrade the wallet. Upgrades to the latest version if no version number is specified.",
+<       "description": "Upgrade the wallet. Upgrades to the latest version if no version number is specified.\nNew keys may be generated and a new wallet backup will need to be made.",
+<       "paramStructure": "by-position",
+<       "params": [
+<         {
+<           "name": "version",
+<           "schema": {
+<             "type": "number",
+<             "description": "The version number to upgrade to. Default is the latest wallet version.",
+<             "default": 169900
+<           },
+<           "required": false,
+<           "description": "The version number to upgrade to. Default is the latest wallet version."
+<         }
+<       ],
+<       "result": {
+<         "name": "result",
+<         "schema": {
+<           "type": "object",
+<           "properties": {
+<             "wallet_name": {
+<               "type": "string",
+<               "description": "Name of wallet this operation was performed on"
+<             },
+<             "previous_version": {
+<               "type": "number",
+<               "description": "Version of wallet before this operation"
+<             },
+<             "current_version": {
+<               "type": "number",
+<               "description": "Version of wallet after this operation"
+<             },
+<             "result": {
+<               "type": "string",
+<               "description": "Description of result, if no error",
+<               "x-bitcoin-optional": true
+<             },
+<             "error": {
+<               "type": "string",
+<               "description": "Error message (if there is one)",
+<               "x-bitcoin-optional": true
+<             }
+<           },
+<           "required": [
+<             "wallet_name",
+<             "previous_version",
+<             "current_version"
+<           ],
+<           "additionalProperties": false
+<         }
+<       },
+<       "x-bitcoin-category": "wallet",
+<       "x-bitcoin-examples": "> bitcoin-cli upgradewallet 169900\n> curl --user myusername --data-binary '{\"jsonrpc\": \"2.0\", \"id\": \"curltest\", \"method\": \"upgradewallet\", \"params\": [169900]}' -H 'content-type: application/json' http://127.0.0.1:8332/\n"
+<     },
+<     {
+15213c14718
+<       "x-bitcoin-category": "hidden",
+---
+>       "x-bitcoin-category": "blockchain",
+15265c14770
+<       "x-bitcoin-category": "hidden",
+---
+>       "x-bitcoin-category": "blockchain",
+15282a14788,14798
+>         },
+>         {
+>           "name": "current_tip",
+>           "schema": {
+>             "type": "string",
+>             "pattern": "^[0-9a-fA-F]*$",
+>             "x-bitcoin-type": "hex",
+>             "description": "Method waits for the chain tip to differ from this."
+>           },
+>           "required": false,
+>           "description": "Method waits for the chain tip to differ from this."
+15308c14824
+<       "x-bitcoin-category": "hidden",
+---
+>       "x-bitcoin-category": "blockchain",
+15384c14900
+<                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data"
+---
+>                     "description": "A key-value pair. The key must be \"data\", the value is hex-encoded data that becomes a part of an OP_RETURN output"
+15446c14962
+<                 "description": "The output type to use. Only valid if changeAddress is not specified. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\".",
+---
+>                 "description": "The output type to use. Only valid if changeAddress is not specified. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", \"bech32m\".",
+15451,15452c14967,14968
+<                 "description": "Also select inputs which are watch only",
+<                 "x-bitcoin-default-hint": "true for watch-only wallets, otherwise false"
+---
+>                 "description": "(DEPRECATED) No longer used",
+>                 "default": false
+15573a15090,15099
+>         },
+>         {
+>           "name": "version",
+>           "schema": {
+>             "type": "number",
+>             "description": "Transaction version",
+>             "default": 2
+>           },
+>           "required": false,
+>           "description": "Transaction version"
+15604c15130
+<       "x-bitcoin-examples": "\nCreate a transaction with no inputs\n> bitcoin-cli walletcreatefundedpsbt \"[{\\\"txid\\\":\\\"myid\\\",\\\"vout\\\":0}]\" \"[{\\\"data\\\":\\\"00010203\\\"}]\"\n"
+---
+>       "x-bitcoin-examples": "\nCreate a PSBT with automatically picked inputs that sends 0.5 BTC to an address and has a fee rate of 2 sat/vB:\n> bitcoin-cli walletcreatefundedpsbt \"[]\" \"[{\\\"bc1q09vm5lfy0j5reeulh4x5752q25uqqvz34hufdl\\\":0.5}]\" 0 \"{\\\"add_inputs\\\":true,\\\"fee_rate\\\":2}\"\n\nCreate the same PSBT as the above one instead using named arguments:\n> bitcoin-cli -named walletcreatefundedpsbt outputs=\"[{\\\"bc1q09vm5lfy0j5reeulh4x5752q25uqqvz34hufdl\\\":0.5}]\" add_inputs=true fee_rate=2\n"
