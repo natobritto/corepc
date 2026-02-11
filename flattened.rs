@@ -296,13 +296,19 @@ pub data: String,
 pub txid: String,
 /// Hash encoded in little-endian hexadecimal (including witness data).
 pub hash: String,
-/// Transactions before this one that must be present in the final block.
+/// Array of numbers.
+///
+/// Transactions before this one (by 1-based index in 'transactions' list) that must be present in the final block if this one is.
 pub depends: Vec<i64>,
-/// Difference in value between transaction inputs and outputs (in satoshis).
+/// Difference in value between transaction inputs and outputs (in satoshis); for coinbase
+/// transactions, this is a negative Number of the total collected block fees (ie, not including
+/// the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there
+/// isn't one.
 pub fee: i64,
-/// Total SigOps cost.
+/// Total SigOps cost, as counted for purposes of block limits; if key is not present, sigop
+/// cost is unknown and clients MUST NOT assume it is zero.
 pub sigops: i64,
-/// Total transaction weight.
+/// Total transaction weight, as counted for purposes of block limits.
 pub weight: u64,
 }
 
@@ -623,6 +629,9 @@ pub addresses: Option<Vec<String>>,
 pub p2sh: Option<String>,
 /// Segwit data (see `DecodeScriptSegwit` for explanation).
 pub segwit: Option<DecodeScriptSegwit>,
+/// Address of the P2SH script wrapping this witness redeem script
+#[serde(rename = "p2sh-segwit")]
+pub p2sh_segwit: Option<String>,
 }
 
 /// Segwit data. Part of `decodescript`.
@@ -648,7 +657,7 @@ pub addresses: Option<Vec<String>>,
 pub descriptor: Option<String>,
 /// Address of P2SH script wrapping this redeem script (not returned if the script is already a P2SH).
 #[serde(rename = "p2sh-segwit")]
-pub p2sh_segwit: String,
+pub p2sh_segwit: Option<String>,
 }
 
 /// Deployment info. Part of `getdeploymentinfo`.
@@ -1499,12 +1508,32 @@ pub utxo_size_increase_actual: Option<i32>,
 
 /// Result of the JSON-RPC method `getblocktemplate`.
 ///
-/// > getblocktemplate
+/// > getblocktemplate {"mode":"str","capabilities":["str",...],"rules":["segwit","str",...],"longpollid":"str","data":"hex"}
 /// >
-/// > If the request parameters include a 'mode' key, that is used to explicitly select between the
-/// > default 'template' request or a 'proposal'.
-///
-/// v30 makes `weight_limit` optional.
+/// > If the request parameters include a 'mode' key, that is used to explicitly select between the default 'template' request or a 'proposal'.
+/// > It returns data needed to construct a block to work on.
+/// > For full specification, see BIPs 22, 23, 9, and 145:
+/// >     <https://github.com/bitcoin/bips/blob/master/bip-0022.mediawiki>
+/// >     <https://github.com/bitcoin/bips/blob/master/bip-0023.mediawiki>
+/// >     <https://github.com/bitcoin/bips/blob/master/bip-0009.mediawiki#getblocktemplate_changes>
+/// >     <https://github.com/bitcoin/bips/blob/master/bip-0145.mediawiki>
+/// >
+/// > Arguments:
+/// > 1. template_request            (json object, required) Format of the template
+/// >      {
+/// >        "mode": "str",          (string, optional) This must be set to "template", "proposal" (see BIP 23), or omitted
+/// >        "capabilities": [       (json array, optional) A list of strings
+/// >          "str",                (string) client side supported feature, 'longpoll', 'coinbasevalue', 'proposal', 'serverlist', 'workid'
+/// >          ...
+/// >        ],
+/// >        "rules": [              (json array, required) A list of strings
+/// >          "segwit",             (string, required) (literal) indicates client side segwit support
+/// >          "str",                (string) other client side supported softfork deployment
+/// >          ...
+/// >        ],
+/// >        "longpollid": "str",    (string, optional) delay processing request until the result would vary significantly from the "longpollid" of a prior template
+/// >        "data": "hex",          (string, optional) proposed block data to check, encoded in hexadecimal; valid only for mode="proposal"
+/// >      }
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 pub struct GetBlockTemplate {
@@ -1513,6 +1542,9 @@ pub version: i32,
 /// Specific block rules that are to be enforced.
 pub rules: Vec<String>,
 /// Set of pending, supported versionbit (BIP 9) softfork deployments.
+///
+/// Map of rules name to bit number - identifies the bit number as indicating acceptance and
+/// readiness for the named softfork rule.
 #[serde(rename = "vbavailable")]
 pub version_bits_available: BTreeMap<String, u32>,
 /// Client side supported features.
@@ -1526,20 +1558,26 @@ pub previous_block_hash: String,
 /// Contents of non-coinbase transactions that should be included in the next block.
 pub transactions: Vec<BlockTemplateTransaction>,
 /// Data that should be included in the coinbase's scriptSig content.
+///
+/// Key name is to be ignored, and value included in scriptSig.
 #[serde(rename = "coinbaseaux")]
 pub coinbase_aux: BTreeMap<String, String>,
-/// Maximum allowable input to coinbase transaction (in satoshis).
+/// Maximum allowable input to coinbase transaction, including the generation award and transaction fees (in satoshis).
 #[serde(rename = "coinbasevalue")]
 pub coinbase_value: i64,
 /// An id to include with a request to longpoll on an update to this template.
 #[serde(rename = "longpollid")]
 pub long_poll_id: Option<String>,
+// This is in the docs but not actually returned (for v0.17 and v0.18 at least).
+// coinbase_txn: ???, // Also I don't know what the JSON object represents: `{ ... }`
 /// The hash target.
 pub target: String,
-/// The minimum timestamp appropriate for next block time (UNIX epoch).
+/// The minimum timestamp appropriate for next block time in seconds since epoch (Jan 1 1970 GMT).
 #[serde(rename = "mintime")]
 pub min_time: u32,
 /// List of ways the block template may be changed.
+///
+/// A way the block template may be changed, e.g. 'time', 'transactions', 'prevblock'.
 pub mutable: Vec<String>,
 /// A range of valid nonces.
 #[serde(rename = "noncerange")]
@@ -1550,10 +1588,10 @@ pub sigop_limit: i64,
 /// Limit of block size.
 #[serde(rename = "sizelimit")]
 pub size_limit: i64,
-/// Limit of block weight (optional in v30).
+/// Limit of block weight.
 #[serde(rename = "weightlimit")]
-pub weight_limit: Option<i64>,
-/// Current timestamp in seconds since epoch.
+pub weight_limit: i64,
+/// Current timestamp in seconds since epoch (Jan 1 1970 GMT).
 #[serde(rename = "curtime")]
 pub current_time: u64,
 /// Compressed target of next block.
@@ -2772,12 +2810,12 @@ pub unclaimed_rewards: f64,
 /// > 1. outputs                 (json array, required) The transaction outputs that we want to check, and within each, the txid (string) vout (numeric).
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct GetTxSpendingPrevOut(pub Vec<GetTxSpendingPrevOutItem>);
+pub struct GetTxSpendingPrevout(pub Vec<GetTxSpendingPrevoutItem>);
 /// A transaction item. Part of `gettxspendingprevout`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
 
-pub struct GetTxSpendingPrevOutItem {
+pub struct GetTxSpendingPrevoutItem {
 /// The transaction id of the checked output
 pub txid: String,
 /// The vout value of the checked output
@@ -4408,7 +4446,7 @@ pub struct SubmitPackage {
 pub package_msg: String,
 /// Transaction results keyed by wtxid.
 #[serde(rename = "tx-results")]
-pub tx_results: BTreeMap<String, SubmitPackageTxResults>,
+pub tx_results: BTreeMap<String, SubmitPackageTxResult>,
 /// List of txids of replaced transactions.
 #[serde(rename = "replaced-transactions")]
 pub replaced_transactions: Vec<String>,
@@ -4417,7 +4455,7 @@ pub replaced_transactions: Vec<String>,
 /// The per-transaction result. Part of `submitpackage`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct SubmitPackageTxResults {
+pub struct SubmitPackageTxResult {
 /// The transaction id.
 pub txid: String,
 /// The wtxid of a different transaction with the same txid but different witness found in the mempool.
@@ -4428,7 +4466,7 @@ pub other_wtxid: Option<String>,
 /// Sigops-adjusted virtual transaction size.
 pub vsize: Option<i64>,
 /// Transaction fees.
-pub fees: Option<SubmitPackageTxResultssFees>,
+pub fees: Option<SubmitPackageTxResultFees>,
 /// The transaction error string, if it was rejected by the mempool.
 pub error: Option<String>,
 }
@@ -4436,7 +4474,7 @@ pub error: Option<String>,
 /// The fees included in the per-transaction result. Part of `submitpackage`.
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "serde-deny-unknown-fields", serde(deny_unknown_fields))]
-pub struct SubmitPackageTxResultssFees {
+pub struct SubmitPackageTxResultFees {
 /// Transaction fee.
 #[serde(rename = "base")]
 pub base_fee: f64,

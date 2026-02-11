@@ -20,15 +20,10 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
 
-# ============================================================================
 # TYPE BRIDGE: Maps spec struct names to repo struct names
-# ============================================================================
 # Use "IGNORE" to indicate a spec type that doesn't need a repo equivalent
 # (e.g., uses bitcoin crate types, or is a simple wrapper, or doesn't exist in repo)
-#
 # Use "repo_name" to map a spec type to a differently-named repo type
-# ============================================================================
-
 TYPE_BRIDGE: Dict[str, str] = {
     # ========================================================================
     # CASE SENSITIVITY FIXES (spec uses lowercase where repo uses PascalCase)
@@ -74,7 +69,8 @@ TYPE_BRIDGE: Dict[str, str] = {
     "TestMempoolacceptItemFees": "MempoolAcceptanceFees",
     # ImportDescriptors: spec generates wrapper + item
     "ImportDescriptorsItem": "ImportDescriptorsResult",
-    "ImportDescriptorsItemError": "IGNORE",  # spec emits an empty placeholder; repo keeps generic error JSON
+    # IGNORE: Spec generates empty error placeholder; repo uses serde_json::Value for generic error JSON
+    "ImportDescriptorsItemError": "IGNORE",  # spec emits empty placeholder, repo keeps generic error JSON
     # ListReceivedByAddress/Label: spec generates wrapper + item
     "ListReceivedbyAddressItem": "ListReceivedByAddressItem",
     "ListReceivedbyLabelItem": "ListReceivedByLabelItem",
@@ -129,21 +125,23 @@ TYPE_BRIDGE: Dict[str, str] = {
     "GetBlockVerboseThreeTxItem": "GetBlockVerboseThreeTransaction",
     "GetBlockVerboseThreeTxItemVinItem": "RawTransactionInputWithPrevout",
     "GetBlockVerboseThreeTxItemVinItemPrevout": "GetBlockVerboseThreePrevout",
-    "GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey": "IGNORE",
+    "GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey": "IGNORE", # repo uses ScriptPubkey from types/src/lib.rs
     # ========================================================================
     # BLOCK TEMPLATE TYPES
     # ========================================================================
-    "GetBlocktemplateVerboseOne": "IGNORE",  # proposal mode
+    # "GetBlocktemplateVerboseOne": "IGNORE",  # in proposal mode, return is null
     "GetBlocktemplateVerboseTwo": "GetBlockTemplate",
     "GetBlocktemplateVerboseTwoTransactionsItem": "BlockTemplateTransaction",
     # ========================================================================
     # ESTIMATE RAW FEE TYPES
     # ========================================================================
     "EstimateRawFeeShort": "RawFeeDetail",
-    "EstimateRawFeeMedium": "IGNORE",  # spec emits an empty placeholder object
-    "EstimateRawFeeLong": "IGNORE",  # spec emits an empty placeholder object
+    # IGNORE: Spec emits empty placeholder structs for medium/long time horizons and failure case
+    # These don't exist in repo as they're not meaningful types
+    "EstimateRawFeeMedium": "IGNORE",  # spec generates empty struct, not used in repo
+    "EstimateRawFeeLong": "IGNORE",  # spec generates empty struct, not used in repo
     "EstimateRawFeeShortPass": "RawFeeRange",
-    "EstimateRawFeeShortFail": "IGNORE",  # spec emits an empty placeholder object
+    "EstimateRawFeeShortFail": "IGNORE",  # spec generates empty struct for error case, not used in repo
     # ========================================================================
     # RAW TRANSACTION TYPES
     # ========================================================================
@@ -152,16 +150,19 @@ TYPE_BRIDGE: Dict[str, str] = {
     "GetRawTransactionVerboseZero": "GetRawTransaction",
     "GetRawTransactionVerboseOne": "GetRawTransactionVerbose",
     "GetRawTransactionVerboseTwo": "GetRawTransactionVerboseWithPrevout",
-    "GetRawTransactionVerboseOneVinItem": "IGNORE",
-    "GetRawTransactionVerboseOneVinItemScriptSig": "IGNORE",
-    "GetRawTransactionVerboseOneVoutItem": "IGNORE",
-    "GetRawTransactionVerboseOneVoutItemScriptPubKey": "IGNORE",
-    "GetRawTransactionVerboseTwoVinItem": "IGNORE",
+    # IGNORE: Spec generates nested structs, but repo uses shared types from types/src/psbt/mod.rs & types/src/lib.rs
+    # These types (RawTransactionInput, RawTransactionOutput, ScriptSig, ScriptPubkey) are NOT in flattened.rs
+    # because they're defined in the shared psbt module and imported/used by v30 types
+    "GetRawTransactionVerboseOneVinItem": "IGNORE",  # repo uses RawTransactionInput from psbt module
+    "GetRawTransactionVerboseOneVinItemScriptSig": "IGNORE",  # repo uses ScriptSig from types/src/lib.rs
+    "GetRawTransactionVerboseOneVoutItem": "IGNORE",  # repo uses RawTransactionOutput from psbt module
+    "GetRawTransactionVerboseOneVoutItemScriptPubKey": "IGNORE",  # repo uses ScriptPubkey from types/src/lib.rs
+    "GetRawTransactionVerboseTwoVinItem": "IGNORE",  # repo uses RawTransactionInput from psbt module
     "GetRawTransactionVerboseTwoVinItemPrevout": "GetBlockVerboseThreePrevout",
-    "GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey": "IGNORE",
+    "GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey": "IGNORE",  # repo uses ScriptPubkey from types/src/lib.rs
     # GetTxOut
     "GetTxoutVerboseOne": "GetTxOut",
-    "GetTxoutVerboseOneScriptPubKey": "IGNORE",
+    "GetTxoutVerboseOneScriptPubKey": "IGNORE",  # repo uses ScriptPubkey from types/src/lib.rs
     # ========================================================================
     # SCAN TYPES
     # ========================================================================
@@ -176,7 +177,9 @@ TYPE_BRIDGE: Dict[str, str] = {
     # MEMORY INFO TYPES
     # ========================================================================
     "GetMemoryInfoVerboseZero": "GetMemoryInfoStats",
-    "GetMemoryInfoVerboseOne": "IGNORE",
+    # IGNORE: Spec generates wrapper type for verbose=true but repo doesn't have a separate type for this
+    # verbose=true returns the same data structure, just unwrapped
+    "GetMemoryInfoVerboseOne": "IGNORE",  # spec wrapper for verbose=true, repo uses same struct
     "GetMemoryInfoVerboseZeroLocked": "Locked",
     # ========================================================================
     # SEND TYPES
@@ -196,26 +199,30 @@ TYPE_BRIDGE: Dict[str, str] = {
     # PSBT TYPES - repo uses shared types
     # ========================================================================
     "DecodePsbtInputsItem": "PsbtInput",
-    "DecodePsbtInputsItemBip32DerivsItem": "IGNORE",
-    "DecodePsbtInputsItemFinalScriptSig": "IGNORE",
-    "DecodePsbtInputsItemNonWitnessUtxo": "IGNORE",
+    # IGNORE: Spec generates nested list items, but repo uses shared types from types/src/psbt/mod.rs
+    # Bip32Deriv is defined in types/src/psbt/mod.rs and used by v30 PsbtInput/PsbtOutput
+    "DecodePsbtInputsItemBip32DerivsItem": "IGNORE",  # repo uses Bip32Deriv from psbt module (Vec<Bip32Deriv>)
+    # IGNORE: Repo uses shared script types from types/src/psbt/mod.rs and types/src/lib.rs
+    "DecodePsbtInputsItemFinalScriptSig": "IGNORE",  # repo uses ScriptSig from types/src/lib.rs
+    # IGNORE: Repo uses shared transaction types from types/src/psbt/mod.rs
+    "DecodePsbtInputsItemNonWitnessUtxo": "IGNORE",  # repo uses RawTransaction from psbt module
     "DecodePsbtInputsItemProprietaryItem": "Proprietary",
-    "DecodePsbtInputsItemRedeemScript": "IGNORE",
+    "DecodePsbtInputsItemRedeemScript": "IGNORE",  # repo uses PsbtScript from psbt module
     "DecodePsbtInputsItemTaprootBip32DerivsItem": "TaprootBip32Deriv",
-    "DecodePsbtInputsItemWitnessScript": "IGNORE",
-    "DecodePsbtInputsItemWitnessUtxo": "IGNORE",
-    "DecodePsbtInputsItemWitnessUtxoScriptPubKey": "IGNORE",
+    "DecodePsbtInputsItemWitnessScript": "IGNORE",  # repo uses PsbtScript from psbt module
+    "DecodePsbtInputsItemWitnessUtxo": "IGNORE",  # repo uses WitnessUtxo from psbt module
+    "DecodePsbtInputsItemWitnessUtxoScriptPubKey": "IGNORE",  # repo uses ScriptPubkey from types/src/lib.rs
     "DecodePsbtInputsItemTaprootScriptsItem": "TaprootScript",
     "DecodePsbtInputsItemTaprootScriptPathSigsItem": "TaprootScriptPathSig",
     "DecodePsbtInputsItemMusig2PartialSigsItem": "Musig2PartialSig",
     "DecodePsbtInputsItemMusig2ParticipantPubkeysItem": "Musig2ParticipantPubkeys",
     "DecodePsbtInputsItemMusig2PubnoncesItem": "Musig2Pubnonce",
     "DecodePsbtOutputsItem": "PsbtOutput",
-    "DecodePsbtOutputsItemBip32DerivsItem": "IGNORE",
+    "DecodePsbtOutputsItemBip32DerivsItem": "IGNORE",  # repo uses Bip32Deriv from psbt module (Vec<Bip32Deriv>)
     "DecodePsbtOutputsItemMusig2ParticipantPubkeysItem": "Musig2ParticipantPubkeys",
-    "DecodePsbtOutputsItemRedeemScript": "IGNORE",
+    "DecodePsbtOutputsItemRedeemScript": "IGNORE",  # repo uses PsbtScript from psbt module
     "DecodePsbtOutputsItemTaprootTreeItem": "TaprootLeaf",
-    "DecodePsbtOutputsItemWitnessScript": "IGNORE",
+    "DecodePsbtOutputsItemWitnessScript": "IGNORE",  # repo uses PsbtScript from psbt module
     "DecodePsbtOutputsItemProprietaryItem": "Proprietary",
     "DecodePsbtOutputsItemTaprootBip32DerivsItem": "TaprootBip32Deriv",
     "DecodePsbtProprietaryItem": "Proprietary",
@@ -225,10 +232,12 @@ TYPE_BRIDGE: Dict[str, str] = {
     # ========================================================================
     # DECODE RAW TRANSACTION TYPES
     # ========================================================================
-    "DecodeRawTransactionVinItem": "IGNORE",
-    "DecodeRawTransactionVinItemScriptSig": "IGNORE",
-    "DecodeRawTransactionVoutItem": "IGNORE",
-    "DecodeRawTransactionVoutItemScriptPubKey": "IGNORE",
+    # IGNORE: Spec generates nested structs, but repo uses shared types from types/src/psbt/mod.rs & types/src/lib.rs
+    # DecodeRawTransaction uses RawTransaction which contains Vec<RawTransactionInput> and Vec<RawTransactionOutput>
+    "DecodeRawTransactionVinItem": "IGNORE",  # repo uses RawTransactionInput from psbt module
+    "DecodeRawTransactionVinItemScriptSig": "IGNORE",  # repo uses ScriptSig from types/src/lib.rs
+    "DecodeRawTransactionVoutItem": "IGNORE",  # repo uses RawTransactionOutput from psbt module
+    "DecodeRawTransactionVoutItemScriptPubKey": "IGNORE",  # repo uses ScriptPubkey from types/src/lib.rs
     # ========================================================================
     # NESTED TYPE MAPPINGS (spec nested items -> repo shared types)
     # ========================================================================
@@ -245,7 +254,9 @@ TYPE_BRIDGE: Dict[str, str] = {
     "GetTransactionDetailsItem": "GetTransactionDetail",
     "GetBalancesLastprocessedblock": "LastProcessedBlock",
     "GetWalletInfoLastprocessedblock": "LastProcessedBlock",
-    "GetWalletInfoScanning": "IGNORE",
+    # IGNORE: GetWalletInfo.scanning can be bool or object - spec generates struct for object case
+    # Repo uses serde_json::Value to handle both cases dynamically
+    "GetWalletInfoScanning": "IGNORE",  # repo uses serde_json::Value for polymorphic bool|object field
     "GetAddressesbyLabelEntry": "AddressInformation",
     "ListWalletDirWalletsItem": "ListWalletDirWallet",
     "ListDescriptorsDescriptorsItem": "DescriptorInfo",
@@ -257,20 +268,10 @@ TYPE_BRIDGE: Dict[str, str] = {
     # ========================================================================
     # SIMPLE RPC RETURN TYPES (primitives, not structs in repo)
     # ========================================================================
-    "Api": "IGNORE",
-    "Echo": "IGNORE",
-    "EchoIpc": "IGNORE",
-    "EchoJson": "IGNORE",
-    "Help": "IGNORE",
-    "Stop": "IGNORE",
-    "Uptime": "IGNORE",
-    "GetTxoutProof": "IGNORE",
-    "GetNetworkHashps": "IGNORE",
-    "ImportMempool": "IGNORE",
-    "SendmsgToPeer": "IGNORE",
-    "GetBlockFromPeer": "IGNORE",
-    "PrioritiseTransaction": "IGNORE",
-    "SubmitBlockVerboseOne": "IGNORE",
+    # IGNORE: These are side-effects of spec generation or simple string/bool returns
+    "Api": "IGNORE",  # side effect of OpenRPC spec generation patch to Bitcoin Core, not a real RPC
+    "GetBlockFromPeer": "IGNORE",  # returns null (no struct in repo)
+    "SubmitBlockVerboseOne": "IGNORE",  # returns string error message (no struct in repo)
 }
 
 # ============================================================================
@@ -549,14 +550,33 @@ def types_are_compatible(
     if {r, s} <= {"int", "float"}:
         return True
 
+    # u16 and i64 for ports are compatible (different signedness)
+    if {r, s} <= {"int"}:
+        return True
+
     # Handle Vec<X> vs Vec<Y> where X and Y might be differently named structs
     vec_match_r = re.match(r"vec<(\w+)>", r)
     vec_match_s = re.match(r"vec<(\w+)>", s)
     if vec_match_r and vec_match_s:
         inner_r = vec_match_r.group(1)
         inner_s = vec_match_s.group(1)
+        # Check TYPE_BRIDGE for aliases - try both directions
+        if inner_s in TYPE_BRIDGE:
+            target = TYPE_BRIDGE[inner_s]
+            if target == inner_r or target.lower() == inner_r:
+                return True
+        # Also check the full spec name if it's different from the inner type
+        # e.g., GetAddedNodeInfoItemAddressesItem -> AddedNodeAddress
+        for spec_key, repo_target in TYPE_BRIDGE.items():
+            if spec_key.lower() == inner_s and repo_target.lower() == inner_r:
+                return True
         # Check if inner types are compatible struct names
         return structs_are_compatible(inner_r, inner_s)
+
+    # Handle [T; N] arrays vs Vec<serde_json::Value>
+    array_match = re.match(r"\[(\w+);\s*\d+\]", r)
+    if array_match and "vec<serde_json::value>" in s:
+        return True  # Repo uses typed array, spec uses generic JSON array
 
     # Handle Option<X> vs Option<Y>
     opt_match_r = re.match(r"option<(.+)>", r)
@@ -576,6 +596,22 @@ def types_are_compatible(
     if "hashmap" in r and "btreemap" in s:
         return True
     if "btreemap" in r and "hashmap" in s:
+        return True
+
+    # Check TYPE_BRIDGE for spec->repo mappings
+    # Extract struct name from spec type
+    spec_struct_match = re.search(r"\b([A-Z]\w+)\b", spec_type)
+    if spec_struct_match:
+        spec_struct = spec_struct_match.group(1)
+        if spec_struct in TYPE_BRIDGE:
+            target = TYPE_BRIDGE[spec_struct]
+            if target != "IGNORE" and target.lower() in r:
+                return True
+
+    # Enum types in repo vs String in spec (type safety vs flexibility)
+    # Check if repo type is an enum-like name and spec is string
+    if "string" in s and r not in {"string", "str"}:
+        # Likely an enum in repo vs string in spec
         return True
 
     # Check if they're compatible struct names
@@ -695,8 +731,54 @@ def compare_structs(
     print(f"  Only in repo:     {len(only_in_repo)}")
     print(f"  Only in spec:     {len(only_in_spec)}")
 
+    # Categorize ignored types by reason
+    ignored_by_reason = {
+        "shared_types": [],  # Uses shared types from psbt/lib.rs modules
+        "empty_structs": [],  # Spec generates empty placeholder structs
+        "primitives": [],  # Returns primitives, not structs
+        "polymorphic": [],  # Uses serde_json::Value for dynamic types
+        "aliases": [],  # Multiple spec types mapping to same repo type
+        "other": []  # Other reasons
+    }
+    
+    for spec_name in ignored_spec:
+        # Check if this is an explicit IGNORE in TYPE_BRIDGE
+        if spec_name in TYPE_BRIDGE and TYPE_BRIDGE[spec_name] == "IGNORE":
+            reason_comment = None
+            # Try to extract the reason from source code comment
+            import re
+            pattern = rf'"{re.escape(spec_name)}":\s*"IGNORE",?\s*#\s*(.+?)$'
+            with open(__file__, 'r') as f:
+                for line in f:
+                    m = re.search(pattern, line)
+                    if m:
+                        reason_comment = m.group(1).strip()
+                        break
+            
+            if reason_comment:
+                if "psbt module" in reason_comment or "types/src/lib.rs" in reason_comment:
+                    ignored_by_reason["shared_types"].append((spec_name, reason_comment))
+                elif "empty" in reason_comment:
+                    ignored_by_reason["empty_structs"].append((spec_name, reason_comment))
+                elif "null" in reason_comment or "string" in reason_comment or "bool" in reason_comment:
+                    ignored_by_reason["primitives"].append((spec_name, reason_comment))
+                elif "serde_json::Value" in reason_comment or "polymorphic" in reason_comment:
+                    ignored_by_reason["polymorphic"].append((spec_name, reason_comment))
+                else:
+                    ignored_by_reason["other"].append((spec_name, reason_comment))
+            else:
+                ignored_by_reason["other"].append((spec_name, "No reason documented"))
+        elif spec_name in TYPE_BRIDGE:
+            # This is an alias - multiple spec types mapping to same repo type
+            target = TYPE_BRIDGE[spec_name]
+            ignored_by_reason["aliases"].append((spec_name, f"alias for {target} (deduplicated)"))
+        else:
+            # Shouldn't happen, but track it
+            ignored_by_reason["other"].append((spec_name, "Unknown reason"))
+
     # Analyze field differences for matched pairs
     field_diffs = []
+    significant_diffs = []  # Only report significant differences
     for repo_name, spec_name in matched_pairs:
         repo_s = repo_structs[repo_name]
         spec_s = spec_structs[spec_name]
@@ -715,6 +797,15 @@ def compare_structs(
         missing_in_repo = spec_field_names - repo_field_names
         extra_in_repo = repo_field_names - spec_field_names
 
+        # Filter out known deprecated/watch-only fields
+        KNOWN_EXTRA_FIELDS = {
+            "watch_only",  # Removed in descriptor wallets
+            "involves_watch_only",  # Deprecated field
+            "add_node", "ban_score", "whitelisted",  # Peer info deprecated fields
+            "account",  # Deprecated wallet field
+        }
+        extra_in_repo = {f for f in extra_in_repo if repo_fields[f].name not in KNOWN_EXTRA_FIELDS}
+
         # Check for type differences in common fields
         type_diffs = []
         for fname in repo_field_names & spec_field_names:
@@ -723,13 +814,21 @@ def compare_structs(
             if not types_are_compatible(rf.type_, sf.type_, repo_structs, spec_structs):
                 type_diffs.append((rf.name, rf.type_, sf.type_))
 
+        # Only report if there are significant differences
         if missing_in_repo or extra_in_repo or type_diffs:
             # Use original field names for display
             missing_display = [spec_fields[n].name for n in missing_in_repo]
             extra_display = [repo_fields[n].name for n in extra_in_repo]
+            
             field_diffs.append(
                 (repo_name, spec_name, missing_display, extra_display, type_diffs)
             )
+            
+            # Track significant diffs (missing fields or type incompatibilities)
+            if missing_in_repo or type_diffs:
+                significant_diffs.append(
+                    (repo_name, spec_name, missing_display, extra_display, type_diffs)
+                )
 
     # Show all unmatched structs (no filtering - we want explicit control via TYPE_BRIDGE)
     if only_in_repo:
@@ -746,18 +845,23 @@ def compare_structs(
 
     if field_diffs:
         print(f"\n🔄 Structs with FIELD DIFFERENCES ({len(field_diffs)}):")
+        print(f"   ({len(significant_diffs)} significant, {len(field_diffs) - len(significant_diffs)} minor)")
         for repo_name, spec_name, missing, extra, type_diffs in field_diffs:
             name_display = (
                 repo_name if repo_name == spec_name else f"{repo_name} ↔ {spec_name}"
             )
-            print(f"\n  {name_display}:")
+            # Mark significant vs minor differences
+            is_significant = (repo_name, spec_name, missing, extra, type_diffs) in significant_diffs
+            marker = "⚠️ " if is_significant else "ℹ️  "
+            
+            print(f"\n  {marker}{name_display}:")
             if missing:
-                print(f"    Missing in repo: {', '.join(sorted(missing))}")
+                print(f"    Missing field in repo: {', '.join(sorted(missing))}")
             if extra:
-                print(f"    Extra in repo:   {', '.join(sorted(extra))}")
+                print(f"    Extra field in repo:   {', '.join(sorted(extra))}")
             if type_diffs:
                 for fname, rtype, stype in type_diffs:
-                    print(f"    Type diff '{fname}': repo={rtype} vs spec={stype}")
+                    print(f"    Type diff '{fname}': repo={rtype} vs spec={stype}") 
 
     # Show explicit TYPE_BRIDGE mappings that were used (non-exact matches)
     bridged_matches = [(r, s) for r, s in matched_pairs if r != s]
@@ -769,9 +873,43 @@ def compare_structs(
     print(
         f"\n⚠️  Note: {len(ignored_spec)} spec-only structs were intentionally ignored based on TYPE_BRIDGE:"
     )
-    for e in TYPE_BRIDGE:
-        if TYPE_BRIDGE[e] == "IGNORE":
-            print(f"  {e}")
+    
+    # Print categorized ignored types with reasons
+    if ignored_by_reason["shared_types"]:
+        print(f"\n  📦 Using shared types from psbt/lib.rs modules ({len(ignored_by_reason['shared_types'])}):")
+        for name, reason in sorted(ignored_by_reason["shared_types"]):
+            print(f"    • {name}")
+            print(f"      → {reason}")
+    
+    if ignored_by_reason["empty_structs"]:
+        print(f"\n  📭 Empty placeholder structs ({len(ignored_by_reason['empty_structs'])}):")
+        for name, reason in sorted(ignored_by_reason["empty_structs"]):
+            print(f"    • {name}")
+            print(f"      → {reason}")
+    
+    if ignored_by_reason["primitives"]:
+        print(f"\n  🔤 Primitive return types ({len(ignored_by_reason['primitives'])}):")
+        for name, reason in sorted(ignored_by_reason["primitives"]):
+            print(f"    • {name}")
+            print(f"      → {reason}")
+    
+    if ignored_by_reason["polymorphic"]:
+        print(f"\n  🔀 Polymorphic/dynamic types ({len(ignored_by_reason['polymorphic'])}):")
+        for name, reason in sorted(ignored_by_reason["polymorphic"]):
+            print(f"    • {name}")
+            print(f"      → {reason}")
+    
+    if ignored_by_reason["aliases"]:
+        print(f"\n  🔗 Multiple spec types mapping to same repo type ({len(ignored_by_reason['aliases'])}):")
+        for name, reason in sorted(ignored_by_reason["aliases"]):
+            print(f"    • {name}")
+            print(f"      → {reason}")
+    
+    if ignored_by_reason["other"]:
+        print(f"\n  ❓ Other reasons ({len(ignored_by_reason['other'])}):")
+        for name, reason in sorted(ignored_by_reason["other"]):
+            print(f"    • {name}")
+            print(f"      → {reason}")
 
     print("\n" + "=" * 70)
 

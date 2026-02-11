@@ -5,212 +5,163 @@ STRUCT COMPARISON REPORT
 📊 Summary:
   Repo structs:     237
   Spec structs:     278
-  Matched pairs:    219
-  Bridged/Ignored:  59
+  Matched pairs:    215
+  Bridged/Ignored:  47
   Repo deprecated:  16
-  Only in repo:     2
-  Only in spec:     0
+  Only in repo:     6
+  Only in spec:     16
 
-🔵 Structs only in REPO (2):
+🔵 Structs only in REPO (6):
   - DumpPrivKey
+  - GetTxSpendingPrevout
+  - GetTxSpendingPrevoutItem
   - GetUnconfirmedBalance
+  - SubmitPackageTxResult
+  - SubmitPackageTxResultFees
 
-🔄 Structs with FIELD DIFFERENCES (58):
+🟡 Structs only in SPEC (16) - may need implementation:
+  + Echo
+  + EchoIpc
+  + EchoJson
+  + GetBlocktemplateVerboseOne
+  + GetNetworkHashps
+  + GetTxoutProof
+  + GetTxspendingprevOut
+  + GetTxspendingprevOutItem
+  + Help
+  + ImportMempool
+  + PrioritiseTransaction
+  + SendmsgToPeer
+  + Stop
+  + SubmitPackageTxResults
+  + SubmitPackageTxResultsFees
+  + Uptime
 
-  AddPeerAddress:
-    Missing in repo: error
+🔄 Structs with FIELD DIFFERENCES (36):
+   (28 significant, 8 minor)
 
-  AddedNode ↔ GetAddedNodeInfoItem:
-    Type diff 'addresses': repo=Vec<AddedNodeAddress> vs spec=Vec<GetAddedNodeInfoItemAddressesItem>
+  ⚠️ AddPeerAddress:
+    Missing field in repo: error
 
-  AddressInformation ↔ GetAddressesbyLabelEntry:
-    Type diff 'purpose': repo=AddressPurpose vs spec=String
+  ⚠️ AnalyzePsbt:
+    Missing field in repo: error
 
-  AnalyzePsbt:
-    Missing in repo: error
-
-  AnalyzePsbtInput ↔ AnalyzePsbtInputsItem:
+  ⚠️ AnalyzePsbtInput ↔ AnalyzePsbtInputsItem:
     Type diff 'missing': repo=Option<AnalyzePsbtInputMissing> vs spec=Option<AnalyzePsbtInputsItemMissing>
 
-  Bip9Info ↔ GetDeploymentInfoDeploymentsBip9:
+  ⚠️ Bip9Info ↔ GetDeploymentInfoDeploymentsBip9:
     Type diff 'bit': repo=Option<u8> vs spec=Option<i64>
 
-  ChainTips ↔ GetChainTipsItem:
-    Type diff 'status': repo=ChainTipsStatus vs spec=String
-
-  DecodePsbt:
+  ⚠️ DecodePsbt:
     Type diff 'tx': repo=RawTransaction vs spec=DecodePsbtTx
 
-  DecodeScript:
-    Extra in repo:   addresses, required_signatures
+  ℹ️  DecodeScript:
+    Extra field in repo:   addresses, p2sh_segwit, required_signatures
 
-  DecodeScriptSegwit:
-    Extra in repo:   addresses, required_signatures
+  ℹ️  DecodeScriptSegwit:
+    Extra field in repo:   addresses, required_signatures
 
-  DeploymentInfo ↔ GetDeploymentInfoDeployments:
+  ⚠️ DeploymentInfo ↔ GetDeploymentInfoDeployments:
     Type diff 'bip9': repo=Option<Bip9Info> vs spec=Option<GetDeploymentInfoDeploymentsBip9>
 
-  DescriptorInfo ↔ ListDescriptorsDescriptorsItem:
-    Type diff 'range': repo=Option<[u64; 2]> vs spec=Option<Vec<serde_json::Value>>
-
-  EstimateRawFee:
+  ⚠️ EstimateRawFee:
     Type diff 'medium': repo=Option<RawFeeDetail> vs spec=Option<EstimateRawFeeMedium>
     Type diff 'short': repo=Option<RawFeeDetail> vs spec=Option<EstimateRawFeeShort>
     Type diff 'long': repo=RawFeeDetail vs spec=Option<EstimateRawFeeLong>
 
-  GetAddressInfo:
-    Type diff 'script': repo=Option<ScriptType> vs spec=Option<String>
+  ℹ️  GetAddressInfoEmbedded:
+    Extra field in repo:   address, descriptor, hex, is_change, is_compressed, is_script, is_witness, labels, parent_descriptor, pubkey, pubkeys, script, script_pubkey, sigs_required, solvable, witness_program, witness_version
 
-  GetAddressInfoEmbedded:
-    Extra in repo:   address, descriptor, hex, is_change, is_compressed, is_script, is_witness, labels, parent_descriptor, pubkey, pubkeys, script, script_pubkey, sigs_required, solvable, witness_program, witness_version
+  ℹ️  GetBlockVerboseThree:
+    Extra field in repo:   bits, chain_work, confirmations, difficulty, hash, height, median_time, merkle_root, n_tx, next_block_hash, nonce, previous_block_hash, size, stripped_size, target, time, version, version_hex, weight
 
-  GetBalances:
-    Extra in repo:   watch_only
+  ⚠️ GetBlockVerboseThreeTransaction ↔ GetBlockVerboseThreeTxItem:
+    Missing field in repo: vin
+    Extra field in repo:   fee, transaction
 
-  GetBlockStats ↔ GetBlockstats:
-    Type diff 'fee_rate_percentiles': repo=[u64; 5] vs spec=Option<Vec<serde_json::Value>>
+  ℹ️  GetBlockVerboseTwo:
+    Extra field in repo:   bits, chain_work, confirmations, difficulty, hash, height, median_time, merkle_root, n_tx, next_block_hash, nonce, previous_block_hash, size, stripped_size, target, time, version, version_hex, weight
 
-  GetBlockTemplate ↔ GetBlocktemplateVerboseTwo:
-    Type diff 'transactions': repo=Vec<BlockTemplateTransaction> vs spec=Vec<GetBlocktemplateVerboseTwoTransactionsItem>
+  ℹ️  GetBlockVerboseTwoTransaction ↔ GetBlockVerboseTwoTxItem:
+    Extra field in repo:   transaction
 
-  GetBlockVerboseThree:
-    Extra in repo:   bits, chain_work, confirmations, difficulty, hash, height, median_time, merkle_root, n_tx, next_block_hash, nonce, previous_block_hash, size, stripped_size, target, time, version, version_hex, weight
-    Type diff 'tx': repo=Vec<GetBlockVerboseThreeTransaction> vs spec=Vec<GetBlockVerboseThreeTxItem>
-
-  GetBlockVerboseThreeTransaction ↔ GetBlockVerboseThreeTxItem:
-    Missing in repo: vin
-    Extra in repo:   fee, transaction
-
-  GetBlockVerboseTwo:
-    Extra in repo:   bits, chain_work, confirmations, difficulty, hash, height, median_time, merkle_root, n_tx, next_block_hash, nonce, previous_block_hash, size, stripped_size, target, time, version, version_hex, weight
-    Type diff 'tx': repo=Vec<GetBlockVerboseTwoTransaction> vs spec=Vec<GetBlockVerboseTwoTxItem>
-
-  GetBlockVerboseTwoTransaction ↔ GetBlockVerboseTwoTxItem:
-    Extra in repo:   transaction
-
-  GetDeploymentInfo:
-    Type diff 'deployments': repo=std::collections::BTreeMap<String, DeploymentInfo> vs spec=std::collections::BTreeMap<String, GetDeploymentInfoDeployments>
-
-  GetDescriptorActivity:
+  ⚠️ GetDescriptorActivity:
     Type diff 'activity': repo=Vec<ActivityEntry> vs spec=Vec<serde_json::Value>
 
-  GetMiningInfo:
-    Type diff 'next': repo=NextBlockInfo vs spec=GetMiningInfoNext
-
-  GetNetworkInfo:
-    Type diff 'local_addresses': repo=Vec<GetNetworkInfoAddress> vs spec=Vec<GetNetworkInfoLocaladdressesItem>
-
-  GetNetworkInfoAddress ↔ GetNetworkInfoLocaladdressesItem:
+  ⚠️ GetNetworkInfoAddress ↔ GetNetworkInfoLocaladdressesItem:
     Type diff 'port': repo=u16 vs spec=i64
 
-  GetOrphanTxsVerboseOneEntry ↔ GetOrphanTxsVerboseOneItem:
-    Extra in repo:   entry_time, expiration_time
+  ℹ️  GetOrphanTxsVerboseOneEntry ↔ GetOrphanTxsVerboseOneItem:
+    Extra field in repo:   entry_time, expiration_time
 
-  GetOrphanTxsVerboseTwoEntry ↔ GetOrphanTxsVerboseTwoItem:
-    Extra in repo:   entry_time, expiration_time
+  ℹ️  GetOrphanTxsVerboseTwoEntry ↔ GetOrphanTxsVerboseTwoItem:
+    Extra field in repo:   entry_time, expiration_time
 
-  GetRawTransactionVerbose ↔ GetRawTransactionVerboseOne:
-    Type diff 'inputs': repo=Vec<RawTransactionInput> vs spec=Vec<GetRawTransactionVerboseOneVinItem>
+  ⚠️ GetRawTransactionVerbose ↔ GetRawTransactionVerboseOne:
     Type diff 'outputs': repo=Vec<RawTransactionOutput> vs spec=Vec<GetRawTransactionVerboseOneVoutItem>
+    Type diff 'inputs': repo=Vec<RawTransactionInput> vs spec=Vec<GetRawTransactionVerboseOneVinItem>
 
-  GetRawTransactionVerboseWithPrevout ↔ GetRawTransactionVerboseTwo:
-    Missing in repo: fee
-    Extra in repo:   block_hash, block_time, confirmations, hash, hex, in_active_chain, lock_time, outputs, size, transaction_time, txid, version, vsize, weight
+  ⚠️ GetRawTransactionVerboseWithPrevout ↔ GetRawTransactionVerboseTwo:
+    Missing field in repo: fee
+    Extra field in repo:   block_hash, block_time, confirmations, hash, hex, in_active_chain, lock_time, outputs, size, transaction_time, txid, version, vsize, weight
     Type diff 'inputs': repo=Vec<RawTransactionInputWithPrevout> vs spec=Vec<GetRawTransactionVerboseTwoVinItem>
 
-  GetTransaction:
-    Missing in repo: bip125_replaceable, decoded, details, hex, last_processed_block, parent_descs
+  ⚠️ GetTransaction:
+    Missing field in repo: bip125_replaceable, decoded, details, hex, last_processed_block, parent_descs
 
-  GetTransactionDetail ↔ GetTransactionDetailsItem:
-    Extra in repo:   account, involves_watch_only
-    Type diff 'category': repo=TransactionCategory vs spec=String
-
-  GetTxOutSetInfoBlockInfo ↔ GetTxoutSetInfoBlockInfo:
-    Type diff 'unspendables': repo=GetTxOutSetInfoUnspendables vs spec=GetTxoutSetInfoBlockInfoUnspendables
-
-  HdKey ↔ GetHdKeysItem:
-    Type diff 'descriptors': repo=Vec<HdKeyDescriptor> vs spec=Vec<GetHdKeysItemDescriptorsItem>
-
-  ImportDescriptorsResult ↔ ImportDescriptorsItem:
+  ⚠️ ImportDescriptorsResult ↔ ImportDescriptorsItem:
     Type diff 'error': repo=Option<serde_json::Value> vs spec=Option<ImportDescriptorsItemError>
 
-  ListDescriptors:
-    Type diff 'descriptors': repo=Vec<DescriptorInfo> vs spec=Vec<ListDescriptorsDescriptorsItem>
-
-  ListReceivedByAddressItem ↔ ListReceivedbyAddressItem:
-    Extra in repo:   involves_watch_only
-
-  ListReceivedByLabelItem ↔ ListReceivedbyLabelItem:
-    Extra in repo:   involves_watch_only
-
-  ListSinceBlock:
+  ⚠️ ListSinceBlock:
     Type diff 'removed': repo=Vec<TransactionItem> vs spec=Option<Vec<serde_json::Value>>
 
-  ListUnspentItem:
-    Missing in repo: ancestor_count, ancestor_fees, ancestors_ize, reused, witness_script
+  ⚠️ ListUnspentItem:
+    Missing field in repo: ancestor_count, ancestor_fees, ancestors_ize, reused, witness_script
 
-  MempoolAcceptance ↔ TestMempoolacceptItem:
-    Missing in repo: package_error
+  ⚠️ MempoolAcceptance ↔ TestMempoolacceptItem:
+    Missing field in repo: package_error
     Type diff 'fees': repo=Option<MempoolAcceptanceFees> vs spec=Option<TestMempoolacceptItemFees>
 
-  MempoolEntry ↔ GetMempoolAncestorsVerboseOneEntry:
-    Type diff 'fees': repo=MempoolEntryFees vs spec=GetMempoolAncestorsVerboseOneEntryFees
-
-  NodeAddress ↔ GetNodeAddressesItem:
+  ⚠️ NodeAddress ↔ GetNodeAddressesItem:
     Type diff 'port': repo=u16 vs spec=i64
 
-  PeerInfo ↔ GetPeerInfoItem:
-    Extra in repo:   add_node, ban_score, whitelisted
+  ⚠️ Proprietary ↔ DecodePsbtInputsItemProprietaryItem:
+    Missing field in repo: identifier, key, subtype, value
 
-  Proprietary ↔ DecodePsbtInputsItemProprietaryItem:
-    Missing in repo: identifier, key, subtype, value
-
-  PsbtInput ↔ DecodePsbtInputsItem:
-    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtInputsItemRedeemScript>
-    Type diff 'non_witness_utxo': repo=Option<RawTransaction> vs spec=Option<DecodePsbtInputsItemNonWitnessUtxo>
+  ⚠️ PsbtInput ↔ DecodePsbtInputsItem:
     Type diff 'witness_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtInputsItemWitnessScript>
+    Type diff 'non_witness_utxo': repo=Option<RawTransaction> vs spec=Option<DecodePsbtInputsItemNonWitnessUtxo>
+    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtInputsItemRedeemScript>
 
-  PsbtOutput ↔ DecodePsbtOutputsItem:
-    Type diff 'taproot_tree': repo=Option<Vec<TaprootLeaf>> vs spec=Option<Vec<DecodePsbtOutputsItemTaprootTreeItem>>
-    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemRedeemScript>
+  ⚠️ PsbtOutput ↔ DecodePsbtOutputsItem:
     Type diff 'witness_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemWitnessScript>
+    Type diff 'redeem_script': repo=Option<PsbtScript> vs spec=Option<DecodePsbtOutputsItemRedeemScript>
 
-  RawAddrManEntry ↔ GetRawAddrmanEntryEntry:
+  ⚠️ RawAddrManEntry ↔ GetRawAddrmanEntryEntry:
     Type diff 'port': repo=u16 vs spec=i64
 
-  RawFeeDetail ↔ EstimateRawFeeShort:
-    Type diff 'pass': repo=Option<RawFeeRange> vs spec=Option<EstimateRawFeeShortPass>
+  ⚠️ RawFeeDetail ↔ EstimateRawFeeShort:
     Type diff 'fail': repo=Option<RawFeeRange> vs spec=Option<EstimateRawFeeShortFail>
+    Type diff 'pass': repo=Option<RawFeeRange> vs spec=Option<EstimateRawFeeShortPass>
 
-  RawTransactionInputWithPrevout ↔ GetBlockVerboseThreeTxItemVinItem:
-    Extra in repo:   input
+  ⚠️ RawTransactionInputWithPrevout ↔ GetBlockVerboseThreeTxItemVinItem:
+    Extra field in repo:   input
     Type diff 'prevout': repo=Option<GetBlockVerboseThreePrevout> vs spec=GetBlockVerboseThreeTxItemVinItemPrevout
 
-  RestoreWallet:
-    Missing in repo: warnings
-    Extra in repo:   warning
+  ⚠️ RestoreWallet:
+    Missing field in repo: warnings
+    Extra field in repo:   warning
 
-  ScanTxOutSetStart ↔ ScanTxoutSetVerboseZero:
-    Type diff 'unspents': repo=Vec<ScanTxOutSetUnspent> vs spec=Vec<ScanTxoutSetVerboseZeroUnspentsItem>
+  ⚠️ SignFail ↔ SignRawTransactionwithKeyErrorsItem:
+    Missing field in repo: witness
 
-  SignFail ↔ SignRawTransactionwithKeyErrorsItem:
-    Missing in repo: witness
+  ⚠️ TransactionItem ↔ ListTransactionsItem:
+    Missing field in repo: abandoned, bip125_replaceable, label, parent_descs
 
-  SignRawTransaction ↔ SignRawTransactionwithKey:
-    Type diff 'errors': repo=Option<Vec<SignFail>> vs spec=Option<Vec<SignRawTransactionwithKeyErrorsItem>>
+  ⚠️ ValidateAddress:
+    Missing field in repo: error, error_locations
 
-  SubmitPackageTxResults:
-    Type diff 'fees': repo=Option<SubmitPackageTxResultssFees> vs spec=Option<SubmitPackageTxResultsFees>
-
-  TransactionItem ↔ ListTransactionsItem:
-    Missing in repo: abandoned, bip125_replaceable, label, parent_descs
-    Extra in repo:   involves_watch_only
-    Type diff 'category': repo=super::TransactionCategory vs spec=String
-
-  ValidateAddress:
-    Missing in repo: error, error_locations
-
-🔗 TYPE_BRIDGE mappings used (111):
+🔗 TYPE_BRIDGE mappings used (108):
   ActiveCommand ↔ GetRpcInfoActiveCommandsItem
   AddedNode ↔ GetAddedNodeInfoItem
   AddedNodeAddress ↔ GetAddedNodeInfoItemAddressesItem
@@ -265,8 +216,6 @@ STRUCT COMPARISON REPORT
   GetTxOutSetInfo ↔ GetTxoutSetInfo
   GetTxOutSetInfoBlockInfo ↔ GetTxoutSetInfoBlockInfo
   GetTxOutSetInfoUnspendables ↔ GetTxoutSetInfoBlockInfoUnspendables
-  GetTxSpendingPrevOut ↔ GetTxspendingprevOut
-  GetTxSpendingPrevOutItem ↔ GetTxspendingprevOutItem
   GlobalXpub ↔ DecodePsbtGlobalXpubsItem
   HdKey ↔ GetHdKeysItem
   HdKeyDescriptor ↔ GetHdKeysItemDescriptorsItem
@@ -313,7 +262,6 @@ STRUCT COMPARISON REPORT
   SignMessageWithPrivKey ↔ SignMessagewithPrivKey
   SignRawTransaction ↔ SignRawTransactionwithKey
   Signers ↔ EnumerateSignersSignersItem
-  SubmitPackageTxResultssFees ↔ SubmitPackageTxResultsFees
   TaprootBip32Deriv ↔ DecodePsbtInputsItemTaprootBip32DerivsItem
   TaprootLeaf ↔ DecodePsbtOutputsItemTaprootTreeItem
   TaprootScript ↔ DecodePsbtInputsItemTaprootScriptsItem
@@ -323,49 +271,110 @@ STRUCT COMPARISON REPORT
   UploadTarget ↔ GetNetTotalsUploadtarget
   VerifyTxOutProof ↔ VerifyTxoutProof
 
-⚠️  Note: 59 spec-only structs were intentionally ignored based on TYPE_BRIDGE:
-  ImportDescriptorsItemError
-  GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey
-  GetBlocktemplateVerboseOne
-  EstimateRawFeeMedium
-  EstimateRawFeeLong
-  EstimateRawFeeShortFail
-  GetRawTransactionVerboseOneVinItem
-  GetRawTransactionVerboseOneVinItemScriptSig
-  GetRawTransactionVerboseOneVoutItem
-  GetRawTransactionVerboseOneVoutItemScriptPubKey
-  GetRawTransactionVerboseTwoVinItem
-  GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey
-  GetTxoutVerboseOneScriptPubKey
-  GetMemoryInfoVerboseOne
-  DecodePsbtInputsItemBip32DerivsItem
-  DecodePsbtInputsItemFinalScriptSig
-  DecodePsbtInputsItemNonWitnessUtxo
-  DecodePsbtInputsItemRedeemScript
-  DecodePsbtInputsItemWitnessScript
-  DecodePsbtInputsItemWitnessUtxo
-  DecodePsbtInputsItemWitnessUtxoScriptPubKey
-  DecodePsbtOutputsItemBip32DerivsItem
-  DecodePsbtOutputsItemRedeemScript
-  DecodePsbtOutputsItemWitnessScript
-  DecodeRawTransactionVinItem
-  DecodeRawTransactionVinItemScriptSig
-  DecodeRawTransactionVoutItem
-  DecodeRawTransactionVoutItemScriptPubKey
-  GetWalletInfoScanning
-  Api
-  Echo
-  EchoIpc
-  EchoJson
-  Help
-  Stop
-  Uptime
-  GetTxoutProof
-  GetNetworkHashps
-  ImportMempool
-  SendmsgToPeer
-  GetBlockFromPeer
-  PrioritiseTransaction
-  SubmitBlockVerboseOne
+⚠️  Note: 47 spec-only structs were intentionally ignored based on TYPE_BRIDGE:
+
+  📦 Using shared types from psbt/lib.rs modules (22):
+    • DecodePsbtInputsItemBip32DerivsItem
+      → repo uses Bip32Deriv from psbt module (Vec<Bip32Deriv>)
+    • DecodePsbtInputsItemFinalScriptSig
+      → repo uses ScriptSig from types/src/lib.rs
+    • DecodePsbtInputsItemNonWitnessUtxo
+      → repo uses RawTransaction from psbt module
+    • DecodePsbtInputsItemRedeemScript
+      → repo uses PsbtScript from psbt module
+    • DecodePsbtInputsItemWitnessScript
+      → repo uses PsbtScript from psbt module
+    • DecodePsbtInputsItemWitnessUtxo
+      → repo uses WitnessUtxo from psbt module
+    • DecodePsbtInputsItemWitnessUtxoScriptPubKey
+      → repo uses ScriptPubkey from types/src/lib.rs
+    • DecodePsbtOutputsItemBip32DerivsItem
+      → repo uses Bip32Deriv from psbt module (Vec<Bip32Deriv>)
+    • DecodePsbtOutputsItemRedeemScript
+      → repo uses PsbtScript from psbt module
+    • DecodePsbtOutputsItemWitnessScript
+      → repo uses PsbtScript from psbt module
+    • DecodeRawTransactionVinItem
+      → repo uses RawTransactionInput from psbt module
+    • DecodeRawTransactionVinItemScriptSig
+      → repo uses ScriptSig from types/src/lib.rs
+    • DecodeRawTransactionVoutItem
+      → repo uses RawTransactionOutput from psbt module
+    • DecodeRawTransactionVoutItemScriptPubKey
+      → repo uses ScriptPubkey from types/src/lib.rs
+    • GetBlockVerboseThreeTxItemVinItemPrevoutScriptPubKey
+      → repo uses ScriptPubkey from types/src/lib.rs
+    • GetRawTransactionVerboseOneVinItem
+      → repo uses RawTransactionInput from psbt module
+    • GetRawTransactionVerboseOneVinItemScriptSig
+      → repo uses ScriptSig from types/src/lib.rs
+    • GetRawTransactionVerboseOneVoutItem
+      → repo uses RawTransactionOutput from psbt module
+    • GetRawTransactionVerboseOneVoutItemScriptPubKey
+      → repo uses ScriptPubkey from types/src/lib.rs
+    • GetRawTransactionVerboseTwoVinItem
+      → repo uses RawTransactionInput from psbt module
+    • GetRawTransactionVerboseTwoVinItemPrevoutScriptPubKey
+      → repo uses ScriptPubkey from types/src/lib.rs
+    • GetTxoutVerboseOneScriptPubKey
+      → repo uses ScriptPubkey from types/src/lib.rs
+
+  📭 Empty placeholder structs (4):
+    • EstimateRawFeeLong
+      → spec generates empty struct, not used in repo
+    • EstimateRawFeeMedium
+      → spec generates empty struct, not used in repo
+    • EstimateRawFeeShortFail
+      → spec generates empty struct for error case, not used in repo
+    • ImportDescriptorsItemError
+      → spec emits empty placeholder, repo keeps generic error JSON
+
+  🔤 Primitive return types (3):
+    • GetBlockFromPeer
+      → returns null (no struct in repo)
+    • GetWalletInfoScanning
+      → repo uses serde_json::Value for polymorphic bool|object field
+    • SubmitBlockVerboseOne
+      → returns string error message (no struct in repo)
+
+  🔗 Multiple spec types mapping to same repo type (16):
+    • DecodePsbtOutputsItemMusig2ParticipantPubkeysItem
+      → alias for Musig2ParticipantPubkeys (deduplicated)
+    • DecodePsbtOutputsItemProprietaryItem
+      → alias for Proprietary (deduplicated)
+    • DecodePsbtOutputsItemTaprootBip32DerivsItem
+      → alias for TaprootBip32Deriv (deduplicated)
+    • DecodePsbtProprietaryItem
+      → alias for Proprietary (deduplicated)
+    • GetBalancesLastprocessedblock
+      → alias for LastProcessedBlock (deduplicated)
+    • GetMempoolAncestorsVerboseOneEntryFees
+      → alias for MempoolEntryFees (deduplicated)
+    • GetMempoolDescendantsVerboseOneEntry
+      → alias for MempoolEntry (deduplicated)
+    • GetMempoolDescendantsVerboseOneEntryFees
+      → alias for MempoolEntryFees (deduplicated)
+    • GetRawMempoolVerboseOneEntry
+      → alias for MempoolEntry (deduplicated)
+    • GetRawMempoolVerboseOneEntryFees
+      → alias for MempoolEntryFees (deduplicated)
+    • GetRawTransactionVerboseTwoVinItemPrevout
+      → alias for GetBlockVerboseThreePrevout (deduplicated)
+    • GetWalletInfoLastprocessedblock
+      → alias for LastProcessedBlock (deduplicated)
+    • ListSinceBlockTransactionsItem
+      → alias for TransactionItem (deduplicated)
+    • SendmanyVerboseOne
+      → alias for SendManyVerbose (deduplicated)
+    • SignRawTransactionwithWallet
+      → alias for SignRawTransaction (deduplicated)
+    • SignRawTransactionwithWalletErrorsItem
+      → alias for SignFail (deduplicated)
+
+  ❓ Other reasons (2):
+    • Api
+      → side effect of OpenRPC spec generation patch to Bitcoin Core, not a real RPC
+    • GetMemoryInfoVerboseOne
+      → spec wrapper for verbose=true, repo uses same struct
 
 ======================================================================
