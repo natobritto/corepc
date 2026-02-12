@@ -1,0 +1,3 @@
+# Generated comparison artefacts — do not commit.
+output/
+__pycache__/
