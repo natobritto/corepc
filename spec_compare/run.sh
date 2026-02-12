@@ -59,11 +59,11 @@ for VER in "${VERSIONS[@]}"; do
     echo "━━━ v${VER}: ${SPEC_BASENAME} ━━━"
 
     # Step 1: Generate structs from the OpenRPC spec via codegen
-    (cd "$SCRIPT_DIR/codegen" && cargo run --quiet -- \
+    python3 "$SCRIPT_DIR/codegen.py" \
         --input "$OPENRPC_FILE" \
         --output "$OUTPUT_DIR" \
         --core-version "${VER}" \
-        --single-file 2>&1 | grep -v "^Debug:")
+        --single-file
 
     # codegen writes generated.rs into --output dir; rename to versioned name
     mv "$OUTPUT_DIR/generated.rs" "$GENERATED"
